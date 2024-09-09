@@ -1,0 +1,49 @@
+{
+    "jobs_tab_visibility": "shown",
+    "initial_working_directory": "~",
+    "posix_terminal_shell": "bash",
+    "panes": {
+        "quadrants": [
+            "Source",
+            "TabSet1",
+            "TabSet2",
+            "Console"
+        ],
+        "tabSet1": [
+            "History",
+            "Packages",
+            "Presentation"
+        ],
+        "tabSet2": [
+            "Environment",
+            "Files",
+            "Plots",
+            "Connections",
+            "Help",
+            "Build",
+            "Viewer",
+            "Presentations"
+        ],
+        "hiddenTabSet": [
+            "VCS",
+            "Tutorial"
+        ],
+        "console_left_on_top": false,
+        "console_right_on_top": false,
+        "additional_source_columns": 0
+    },
+    "rmd_viewer_type": "pane",
+    "save_workspace": "never",
+    "load_workspace": false,
+    "num_spaces_for_tab": 4,
+    "help_font_size_points": 11,
+    "font_size_points": 12,
+    "server_editor_font": "UbuntuMono-Regular",
+    "server_editor_font_enabled": true,
+    "always_save_history": false,
+    "auto_append_newline": true,
+    "strip_trailing_whitespace": true,
+    "auto_save_on_blur": true,
+    "indent_guides": "gray",
+    "editor_theme": "Cobalt"
+}
