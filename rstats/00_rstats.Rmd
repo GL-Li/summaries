@@ -1,0 +1,20 @@
+## Basic concepts
+
+### import an environment to .GlobalEnv
+
+```{r}
+# save an env object to RDS file
+saveRDS(env_i, file = "env_i.RDS")
+
+# clear global environment
+rm(list = ls(envir = .GlobalEnd), envir = .GlobalEnv)
+
+# read the saved environment
+env_i <- readRDS("env_i.RDS")
+
+# load all objects in env_i to global environment
+list2env(as.list(env_i), envir = .GlobalEnv)
+
+# delete env_i from global environment
+rm("env_i)
+```

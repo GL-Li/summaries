@@ -1,0 +1,39 @@
+## fread
+
+### colClass
+colClass can be a named vector that sepcify classes of selected columns. Unfortunately, it cannot override a higher type to a lower one. For example, if a column has characters, the column cannot be read into integer. So the colClass for this column is ignored.
+
+Order of types in R: character > numeric > integer
+
+If the higher to lower class reading is intended, do this after reading.
+
+```{r}
+# a sample aaa.csv file
+aaa <- utils::read.table(header = TRUE, text = "
+ x y z t
+ a 1 0 3.14
+ b 2 0 1
+")
+fwrite(aaa, file = "aaa.csv")
+
+col_class <- c(x = "numeric", y = "character", t = "integer")
+aaa <- fread("aaa.csv", colClass = col_class)
+
+# result
+# - x is read into character. numeric class is ignored.
+# - y is read into character "1", "2"
+# - z is determined by fread function.
+# - t is read into numeric, not integer
+
+# forced conversion
+for (col in names(col_class)) {
+  if (class(aaa[[col]]) != col_class[col]) {
+    if (col_class[col] == "numeric") {
+          aaa[[col]] <- as.numeric(aaa[[col]])
+    }
+    if (col_class[col] == "integer") {
+          aaa[[col]] <- as.integer(aaa[[col]])
+    }
+  }
+}
+```
