@@ -1,10 +1,18 @@
 ## Set up
 
-Install ipython3
+### use virtual environment
+Debian is very restrictive in installing Python package system-wide or user-wide. So the best practice is to create virtual environments for specific projects. Typically we only need a couple of virtual environments for tasks like data science and web applications.
+```sh
+# create a data science virtual environment
+$ python3 -m venv ~/projects/my_ds_venv
+# To activate the environment for any data-science project
+$ source ~/projects/my_ds_venv/bin/activate
+```
 
-`$ sudo apt install ipython3`
+### use ipython for REPL
+It is used in `iron.lua` for LazyVim.
 
-Get documention of a function at ipython console:
+To get documentation of a function at ipython console:
 
 `> help(np.argmax)`
 
