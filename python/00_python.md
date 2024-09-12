@@ -1,3 +1,10 @@
+## Structure of this directory
+- 00_python.md: overall summary for python
+- 01_xxxxxx.md: summary of a specific topic
+- 02_yyyyyy.md: summary of another specific topic
+- numpy_pkg.py: code for numpy package. Do not name it a numpy.py, as Python will confuse it with the numpy package.
+- xxxx_pkg.py: code for another package. Still avoid name conflicts.
+
 ## Set up
 
 ### use virtual environment
