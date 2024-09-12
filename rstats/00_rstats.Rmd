@@ -1,5 +1,35 @@
 ## Basic concepts
 
+### Installation
+
+R is not in registry on Window. So `path/to/Rscript.exe xxx.R` will run from command line. Under the installation directory, the following subdirectories are not required for `Rscript.exe`:
+
+- Tcl/
+- tests/
+- doc/
+- share/
+- subdir in library/
+  - translations/
+  - KernSmooth
+  - spatial
+  - survival
+  - mgcv
+  - rpart
+  - nlme
+
+required packages
+- tools
+
+local-installed-package, tried to delete 3, all required
+- zip
+- tzdb
+- Rcpp
+
+These base packages must stay in R-4.4.1/library/ and cannot be moved to user library.
+`base  compiler  datasets  grDevices  graphics  grid  methods  parallel  stats  tools  utils`
+
+
+
 ### import an environment to .GlobalEnv
 
 ```{r}
