@@ -1,7 +1,7 @@
 ## Structure of this directory
-- 00_python.md: overall summary for python
-- 01_xxxxxx.md: summary of a specific topic
-- 02_yyyyyy.md: summary of another specific topic
+- python.md: overall summary for python
+- xxxxxx.md: summary of a specific topic
+- yyyyyy.md: summary of another specific topic
 - numpy_pkg.py: code for numpy package. Do not name it a numpy.py, as Python will confuse it with the numpy package.
 - xxxx_pkg.py: code for another package. Still avoid name conflicts.
 
@@ -14,6 +14,10 @@ Debian is very restrictive in installing Python package system-wide or user-wide
 $ python3 -m venv ~/projects/my_ds_venv
 # To activate the environment for any data-science project
 $ source ~/projects/my_ds_venv/bin/activate
+# generate installed packages of the virtual environment
+$ pip freeze > requirements.txt
+# replicate installed packages in another virtual environment
+$ pip install -r requirements.txt   # activate this virtual environment first
 ```
 
 ### use ipython for REPL
@@ -42,26 +46,6 @@ add(**dic)
 ## Packages
 
 ### numpy
+See `numpy_pkg.py` for code examples
 
-#### np.argmax()
-Index of the largest value along a axis
-
-```python
-import numpy as np
-arr = np.array([[1,3,2,1], [2,5,8,9], [9,4,4,3]])
-    # array([[1, 3, 2, 1],
-    #        [2, 5, 8, 9],
-    #        [9, 4, 4, 3]])
-
-# axis=0 means which row index has the largest value (in each column)
-np.argmax(arr, axis=0)
-    # array([2, 1, 1, 1])
-
-# axis=1 returns column index of the largest value in each row
-np.argmax(arr, axis=1)
-    # array([1, 3, 0])
-    
-# axis=-1 where -1 is the index of the last axis, which is column for 2-D arrays
-np.argmax(arr, axis=-1)
-    # array([1, 3, 0])
-```
+- `np.argmax(arr, axis)`: get the index of the largest value along an axis

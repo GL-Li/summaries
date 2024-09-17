@@ -29,10 +29,10 @@ aaa <- fread("aaa.csv", colClass = col_class)
 for (col in names(col_class)) {
   if (class(aaa[[col]]) != col_class[col]) {
     if (col_class[col] == "numeric") {
-          aaa[[col]] <- as.numeric(aaa[[col]])
+      aaa[[col]] <- as.numeric(aaa[[col]])
     }
     if (col_class[col] == "integer") {
-          aaa[[col]] <- as.integer(aaa[[col]])
+      aaa[[col]] <- as.integer(aaa[[col]])
     }
   }
 }
