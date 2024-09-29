@@ -37,3 +37,30 @@ In normal mode, `<leader>tm` to enable/disable table mode
 | row 1    | line1 | ccc | aaaaaaaaaaaa | A |
 |          |       |     | bbbbbbbbbbbb |   |
 
+
+## gp.nvim for chatgpt
+https://github.com/Robitx/gp.nvim
+
+Preparation: 
+- chatgpt API key:
+  - Project API key is recommended over user API key
+  - from openAI developer platform: https://platform.openai.com/docs/overview
+- Add credit to the account and set monthly limit to limit the spending
+
+Installation and minimal configuration of the plugin: ready to use with the default configuration after providing the api key.
+  ```lua
+  -- chatgpt.lua
+  return {
+    "robitx/gp.nvim",
+    config = function()
+      local conf = {
+        openai_api_key = "your-api-key",
+      }
+      require("gp").setup(conf)
+    end,
+  }
+  ```
+
+
+
+
