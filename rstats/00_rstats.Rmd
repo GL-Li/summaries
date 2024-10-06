@@ -53,12 +53,14 @@ rm("env_i)
 
 For example, we have a test file `ttt.R`, which has a quit statement
 ```{r}
+print("stat the test")
 quit(save = "no", status = 5) # nolint
 ```
 In another file `ttt_run.R`, which runs `ttt.R` with `system()` function:
 ```{r}
 # pass exit status 5 to exit_status
-exit_status <- system("Rscript ttt.R ; echo $?", intern = TRUE)
+std_out <- system("Rscript ttt.R ; echo $?", intern = TRUE)
+exit_status <- std_out[length(std_out)]
 print(exit_status)
 ```
 From terminal, when we run $ Rscript ttt_run.R, it will print 5 to stdout.
