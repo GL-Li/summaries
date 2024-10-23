@@ -1,3 +1,9 @@
+"""HEAD NOTES
+Polars does not use index, so forget about index.
+- https://pola-rs.github.io/polars-book/user-guide/coming_from_pandas.html
+"""
+
+
 # https://docs.pola.rs/user-guide/getting-started/#combination
 
 import polars as pl

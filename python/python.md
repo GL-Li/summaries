@@ -20,6 +20,18 @@ $ pip freeze > requirements.txt
 $ pip install -r requirements.txt   # activate this virtual environment first
 ```
 
+### install packages from a file
+In a virtual environment, to generate requirements.txt which contains installed packages
+```sh
+pip freeze > requirments.txt
+```
+Edit the file if necessary, for example, some packages might be specific to the computer hardward.
+
+To install the same packages in a new virtual environment on any computer:
+```sh
+pip install -r requirements.txt
+```
+
 ### use ipython for REPL
 It is used in `iron.lua` for LazyVim.
 
