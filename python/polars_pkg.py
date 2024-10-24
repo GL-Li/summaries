@@ -41,10 +41,11 @@ Expressions
 """
 
 # select columns
+df.select(["integer", "string"])  # preferred
 df.select(pl.col("integer", "string"))
 df.select(pl.all().exclude(["date", "float"]))
 
-# filter rows
+# filter rows - better to use pl.col to specify columns
 df.filter(pl.col("float").is_between(3.0, 5.9))
 df.filter(pl.col("float").is_between(3.0, 5.9) & pl.col("string").is_in(["a", "c"]))
 

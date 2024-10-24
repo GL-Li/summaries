@@ -21,8 +21,9 @@ Installation
 - install docker engine
   - following official instruction from docker to install docker
   - add user xxx to docker group
-    -   $ sudo gpasswd -a xxx docker
-    -   $ newgrp docker
+    -   `$ sudo gpasswd -a xxx docker`
+    -   `$ newgrp docker`
+    -   may need restart to take effect
 - install build-essentials
   - `$ sudo apt install build-essential`
 - install Rust and Cargo using rustup
@@ -37,10 +38,10 @@ Installation
     - `$ sudo timeshift --delete --snapshot "2023-06-17_07-34-09"` to delete a snapshot
 - install password mananger
   - `$ sudo apt install pass`  instruction https:gc/www.passwordstore.org/
-- import gpg keys to the new computer and set it up for password manager.
+- import gpg keys to the new computer and set it up for password manager. See section _gpg: file encryption_.
 - create ssh for github and bitbucket
   - `$ ssh-keygen -t rsa` to generate keys. Use all blank settings.
-  - copy id_rsa_pub content to github and bitbucket SSH setting
+  - copy `id_rsa_pub` content to github and bitbucket SSH setting
     - github: settings --> SSH and GPG keys --> New SSH key
     - bitbucker: settings --> Personal Bitbucket settings --> SSH keys --> add key
 - clone configuration repo from github
@@ -48,13 +49,12 @@ Installation
   - copy `.gitconfig` to `~/.gitconfig`
   - copy `bin/` to `~/bin/`
 - install NeoVim and config it follow instructions in `vim-in-use`
-- connect to OneDriv and download files
+- connect to OneDrive and download files
   - `$ docker_onedrive` # it is in `~/bin/`. follow the instructions to authroize the connection
 - setup blue terminal
   - `$ dconf load gcorg/gnome/terminal/ < gnome_terminal_blue.txt`
 
 
-### Windows WSL Ubuntu
 
 
 ## Files and directories
