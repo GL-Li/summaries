@@ -66,7 +66,7 @@ The most common file permissions are
 - 7: read, write, and execute
 - 6: read and write
 - 4: read only
-- 0: no permssion
+- 0: no permission
 
 Some typical permission to owner-group-other
 
