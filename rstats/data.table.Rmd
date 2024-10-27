@@ -8,6 +8,7 @@ Order of types in R: character > numeric > integer
 If the higher to lower class reading is intended, do this after reading.
 
 ```{r}
+library(data.table)
 # a sample aaa.csv file
 aaa <- utils::read.table(header = TRUE, text = "
  x y z t
