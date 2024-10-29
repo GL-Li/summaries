@@ -17,6 +17,24 @@ In Windows WSL Ubuntu, which does not have FUSS to support appimage, extract the
 This `init.vim` can be used by VSCode extension `VSCode Neovim` created by asvetliako. Unfortunately, `.vimrc` is not supported by VScode extension `Vim` by vscodevim. This is why we have this note.
 
 
+## Most useful vim skills
+
+### automation with vim macros
+Record a macro
+- in normal mode, press `q` followed by a single letter from a-z as registry name to start recording
+- press `0` to move the start of a line (or `$` to the end) and then start operations on the line. 
+- press <ESC> to return to normal mode and then `j` to next line
+- press `q` to finish recording
+
+Use a macro `a`
+- review contents of a macro: `:reg` to view the content
+- apply macro `a` on a single line: move cursor to the line in normal mode and run `@a`
+- repeat on a new line: `@@`
+- apply on 5 lines: `5@a`
+- apply on selected lines: `:<>normal @a`
+- apply to all lines: `:%:normal @a`.
+
+
     
 ## Understand vim
 
