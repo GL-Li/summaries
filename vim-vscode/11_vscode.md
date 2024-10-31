@@ -4,6 +4,16 @@ https://code.visualstudio.com/docs
 
 ## Tricks
 
+### formatting
+
+#### code folding based on indentation
+- `ctrl shift [` to fold
+- `ctrl shift ]` to unfold
+
+### move a line or selected lines up and down
+- `alt <uparrow>`
+- `alt <downarrow>`
+
 ### Settings
 
 #### How to modify settings?
