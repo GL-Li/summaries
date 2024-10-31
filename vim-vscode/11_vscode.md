@@ -4,13 +4,13 @@ https://code.visualstudio.com/docs
 
 ## Tricks
 
-### formatting
+### 10 most useful VScode key-bindings
 
-#### code folding based on indentation
+1. code folding based on indentation
 - `ctrl shift [` to fold
 - `ctrl shift ]` to unfold
 
-### move a line or selected lines up and down
+2. move a line or selected lines up and down
 - `alt <uparrow>`
 - `alt <downarrow>`
 
@@ -39,3 +39,22 @@ In Keyboard Shortcuts, search for `positron` for related shortcuts.
 ## vscodevim plugin setting
 
 enable easymotion
+
+## vscode user setting
+`ctrl shift p` to open the search window and search for `User Setting (JSON)` and open the file. Update the file for customer setting.
+
+```json
+{
+  "security.workspace.trust.untrustedFiles": "open",
+  "python.defaultInterpreterPath": "/home/gl/projects/python-venv",
+  "extensions.experimental.affinity": {
+      "asvetliakov.vscode-neovim": 1
+  },
+  "workbench.colorTheme": "Cobalt2",
+
+  // manuall setting indent size to 2.
+  "editor.tabSize": 2,
+	"editor.detectIndentation": false // do not use default for given file types,
+	"editor.wrappingIndent": "indent" // indent in long line soft wrapping
+}
+```
