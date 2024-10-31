@@ -35,6 +35,22 @@ Use a macro `a`
 - apply to all lines: `:%:normal @a`.
 
 
+### register for temporary storage
+All register starts with one double quote `"`.
+
+Types of registers:
+- `""`: the most recent yanked or deleted text
+- `"0` - `"9`: past yanked or deleted text
+- `"a` - `"z`: named register
+
+View registers:
+- `:reg` to list all registers
+
+Use registers:
+- `p`: to paste text in current register
+- `"3p` or '"cp`: to paste text in numbered or named register
+- `"cyw`: yank word into regester `c`.
+
     
 ## Understand vim
 
