@@ -10,6 +10,19 @@ https://code.visualstudio.com/docs
 - `ctrl shift [` to fold
 - `ctrl shift ]` to unfold
 
+2. multi-cursor
+- Anywhere: In the example below, in insert mode, hold down `Alt` key and click behind `a`, `b`, and `c` and insertion will show up in all three places
+
+  item a is
+  project b is
+  what does c do
+  
+- on same words: In the example below, place cursor on word `abc` and press `ctl shift L`. Insertion replaces all after cursor position
+
+  my abc aaa
+  this is abc bbb
+  a new abc is coming
+
 2. move a line or selected lines up and down
 - `alt <uparrow>`
 - `alt <downarrow>`
