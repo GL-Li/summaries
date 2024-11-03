@@ -57,17 +57,17 @@ enable easymotion
 `ctrl shift p` to open the search window and search for `User Setting (JSON)` and open the file. Update the file for customer setting.
 
 ```json
+// good as of 2024-11-03
 {
-  "security.workspace.trust.untrustedFiles": "open",
-  "python.defaultInterpreterPath": "/home/gl/projects/python-venv",
-  "extensions.experimental.affinity": {
-      "asvetliakov.vscode-neovim": 1
-  },
   "workbench.colorTheme": "Cobalt2",
-
-  // manuall setting indent size to 2.
-  "editor.tabSize": 2,
-	"editor.detectIndentation": false // do not use default for given file types,
-	"editor.wrappingIndent": "indent" // indent in long line soft wrapping
+  "files.autoSave": "onFocusChange",
+  "editor.lineNumbers": "relative",
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "vim.highlightedyank.enable": true,
+  "vim.easymotion": true,
+  "vim.easymotionMarkerForegroundColorOneChar": "#eb9534",
+  "vim.leader": "<space>",
+  "vim.foldfix": true
 }
 ```
