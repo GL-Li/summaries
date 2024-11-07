@@ -26,6 +26,8 @@ Installation
     -   may need restart to take effect
 - install build-essentials
   - `$ sudo apt install build-essential`
+- install xclip for vim to copy to clipboard
+  - `$ sudo apt install xlip`
 - install Rust and Cargo using rustup
   - something like `curl --proto '=https' --tlsv1.2 -sSf https:gc/sh.rustup.rs | sh`
 - install rig for R installation
