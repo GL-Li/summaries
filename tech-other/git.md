@@ -14,12 +14,12 @@
 - Book: https://git-scm.com/book/en/v2
   - this should be the read after the Udemy course.
 
-## Workflow and SOP ===========================================================
+## Workflow and SOP =================================================
 
 
 ### SOP: config a specific repo user.name, user.email, and credentials
 - **use case**: my global configuration is for Bitbucket. Now I have a repo for Github and I want to set config for this repo, what should I do?
-- steps to take:
+- steps to take: do not use `--global` tag if configure for a specific repo
     - `$ git config --list` to check current configuration
     - `git config user.email "xxxx"` to set user.email for this repo
     - `git config user.name "yyy"` to set user.name for this repo
@@ -56,21 +56,21 @@
     git status                 # or git diff to see the difference
     git commit - m "yyyyy"
     ```
-## QA =========================================================================
+## QA =================================================
 
-### How to reduce the size of a git repo?
+### QA: How to reduce the size of a git repo?
 
 `$ du -sh .git` to check the size of the git repo
 `$ git count-objects -vH` to count files, list file size, and identify garbages and prune-packables.
 `$ git gc --aggressive` to clean up the repo.
 
-## QA: how to push, delete, and modify a tag in remote?
+### QA: how to push, delete, and modify a tag in remote?
 
 - `$ git tag v0.1.23` to add a tag to current commit
 - `$ git push origin v0.1.23` to push a tag to origin
 - `$ git push --delete origin v0.1.23` to delete tag from origin
 - `$ git tag -d v0.1.23` to delete a local tag
- 
+
 
 ### QA: how to check edit history of a file?
 
@@ -314,11 +314,11 @@ Should use them for main portofolio.
     [branch "master"]
         remote = origin
         merge = refs/heads/master
-
+    
     [user]
         name = xxxxx
         email = yyyyy
-
+    
     ```
 
 - `.git/objects` has all the repo data
@@ -330,9 +330,9 @@ Should use them for main portofolio.
         parent bc9b93d4cae220ee393acda4d4105506819079ef
         author GL-Li <liguanglai@gmail.com> 1675771322 -0500
         committer GL-Li <liguanglai@gmail.com> 1675771322 -0500
-
+        
         fix bug in read_decennial(..., year = 2010, summary_level = "block")
-
+        
         ```
 
 ### git reflogs retrive lost work and fix big mistakes
@@ -346,7 +346,7 @@ Use `git reflog show` to find the lost commits and then `git checkout xxxx` to t
         a3401891ce0733e2fddc95565be95cf35030dd86 a3401891ce0733e2fddc95565be95cf35030dd86 GL-Li <liguanglai@gmail.com> 1675866590 -0500	rebase (finish): returning to refs/heads/test
         a3401891ce0733e2fddc95565be95cf35030dd86 a1d2efc68c569e0577ed4cdc428a7e636c62ff28 GL-Li <liguanglai@gmail.com> 1675866900 -0500	checkout: moving from test to main
         a1d2efc68c569e0577ed4cdc428a7e636c62ff28 c2490afd483cdcaab8ae7efef1f6d4cd1d230be1 GL-Li <liguanglai@gmail.com> 1675866904 -0500	merge test: Merge made by the 'ort' strategy.
-
+        
         ```
     - logs/ contains the HEAD change history of each branch
 
@@ -358,7 +358,7 @@ Use `git reflog show` to find the lost commits and then `git checkout xxxx` to t
         8c5bd86 main@{2}: commit: add AAA BBB
         e741f5e main@{3}: commit: update 1
         1685275 main@{4}: commit (initial): initial commit
-
+        
         ```
     - `git reflog show HEAD` shows HEAD history of all branches
        ```
@@ -368,7 +368,7 @@ Use `git reflog show` to find the lost commits and then `git checkout xxxx` to t
         a340189 (test) HEAD@{3}: rebase (fixup): add aaa bbb
         4993976 HEAD@{4}: rebase (fixup): # This is a combination of 2 commits.
         a1d2efc HEAD@{5}: rebase (start): checkout 8c5bd86
-
+       
        ```
     - `git reflog show main@{1.week.ago}` shows HEAD history of main branch a week ago.
 
@@ -399,7 +399,7 @@ Use `git reflog show` to find the lost commits and then `git checkout xxxx` to t
         name = GL-Li
     [diff]
         tool = vimdiff
-
+    
     ```
 
 ### git alias
