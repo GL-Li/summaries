@@ -83,19 +83,22 @@
 This happens when we do not need a large fies or directory anymore and we want to remove it from .git, in order to reduce the repo size.
 
 **Solution**: using BFG repo-cleaner
-    - prepare to use bfg repo-cleaner
-        - Make sure Java is installed with `$ java -version`, if not install with `$ sudo apt install default-jre`.
-        - Download `.jar` file from `https://rtyley.github.io/bfg-repo-cleaner/` and save it to, for example, `~/Downloads/`.
-    - delete files from a repo
-        - git clone a bare repo to `~/Downloads/`. **Do not** use your the repo in your computer you are working one.
-            ```sh
-            git clone --mirror xxxx.git
-            ```
-        - from `~/Downloads/` run  to delete file `renv.loc`. Do not run the command inside the repo.
-            ```sh
-            java -jar bfg-1.14.0.jar --delete-files renv.lock xxxx.git
-            ```
-            - current commit is protected so `renv.lock` will not be deleted from the current commit.Mannually delete it before commit and push to make sure `renv.lock` is deleted from current and past commit.
+
+- prepare to use bfg repo-cleaner
+
+  - Make sure Java is installed wit h `$ java -version`, if not install with `$ sudo apt install default-jre`.
+  - Download `.jar` file from `https://rtyley.github.io/bfg-repo-cleaner/` and save it to, for example, `~/Downloads/`.
+
+- delete files from a repo
+
+    - git clone a bare repo to `~/Downloads/`. **Do not** use the repo in your computer you are working on.
+                 - `$ git clone --mirror xxxx.git` 
+             
+    - from `~/Downloads/` run code below  to delete, for example, file `renv.loc`. Do not run the command inside the repo.
+    
+        - `$ java -jar bfg-1.14.0.jar --delete-files renv.lock xxxx.git`
+            - current commit is protected so `renv.lock` will not be deleted from the current commit. 
+            - Manually delete it before commit and push to make sure `renv.lock` is deleted from current and past commit.
         - go to the directory of the bare repo and run to update the remote repo
           ```sh
           # delete the file identified by bfg
@@ -103,12 +106,14 @@ This happens when we do not need a large fies or directory anymore and we want t
           # push to github
           git push
           ```
+    
     - delete the bare repo and go to local repo and git pull to update local repo.
     - other ways to delete
-        ```sh
-        java -jar bfg-xxx.jar --delete-folders dir1 xxx.git
-        java -jar bfg-xxx.jar --strip-blobs-bigger-than 50M xxx.git
-        ```
+      ```sh
+      java -jar bfg-xxx.jar --delete-folders dir1 xxx.git
+      java -jar bfg-xxx.jar --strip-blobs-bigger-than 50M xxx.git
+      ```
+
 
 ### QA: how to search commits by string abcd in commit message
 
@@ -123,14 +128,14 @@ This happens when we do not need a large fies or directory anymore and we want t
 
 ### QA: how to use git show to view a file in other branch or commit?
 
-- `$ git show de304f08:R/pe_dfclass.R` where the path/to/file start from the git project root no matter where the current directory is.
+- `$ git show de304f08:R/pe_dfclass.R` where the path/to/file **start from the git project root no matter** where the current directory is.
 
 
 ### QA: how to exclude a specific subdirectory by name?
 
 For example, a large `target/` dicectory is created in each Rust project after each run. We have no reason to git track this subdirectory in any Rust project.
 
-To exclude this subdirectory, we can add a line `**/target/` in `.gitignore`. Unlike wildcard `*`, `**` includes `/` in the path. It will exclude all `target/` in the project.
+To exclude this subdirectory, we can add a line `**/target/` in `.gitignore`. Unlike wildcard `*`, `**` includes `/` in the path. It will exclude all `/target/` in the project.
 
 To be more specific, if we only need to exclude those in directory `code/`, we can change it to `**/code/**/target/`.
 
@@ -405,15 +410,17 @@ Use `git reflog show` to find the lost commits and then `git checkout xxxx` to t
 ### git alias
 
 Add a section to `~/.gitconfig` file. good reference:
-    - https://www.durdn.com/blog/2012/11/22/must-have-git-aliases-advanced-examples/
-    - https://github.com/GitAlias/gitalias
-    - just use at `git ll` where ll stands for the long code below.
-        ```
-        [alias]
-           ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numsta
-        ```
-        
-        
+
+- https://www.durdn.com/blog/2012/11/22/must-have-git-aliases-advanced-examples/
+- https://github.com/GitAlias/gitalias
+- just use at `git ll` where ll stands for the long code below.
+  ```
+  [alias]
+  ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numsta
+  ```
+  
+  ​          
+
 ### monorepo
 
 - how to merge multiple repo into a monorepo:
