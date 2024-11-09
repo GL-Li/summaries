@@ -146,7 +146,7 @@ This happens when we do not need a large fies or directory anymore and we want t
 - `$ git show de304f08:R/pe_dfclass.R` where the path/to/file **start from the git project root no matter** where the current directory is.
 
 
-### QA: how to exclude a specific subdirectory by name?
+### QA: how to exclude a specific subdirectory by name in `.gitignore`?
 
 For example, a large `target/` dicectory is created in each Rust project after each run. We have no reason to git track this subdirectory in any Rust project.
 
@@ -156,7 +156,7 @@ To be more specific, if we only need to exclude those in directory `code/`, we c
 
 ## Raw notes
 
-### git .git directory is the repo
+### git `.git` directory is the repo
 
 The other two spaces are working tree/diretory and staging area.
 
@@ -197,7 +197,7 @@ The other two spaces are working tree/diretory and staging area.
 
 ### git merge
 
-- fast forward merge, the easist one. This happens in the situation when we merge branch B in to branch A and B is branched out from A's tip. It is impossible to have any conflicts in the merge.
+- fast forward merge, the easiest one. This happens when we merge branch B into branch A and B is branched out from A's tip. It is impossible to have any conflicts in the merge.
 - three-way merge: when branch A has new commits from where B branched out and B has new commit, the merge cannot be completed in fast forward way. This merge is called 3-say merge as there are 3 ways looking from the branch-out point. Three ways merge may have merge conflicts.
 
 ### git comparing changes with git diff
@@ -214,13 +214,17 @@ The other two spaces are working tree/diretory and staging area.
     ```
     gl@xps:~/aaaaa/gitclass (main)$ git diff
     diff --git a/file1 b/file1
-    index 13447e2..e5d24f9 100644         # internal number for commit and file, not commit number
+    index 13447e2..e5d24f9 100644         # internal number for commit and file, not
+                                          # commit number
     --- a/file1                           # old file where deletion marked by -
     +++ b/file1                           # modified file where addition marked by +
-    @@ -1,3 +1,5 @@                       # line number where the change occurs, not important
+    @@ -1,3 +1,5 @@                       # line number where the change occurs, 
+                                          # not important
      This is the first line
-    -This is the second line              # deleted from old file in red starting with - signe
-    +This is the second line, no!         # new lines added to the modified file, starting with +
+    -This is the second line              # deleted from old file in red starting 
+                                          # with - sign
+    +This is the second line, no!         # new lines added to the modified file, 
+                                          # starting with +
     +That is not second line
     +The next is the second line
      This is the third line
