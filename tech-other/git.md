@@ -58,6 +58,21 @@
     ```
 ## QA =================================================
 
+### QA: How to find out who made that change in a file?
+
+Use `git blame`
+
+- `$ git blame -W -M -L 23,+5 path/to/file`
+  - `-W`: ignore changes only in spaces. Often happens after reformatting code. Should always have this option.
+  - `-M`: show original commit and author of moved or copied lines. Should always have this option.
+  - `-L 23,+5`: lines 23 - 28 we are interested in.
+  - `-L 3,6`: lines 3, 4, 5, 6.
+- `$ git blame -W -M --since=2.week path/to/file | grep -v "^\v"`
+  - examine all changes in the last two weeks.
+  - old change lines start with `^`, so we use `grep` to exclude old changes.
+- Know the commit number in which that changes in the lines introduced, we can see more changes in that commit with
+  - `$ git show that_commit_id path/to/file`
+
 ### QA: How to reduce the size of a git repo?
 
 `$ du -sh .git` to check the size of the git repo
@@ -437,6 +452,8 @@ Add a section to `~/.gitconfig` file. good reference:
         
         
 ### git worktree: work with multiple branches 
+
+This method has risk in mess up code versions. Avoid it.
 
 **Basic workflow** 
 Assuming we are at the dev branch with some uncommited changes. We now need to fix a bug in the master branch without commit those changes. Following these steps to fix,commit, and push the master branch.
