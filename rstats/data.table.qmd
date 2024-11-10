@@ -67,3 +67,35 @@ dt1[
   # 2:     2      b      B -0.5736653
   # 3:     3      c      C -0.7555166
 ```
+
+
+## Fast set data.table elements in a for loop
+Try best to avoid for loop over rows in R. If have to, use `set` command with data.table
+
+```{r}
+library(data.table)
+
+dt <- data.table(
+  id = 1:1e5,
+  x = "aaa",
+  y = 0
+)
+
+# inplace update with :=, 41 sec
+system.time({
+  s <- 0
+  for (i in 1:1e5) {
+    s <- s + i
+    dt[i, y := s]
+  }
+})
+
+# update with set, 0.29 sec, > 100 times faster
+system.time({
+  s <- 0
+  for (i in 1:1e5) {
+    s <- s + i
+    set(dt, i, 3L, s)
+  }
+})
+```
