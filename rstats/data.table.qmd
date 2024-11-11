@@ -99,4 +99,154 @@ system.time({
     set(dt, i = i, j = 3L, s)
   }
 })
+
+
+# timing with dplyr
+library(dplyr)
+n <- 1e5
+df <- tibble(
+  id = 1:n,
+  x = "aaa",
+  y = 0
+)
+
+# 30 sec
+system.time({
+  s <- 0
+  for (i in 1:n) {
+    s <- s + i
+    df[i, "y"] <- s  # no copy either
+  }
+})
 ```
+
+Additional comparison between `set()` and `:=`:
+```{r}
+library(data.table)
+n <- 1e7
+
+dt <- data.table(
+  id = 1:n,
+  x = "aaa",
+  y = 1:n,
+  z = 1:n + 100
+)
+
+# 4.8 sec
+system.time({
+  for (i in 1:n) {
+    set(dt, i = i, j = 3L, dt$z[i])
+  }
+})
+
+# 0.014 sec, much faster than one by one update
+system.time({
+  set(dt, i = 1:n, j = 3L, dt$z)
+})
+
+# 0.002 sec, much faster
+system.time({
+    dt[, y := z]
+})
+
+
+library(dplyr)
+df <- tibble(
+  id = 1:n,
+  x = "aaa",
+  y = 1:n,
+  z = 1:n + 100
+)
+
+# 0.002 sec
+system.time({
+  df <- df |>
+    mutate(y = z)
+})
+```
+
+
+## Key Special Symbols in `data.table`
+
+### `.N`
+- Represents the number of rows in the current group when using `by`. 
+- When used without `by`, it gives the total number of rows in the `data.table`.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c(1, 1, 2, 2), x = c(5, 6, 7, 8))
+# Number of rows in each group defined by 'id'
+dt[, .(count = .N), by = id]
+```
+
+### `.SD` (Subset of Data)
+- A 'data.table' itself containing the Subset of Data for each group. 
+- Used within `by` for operations on lower-level groupings.
+- It doesn't include the columns used in the `by` in the subset by default.
+
+**Usage:**
+```{r}
+# Calculate the mean of all remaining columns within each group defined by 'id'
+dt <- data.table(id = c(1, 1, 2, 2), x = 1:4, y = 5:8)
+dt[, lapply(.SD, mean), by = id]
+```
+
+### `.SDcols`
+- If you want to specify which columns to include in `.SD`, you can use `.SDcols`.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c(1, 1, 2, 2), x = 1:4, y = 5:8)
+# Mean for specified columns
+dt[, lapply(.SD, mean), by = id, .SDcols = c("x")]
+```
+
+### `.I`
+- Refers to the row numbers in the original `data.table`.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c(1, 2, 2, 1), x = 1:4, y = 5:8)
+# Return the row numbers of the first occurrence in each group
+dt[, .I[1], by = id]
+# all row numbers by group
+dt[, .I, by = id]
+```
+
+### `.GRP`
+- Identifies the current group number within grouped operations.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c("a", "b", "b", "a"), x = 1:4, y = 5:8)
+# Return group numbers
+dt[, .(group_number = .GRP), by = id]
+```
+
+### `.BY`
+- Returns a list of the grouping variable names and values within the current group.
+- do not see a use case for it.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c("a", "b", "b", "a", "b"), 
+                id2 = c("C", "D", "D", "C", "C"),
+                x = 1:5, 
+                y = 5:9)
+# Show each group with their related group name values
+dt[, .(id_sum = sum(x), group_info = .BY), by = c("id", "id2")]
+```
+
+### Additional Useful Operators:
+
+- **`:=` (Assignment by Reference):**
+  - Modifies `data.table` columns in-place for efficiency.
+  ```r
+  dt[, new_col := x + 1]
+  ```
+
+- **`key` and `setkey`:**
+  - `key` is for setting a sort order and enhancing joining operations.
+  ```r
+  setkey(dt, id)
+  ```
