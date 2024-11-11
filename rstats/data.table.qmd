@@ -95,7 +95,8 @@ system.time({
   s <- 0
   for (i in 1:1e5) {
     s <- s + i
-    set(dt, i, 3L, s)
+    # i for row and j for column
+    set(dt, i = i, j = 3L, s)
   }
 })
 ```

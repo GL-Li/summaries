@@ -1,7 +1,7 @@
 ## Structure of this directory
-- python.md: overall summary for python
-- xxxxxx.md: summary of a specific topic
-- yyyyyy.md: summary of another specific topic
+- python.qmd: overall summary for python
+- xxxxxx.qmd: summary of a specific topic
+- yyyyyy.qmd: summary of another specific topic
 - numpy_pkg.py: code for numpy package. Do not name it a numpy.py, as Python will confuse it with the numpy package.
 - xxxx_pkg.py: code for another package. Still avoid name conflicts.
 
@@ -46,7 +46,7 @@ To get documentation of a function at ipython console:
 ### unpack a dictionary as function argument
 The dictionary keys must match function parameters.
 
-```python
+```{python}
 dic = {"x": 100, "y": 200}
 def add(x, y):
     return(x + y)
