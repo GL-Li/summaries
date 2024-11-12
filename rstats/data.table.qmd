@@ -250,3 +250,39 @@ dt[, .(id_sum = sum(x), group_info = .BY), by = c("id", "id2")]
   ```r
   setkey(dt, id)
   ```
+
+### melt: wide to long table
+
+```{r}
+library(data.table)
+dt <- data.table(
+  c1 = 1,
+  c2 = 2,
+  c3 = 3
+)
+dt_long <- melt(
+  data = dt,
+  id.vars = NULL,
+  measure.vars = names(dt),
+  variable.name = "group",
+  value.name = "count",
+  variable.factor = FALSE
+)
+dt_long
+#     group count
+#    <char> <num>
+# 1:     c1     1
+# 2:     c2     2
+# 3:     c3     3
+```
+
+
+### dcast: long to wide table
+
+```{r}
+aaa <- data.table(x = letters[1:3], y = 5:3)
+bbb <- dcast(aaa, NULL ~ x, value.var = "y")
+# bbb has an extra column whose name and value are "."
+names(bbb)
+bbb$. <- NULL
+```
