@@ -145,6 +145,7 @@ In package development, `.onLoad` function is used to run code when `library(aaa
 
 ### tryCatch
 
+#### What is tryCatch
 `tryCatch` is used to continue the code execution in case of an error (or warning). It is slow so do not use it in very large for loop.
 
 The standard use case: if the expression is successful, returns the output of the expression. If there is error or warning, returns `NULL`  or specified values.
@@ -176,6 +177,70 @@ beera <- function(expr){
 beera(1 + 1)  # 2
 beera(1 / 0) # Inf
 beera(as.numeric("1", "one"))  # NULL, with warning message
+```
+
+#### Use tryCatch in a for loop
+Go to next iteration if failed.
+
+```r
+risky_function <- function(x) {
+  if (x == 3) stop("Something went wrong with x = 3")  # Simulate an error when x is 3
+  return(10 / x)  # Normal division
+}
+
+# Iterate over a sequence of numbers
+# solution 1
+for (i in 1:5) {
+  # a flag for next iteration. If error, change it to TRUE
+  next_iteration <- FALSE
+
+  # Use tryCatch to handle errors
+  tryCatch({
+    # Try to run the function
+    print(paste("Running iteration", i))
+    res <- risky_function(i)
+    print(paste("Result:", res))
+
+  }, error = function(e) {
+    # Handle the error and skip to the next iteration
+    print(paste("Error in iteration", i, ":", e$message))
+    # use super-assignment <<- to assign to parent environment of for loop
+    next_iteration <<- TRUE
+  })
+
+  # change to TRUE if tryCatch an error
+  if (next_iteration) next
+
+  # rest code, not run if tryCatch error
+  print("===================")
+}
+
+
+
+# solution 2, preferred as it does not use super-assignment
+for (i in 1:5) {
+  # Use tryCatch to handle errors
+  possible_error <- tryCatch({
+    # This scope is part of for loop
+    # Try to run the function
+    print(paste("Running iteration", i))
+    # if no error, res is returned to possible_error
+    res <- risky_function(i)
+
+  }, error = function(e) {
+    # this is a local scope
+    print(paste("Error in iteration", i, ":", e$message))
+    # return an error for inherits
+    return(e)
+  })
+
+  # if tryCatch returns an error, possible_error inherit from class `error`
+  if (inherits(possible_error, "error")) next
+
+  # rest code, not run if tryCatch error
+  print("===================")
+  print(paste("Result:", res))
+}
 ```
 
 
