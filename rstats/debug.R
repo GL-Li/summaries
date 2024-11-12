@@ -37,6 +37,7 @@ ggg <- function() {
   return(dt)
 }
 
+# aaa -------
 fff <- function(dat) {
   dat <- data.table::copy(dat)
   x <- sapply(dat, mean)
@@ -58,3 +59,6 @@ fff <- function(dat) {
 }
 
 fff(dt)
+
+
+## bbb =====

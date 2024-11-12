@@ -20,7 +20,7 @@ The idea is to create a .vimrc for a general purpose text editor. The goal is NO
 - Mastering the Vim Language https://www.youtube.com/watch?v=wlR5gYd6um0
 
 
-## Workflow & SOP =============================================================
+## Workflow & SOP ==========
 
 ### SOP: vim for IDE minimal setting
 - minimal .vimrc
@@ -30,16 +30,16 @@ The idea is to create a .vimrc for a general purpose text editor. The goal is NO
     - add the following to .vimrc
         ```
         call plug#begin()
-
+        
             Plug 'prabirshrestha/vim-lsp'
             Plug 'mattn/vim-lsp-settings'
-
+        
         call plug#end()
-
+        
         function! s:on_lsp_buffer_enabled() abort
             setlocal omnifunc=lsp#complete
         endfunction
-
+        
         augroup lsp_install
             au!
             " call s:on_lsp_buffer_enabled only for languages that has the server registered.
@@ -85,7 +85,7 @@ https://github.com/tpope/vim-markdown/issues/21
     ```
 - this new line will overwrite what already in the loaded `markdown.vim` but keep all other settings.
 
-## QA =========================================================================
+## QA ==================
 
 ### QA: how to build vim with clipboard enabled?
 
@@ -112,7 +112,8 @@ If the vim in the repo does not have clipboard support, we can build with it ena
     vim --version
     ```
 
-## QA: how to do tag jumping in vim?
+### QA: how to do tag jumping in vim?
+
 - `$ sudo apt install universal-ctags` if not have it
 - `$ ctags -R .` to create a file called `tags` under current directory
     - add the file to .gitignore
@@ -177,7 +178,7 @@ set history, default is 50
 - `:set history&`  change back to default
 - `:set history?` check the number of history
 
-### vim crate .vimrc file from scratch
+### vim create .vimrc file from scratch
 
 `:e ~/.vimrc`
 
@@ -261,7 +262,7 @@ let R_assign = 0
 
 ### vim key mapping
 
-Plaxe mapping setting in `.vimrc`. The default mapleader is `\`. Use `:echo mapleader` to check for current mapleader. Show as undefined if default.
+Place mapping setting in `.vimrc`. The default mapleader is `\`. Use `:echo mapleader` to check for current mapleader. Show as undefined if default.
 
 ```
 
@@ -325,7 +326,7 @@ https://github.com/Shougo/deoplete.nvim#requirements
   call deoplete#custom#option('omni_patterns', {
     \ 'r': '[^. *\t]\.\w*',
     \})
-
+  
   " to disable `_` being automatically replace by `<-`
   let R_assign = 0
   ```
@@ -334,7 +335,7 @@ https://github.com/Shougo/deoplete.nvim#requirements
 
 From normal mode,
 
-- to insert 10 `-` at the cursor, use `10i->Esc>`, it will create `----------`
+- to insert 10 `-` at the cursor, use `10i-<Esc>`, it will create `----------`
 
 - to create 3 lines starts with `##` below cursor, use `3o##<Esc>`
 
@@ -395,9 +396,9 @@ From normal mode,
 
 ### vim `<ctrl>i` `<ctrl>o` to move to next and previously opened file
 
-### vim: register, default (unnamed), named, numbered
+### vim: registry, default (unnamed), named, numbered
 
-delete and copy command like `c` ,`d` `s`, and `y` store text in unnamed register.
+delete and copy command like `c` ,`d` `s`, and `y` store text in unnamed registry.
 
 - `:reg` view register
 - `"3p` to put content in register `"3`
@@ -429,7 +430,7 @@ search **in document** and replace
 - `*abc` match by whole word `abc` at cursor
 - to replace selected `abc` with `ABC`, search for `abc` with `/abc`, press enter, then use `cwABC` to replace `abc` with `ABC`. Then press `<Esc>` to back to normal mode and `n` move to next `abc`  and press `.`, which represent last command `cwABC`.
 - `*` on a word to search for a word. Place cursor on a word and press `*`.
-- `#` on a word to search for it, but place the cursor at the last occurance.
+- `#` on a word to search for it, but place the cursor at the last occurrence.
 - `:%s/aaa/bbb/g` replace all `aaa` with `bbb` in the whole file. `%` represent the whole file.
 - `:%s/aaa/bbb/gc` confirm at each substituion.
 
@@ -482,7 +483,7 @@ search **in document** and replace
 
 ### vim macros
 
-Macros are used to repeat a series of commands. Macros are named with single letter from a to z. To create a macro `a`, type `qa` followed by commands and ended with `q`. The macro `a` is in the register and can be viewed with `:reg a`. Its content can be put (pasted) in normal mode with `"ap`.  To use the macro, type `@a`, or `@@` for the last macro in normal mode. Best practices:
+Macros are used to repeat a series of commands. Macros are named with single letter from a to z. To create a macro `a`, type `qa` followed by commands and ended with `q`. The macro `a` is in the registry and can be viewed with `:reg a`. Its content can be put (pasted) in normal mode with `"ap`.  To use the macro, type `@a`, or `@@` for the last macro in normal mode. Best practices:
 
 - normalize cursor position at line beginning by typing `0` as the first command.
 - perform other edits and operations
@@ -663,7 +664,7 @@ Ex mode is an extended command-line mode in which we can write commands contineo
         :let lst_a = ["a", "aa"]
         :let lst_b = ["b", "bb"]
         :echo lst_a + lst_b       # return ["a", "aa", "b", "bb"]
-
+        
         :let lst_a = ["a", "aa"]
         :let lst_a += ["aaa"]
         :echo lst_a           # return ["a", "aa", "aaa"]
@@ -673,21 +674,21 @@ Ex mode is an extended command-line mode in which we can write commands contineo
         # list length
         :echo len(["a", "aa"])  # length 2
         :let a = ["a", "aa"]
-
+        
         # insert an element
         :call insert(a, "aaa")  # insert as the first element
         :echo a                 # return ["aaa", "a", "aa"]
         :call insert(a, "aaaa", 2)  # insert at index 2 of a
         :echo a                 # return ["aaa", "a", "aaaa", "aa"]
-
+        
         # remove an element
         : call remove(a, 2)    # remove 3rd element
-
+        
         # filter element by string. v:val is a specical variable in vim for iterating through a list or a dictionary using function filter and map
         :let lst = ["abc", "defg", "xyz"]
         :call filter(lst, 'v:val !~ "ab"')   # filter element that do not contain "ab"
         :echo lst     # return ["defg", "xyz"]
-
+        
         # map a function to each element
         :call map(lst, 'v:val . "_end"')    # append end to each element by function dot "."
         :echo lst    # return ["defg_end", "xyz_end"]
@@ -711,7 +712,7 @@ Ex mode is an extended command-line mode in which we can write commands contineo
     # dictionary key are strings or coered to strings from numbers
     :let dict = {1 : "first", "2" : "second"}
     :echo dict    # return {'1': 'first', '2': 'second'}
-
+    
     # use #{} to save typing double quote on keys
     :let dict = #{a : "aaa", b : "bbb"}
     :echo dict    # returns {'a': 'aaa', 'b': 'bbb'}
@@ -759,17 +760,17 @@ Ex mode is an extended command-line mode in which we can write commands contineo
     ```
     # global variables, start with g: or nothing
     let g:x = 123  # or let x = 123
-
+    
     # buffer variables start with b:, only accessible to the buffer.
     const b:y = "abc"
-
+    
     # window varaible start with w: and only availble to the window
     let w:z = 3.14
-
+    
     # tab varaible start with t:
-
+    
     # script variable start with s: and is only used in the script
-
+    
     # build-in vim varaibles, start with v:
     v:version, vim version
     v:key, current dictionary key in iteration
@@ -786,12 +787,12 @@ https://learnvim.irian.to/vimscript/vimscript_functions
     function Myfunction()
         {do sth}
     endfunction
-
+    
     # use ! to overwrite a function with the same name
     function! Myfunction()
         {do sth else}
     endfunction
-
+    
     # use s: if really want to start function name with lower case letter
     function s:myfunction()
         {do anything}
@@ -839,7 +840,7 @@ https://learnvim.irian.to/vimscript/vimscript_functions
       endwhile
       return l:foods
     endfunction
-
+    
     # a better way is using a:000
     function! Buffet(...)
       let l:foods = ""
@@ -857,7 +858,7 @@ https://learnvim.irian.to/vimscript/vimscript_functions
             echo a:firstline
             echo a:lastline
         endfunction
-
+        
         # to use this function, select text in visual mode and then
         :call Testrange()
         ```
@@ -867,12 +868,12 @@ https://learnvim.irian.to/vimscript/vimscript_functions
         function! SecondBreakfast() dict
             return self.breakfast    # here self refer to the dictionary that uses the function.
         endfunction
-
+        
         # use the function in a dictionary
         let meals = {"breakfast" : "pancakes", "second_breakfast" : function("SecondBreakfast"), "lunch" : "pasta"}
         echo meals.second_breakfast    # return "pancakes", as measl.second_breakfast is
                                        # self.breakfast, which is meals.breakfast.
-
+        
         # an alternative way to add a function into a dictionary is to use a namespace
         function! meals.second_lunch()
             return self.lunch
@@ -886,10 +887,10 @@ https://learnvim.irian.to/vimscript/vimscript_functions
     function! Breakfast(item)
         return "I am haveing " . a:item . " for breakfast"
     endfunction
-
+    
     # assign the function to a variable by calling function() again.
     let Breakfastify = function("Breakfast")
-
+    
     # to use a function as reference in map or filter, add "index" as the first argument
     function! Breakfast(index, item)
         return "I am having " . a:item . " for breakfast"
@@ -906,11 +907,11 @@ https://learnvim.irian.to/vimscript/vimscript_functions
     # example 1
     let Plus = {x,y -> x + y}
     echo Plus(1,2)  # returns 3
-
+    
     # example 2
     let Tasty = { -> "tasty"}
     echo Tasty()    # return "tasty"
-
+    
     # call a functionn from inside a lambda expression
     function! Lunch(item)
         return "I am having " . a:item . " for lunch"
@@ -920,7 +921,7 @@ https://learnvim.irian.to/vimscript/vimscript_functions
     for meal in day_meals
         echo meal
     endfor
-
+    
     # or simply
     let day_meals = map(lunch_items, {index, item -> "I am having " . item . " for lunch"})
     ```
@@ -930,13 +931,13 @@ https://learnvim.irian.to/vimscript/vimscript_functions
     function! Capitalizer(word)
         return substitute(a:word, "\^\.", "\\u&", "g")  # "&" backreference to the matched pattern
     endfunction
-
+    
     function! CapitalizeList(word_list)
         return map(a:word_list, {index, word -> Capitalizer(word)})
     endfunction
-
+    
     let dinner_items = ["bruschetta", "antipasto", "calzone"]
-
+    
     echo dinner_items->CapitalizeList()->sort()->join(", ")
     " returns "Antipasto, Bruschetta, Calzone"
     ```
@@ -946,22 +947,22 @@ https://learnvim.irian.to/vimscript/vimscript_functions
     # This is wrong as appetizer is not available to function SecondLunch
     function! Lunch()
       let appetizer = "shrimp"
-
+    
       function! SecondLunch()
         return appetizer
       endfunction
-
+    
       return funcref("SecondLunch")
     endfunction
-
+    
     # to correct it add "closure" to the function definition
     function! Lunch()
       let appetizer = "shrimp"
-
+    
       function! SecondLunch() closure
         return appetizer
       endfunction
-
+    
       return funcref("SecondLunch")
     endfunction
     ```
@@ -1066,11 +1067,11 @@ hightlight ColorColumn ctermbg=238
     ```
     [legacy]
     theme-variant='dark'
-
+    
     [legacy/profiles:]
     default='87bba6e1-97d5-4c41-bf88-adb1570fe0d2'
     list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '87bba6e1-97d5-4c41-bf88-adb1570fe0d2']
-
+    
     [legacy/profiles:/:87bba6e1-97d5-4c41-bf88-adb1570fe0d2]
     background-color='rgb(23,20,33)'
     bold-is-bright=false
@@ -1083,7 +1084,7 @@ hightlight ColorColumn ctermbg=238
     use-theme-colors=true
     use-theme-transparency=true
     visible-name='solarized_custom'
-
+    
     [legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
     background-color='rgb(23,20,33)'
     bold-is-bright=false
