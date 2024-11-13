@@ -34,6 +34,10 @@ Use a macro `a`
 - apply on selected lines: `:<>normal @a`
 - apply to all lines: `:%:normal @a`.
 
+Modify a macro: a macro is no more than a string stored in a register.
+- `:put a`: paste string of macro `a` to a line
+- edit it just like editing any string
+- highlight the edited string and yank it back to register / macro `a` with `"ay`.
 
 ### register for temporary storage
 All register starts with one double quote `"`.
