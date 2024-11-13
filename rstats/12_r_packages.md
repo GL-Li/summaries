@@ -143,7 +143,23 @@ In package development, `.onLoad` function is used to run code when `library(aaa
 }
 ```
 
-### tryCatch
+### tryCatch and try
+
+#### try is for simple error handling
+```r
+res <- try({
+    x <- "aaa"
+    log(x)
+})
+
+if (inherits(res, "try-error")) {
+  print("do something to handle the error")
+} else {
+  # do normal thing
+  print(res)
+}
+```
+
 
 #### What is tryCatch
 `tryCatch` is used to continue the code execution in case of an error (or warning). It is slow so do not use it in very large for loop.
