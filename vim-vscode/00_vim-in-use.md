@@ -83,3 +83,17 @@ Use registers:
 **map plugin's command**
 
 - `nnoremap <leader>, <Plug>(EasyAlign)ip*,<CR>`
+
+
+## Vim tricks
+
+### autocompletion
+
+Using a keywords list txt file
+- Create a file r_dict.txt file and save at /path/to/r_dict.txt.
+- Edit the file, in which each line is a keyword
+- In .vimrc, add line
+  - set dictionary+=/home/gl/.vim/dict/r_dict.txt
+  - set dictionary+=/home/gl/.vim/dict/python_dict.txt
+- Edit file in vim: in insert mode after typing a couple of characters, use Ctrl-x Ctrl-k to bring up suggestions, and use Ctrl-n or Ctrl-p to select.
+- remap to make life easier.
