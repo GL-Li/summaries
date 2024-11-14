@@ -525,7 +525,7 @@ blockwise visual mode, ctrl v
 
 `>` is to indent by `shiftwidth`, which can be `set shift=4` in `.vimrc` file.
 
-- To indenet single line, use `>>`.
+- To indent single line, use `>>`.
 - To indent a text object, use `>i}` for object inside `{}`.
 - To indent a block of lines, select in visual mode and press `>`.
 
