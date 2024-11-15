@@ -68,3 +68,23 @@ A = np.array([[56.0, 0.0, 4.4, 68.0], [1.2, 104.0, 52.0, 8.0], [1.8, 135.0, 99.0
 col_sum = A.sum(axis=0)
 # duplicate 1x4 col_sum into 3x4 and then element-wise division
 percent = 100 * A / col_sum
+
+
+""" add a dimention to an array with np.newzsis ================================
+Use np.newaxis for a placeholder to add an extra dimension to an array
+"""
+import numpy as np
+arr0 = np.arange(3)
+  # shape is (3, ) 
+  # vector array([0, 1, 2]), single square bracket
+arr1 = arr0[:, np.newaxis]
+  # shape is (3, 1)
+  # array([[0],
+  #        [1],
+  #        [2]])
+arr2 = arr0[np.newaxis, :]
+  # shape (1, 3)
+  # array([[0, 1, 2]])
+arr1[:, :, np.newaxis].shape  # (3, 1, 1)
+arr1[:, np.newaxis, :].shape  # (3, 1, 1)
+arr1[np.newaxis, :, :].shape  # (1, 3, 1)
