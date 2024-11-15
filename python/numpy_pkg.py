@@ -3,7 +3,7 @@ import numpy as np
 """ =================================================================
 numpy rank 1 array
 - A numpy rank 1 array is a vector, which has a shape of (n,).
-  It has no attributes like row or column so its transpose is 
+  It has no attributes like row or column so its transpose is
   still a (n,) vector.
 - Try to avoid rank 1 array, use explicit shape instead. for example,
   when create random numbers, use
@@ -56,7 +56,7 @@ np.argmax(arr, axis=-1)
 # array([1, 3, 0])
 
 """ ================================================================
-broadcasting 
+broadcasting
 - in element-wise matrix operations, numpy automatically coverts low
   deimensional matrix into high deimensional matrix to match the
   other one so that the operations can complete

@@ -1,6 +1,30 @@
+## Overall strategy of combining VScode and Vim
+
+- use vscode-neovim plugin for a complete neovim instance, and use vim soly as a text editor:
+  - mark
+  - registry
+  - macro
+- everyting else is on native VScode
+
+
 ## Tutorial
 https://code.visualstudio.com/docs
 
+
+## VSCode-neovim extension
+
+### keybinding conflicts
+In case of VSCode and neovim have the same keybinding, VSCode keybinding has the higher priority by default. To use Neovim's keybinding, we need to delete VScode's one:
+- Open VSCode Keyboard shortcuts
+- search for the keybinding
+- (cannot delete default vscode keybinding) delete VSCode's keybinding: right click on it and remove the keybiding.
+  - the removed keybindings are actually moved to `keybindings.json` file and become user-defined keybindings, which have even higher priority.
+  - commenting them out in `keybindings.json` restores the default keybinding, which means default vscode keybinding cannot be removed.
+  - you can add another keybinding to the same vscode action, but you cannot remove the default one.
+- So the solution is: do not compete with VScode for keybindings. Just use the editor capacity of Vim/Neovim.
+  - marks
+  - registry
+  - macros
 
 ## Tricks
 
@@ -16,7 +40,7 @@ https://code.visualstudio.com/docs
   item a is
   project b is
   what does c do
-  
+
 - on same words: In the example below, place cursor on word `abc` and press `ctl shift L`. Insertion replaces all after cursor position
 
   my abc aaa
@@ -42,8 +66,8 @@ Settings --> search for `auto save` --> under `File:Autosave`, select `onfocusCh
 - Search by name
 - view installed extensions: `@installed`
 - search by category: `@category:xxx`
-    
-    
+
+
 #### keyboard shortcut
 In Keyboard Shortcuts, search for `positron` for related shortcuts.
 
