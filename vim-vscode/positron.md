@@ -1,15 +1,17 @@
 ## Outlines
 
 ### settings --> outline
+Enable the following outlines
+- Constant: for qmd file
+- string: for md file
 
-- Disable the following outlines
-  - variables: too many
-  - constant
-  - number
-  - array
-  - boolean
-  - null
-  - number
+Disable the following outlines
+- variables: too many
+- number
+- array
+- boolean
+- null
+- number
 
 ### R outlines like in RStudio
 
