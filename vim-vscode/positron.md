@@ -1,4 +1,15 @@
-## Outlines
+## Dependencies and extension
+Dependencies:
+- Install Quarto for qmd files: download from https://quarto.org/docs/get-started/
+
+Extensions:
+- Quarto
+- VSCode Neovim
+- Cobalt2 Theme Official
+
+
+
+## Display Outlines
 
 ### settings --> outline
 Enable the following outlines
