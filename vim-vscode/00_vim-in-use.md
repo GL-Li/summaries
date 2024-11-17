@@ -19,6 +19,32 @@ This `init.vim` can be used by VSCode extension `VSCode Neovim` created by asvet
 
 ## Most useful vim skills
 
+### use dot `.` to repeat changes
+https://learnvim.irian.to/basics/the_dot_command#:~:text=Here%20the%20dot%20command%20repeated,in%20exchange%20for%20just%20one.
+
+What are repeatable:
+- normal mode `d`, `c`, ...
+  - example: how to delete `aaa, bbb, ccc,` one by one
+  - solution: `df,..` to first delete `aaa,`, and then `bbb,` and then `ccc,`.
+- visual line or visual block followed by `d`, `c`, ...
+  - example: delete all `z` below use visual block and dot repeat
+    zaaa zzaaa
+    zbbb zzbbb
+    zccc zzccc
+  - solution: visual block select first three `z`s with `Ctrlvjjd` and then move the next z and repeat with `.` twice.
+- include `next` motion in repeat
+  - example: replace `aaa` with `ABC` below
+    aaa is not
+    as good as bbb, but aaa is
+    better than ccc. So we buy aaa.
+  - solution: `/aaa<CR>` to search for `aaa`, and then `cgnABC<Esc>` to change the first selected to ABC. This change include `gn` for next `aaa` match so we can simply repeat it with `.` withou using `n` to jump to the next match.
+
+What are not repeatable
+- motions that are not part of a change
+  - example: how to delete `,` in `aaa, bbb, ccc,`
+  - wrong solution: `f,x..`: `f,` is a motion, which is not part of deletion `x`.
+  - correct solution: `f,x;.;.`, which uses `;` to repeat motion and `.` to repeat deletion.
+
 ### automation with vim macros
 Record a macro
 - in normal mode, press `q` followed by a single letter from a-z as registry name to start recording
