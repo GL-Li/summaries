@@ -93,3 +93,42 @@ Jumps
 - for the jump motions
     - `Ctrl o`: to move up along jumps
     - `Ctrl i`: to move down along jumps
+
+### Register
+
+Current register
+- `""`: store the latest yank or deletion.
+- simple `p` or `P` to put the text.
+
+Numbered regester
+- `"0`: for yanked text. Deletion or change do not use this register. To put the last yanked text, `"0p`.
+  - `Ctrl-r 0` to insert the last yanked text in insert mode.
+- `1 - 9`: for deletion and change that are at least one line long. Latest at `1` and oldest at `9`. Not use often but can be used as backup of deletion.
+
+Small deletion register
+- `"-`: store deletion that is less than one line.
+- `"-p` to put small deletion.
+
+Read-only regiester, but you can still put the text in them.
+- `".`    Stores the last inserted text
+- `":`    Stores the last executed command-line
+- `"%`    Stores the name of current file
+
+Alternate file register
+- `"#`: the last opened file.
+
+### Visual mode
+
+Increment numbers
+- example: to change below to app-1 to app-5, highlight the last four 1s in visual block mode and then `g Ctrl-A`.
+  <div id="app-1"></div>
+  <div id="app-1"></div>
+  <div id="app-1"></div>
+  <div id="app-1"></div>
+  <div id="app-1"></div>
+  becomes
+  <div id="app-1"></div>
+  <div id="app-2"></div>
+  <div id="app-3"></div>
+  <div id="app-4"></div>
+  <div id="app-5"></div>
