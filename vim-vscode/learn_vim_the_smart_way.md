@@ -53,14 +53,14 @@ Motions
 - `{`: previous paragraph
 - `H`, `M`, `L`: top, middle, and bottom of current view.
 
-Scrolling: movie instead but keep cursor in current line
+Scrolling: move view port but keep cursor in current line
 - `zz`: scroll window so current line is in the middle
-- `zt`: current line at the top
+- `zt`: current line at the top 
 - `zb`: current line at the bottom
 
 Search
 - `*` and `#`: search whole word forward and backward
-- `g*` and `#`: search even if part of a word
+- `g*` and `g#`: search even if part of a word
   - example: "one in onetwo"
 
 Marks
