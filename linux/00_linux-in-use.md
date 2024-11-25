@@ -118,16 +118,6 @@ Some typical permission to owner-group-other
     - `gpg --list-keys`
 
  
-## bash code snippets
-
-### check positional parameters
-
-```sh
-if [[ $# eq 0 ]]; then
-    echo "provide a xxxxx"
-    exit 1
-fi
-```
 
 ## terminal use cases
 

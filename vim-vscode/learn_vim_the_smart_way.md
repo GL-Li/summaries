@@ -25,6 +25,8 @@ Buffers
     - `args **/*.md` to open all `md` files only
   - `:ls` to list all buffers
     - `:b35` to bring buffer 35 to current window.
+- switch between two most recently viewed buffers
+  - `Ctrl ^`
 
 Tabs
 - `:tabnew file1`: start a new tab

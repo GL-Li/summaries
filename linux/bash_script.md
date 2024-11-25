@@ -10,13 +10,13 @@
 `[[ $string =~ pattern ]]` operator chack if a string matches a regex pattern.
 
 Bash regex engine does not support short-hand regex pattern like `\d` and `\D`. It support the following POSIX charater classes:
-- `[:digit:]`
-- `[:alpha:]`
+- `[:digit:]`, can be replaced with `[0-9]`
+- `[:alpha:]`, better with `[a-zA-Z]`
 - `[:alnum:]`
 - `[:space:]`
 - `[:punct:]`
 
-Example: save the code below as bash-scripts/regex.sh and run it.
+Example: save the code below as bash-script-examples/regex.sh and run it.
 ```bash
 #!/usr/bin/env bash
 str="hello123"
@@ -26,6 +26,29 @@ if [[ $str =~ ^h[^0-9]+[0-9]+$ ]]; then
 else
   echo "The string does not starts with 'h' and ends with a number"
 fi
+```
+
+
+### function
+
+```bash
+# define the function
+checkHomeDirectory() {
+  pattern="/home/[a-zA-Z][a-zA-z0-9]*$"
+  # $1 is the first parameters to the function
+  if [[ $1 =~ $pattern ]]; then
+    echo "$1 is a valid home directory"
+  else
+    echo "$1 is an invalid home directory"
+  fi
+}
+
+# call the function
+input="/home/xyz"
+checkHomeDirectory "$input"
+
+input="/home/3aa"
+checkHomeDirectory "$input"
 ```
 
 ## bash code snippets
