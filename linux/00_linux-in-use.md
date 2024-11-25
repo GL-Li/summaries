@@ -105,10 +105,10 @@ Some typical permission to owner-group-other
 - encrypt and decrypt files for self use
     - make sure you have gpg keys in the computer
     - `$ gpg --encrypt --recipient my_gpg_email@gmail.com aaa.txt` to encrypt a file, the output file is `aaa.txt.gpg`
-    - `$ gpg --output xyz.txt --decrypt aaa.txt.gpg` to decrypt the encrupted file to `xyz.txt`. Output file required, otherwise print the content on screen.
+    - `$ gpg --output xyz.txt --decrypt aaa.txt.gpg` to decrypt the encrypted file to `xyz.txt`. Output file required, otherwise print the content on screen.
 - encrypt files for other gpg users
     - acquire gpg email and public key from the recipient
-        - the other generate the public key as above and send over
+        - the others generate the public key as above and send over
     - import the public key to GPG keyring
         - `$ gpg --import other_public_key.gpg`
     - encrypt file for this user
@@ -117,7 +117,7 @@ Some typical permission to owner-group-other
 - view all keys in keyrings
     - `gpg --list-keys`
 
-    
+ 
 ## bash code snippets
 
 ### check positional parameters
