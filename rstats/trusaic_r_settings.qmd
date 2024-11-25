@@ -1,0 +1,119 @@
+---
+title: "Untitled"
+format: html
+---
+
+
+## Trusaic SOPs
+
+### Test code on vdi2
+- prepare files
+    - generate selfSrv-vx.x.xx.zip file:
+        - follow examples in /mnt/d/other-teams/engineering/
+    - upload the zip file to Google Drive https://drive.google.com/drive/folders/1BvFmAiMuk_hkNeN7WrzTE5rOklu9nvID
+    - Download to vdi2
+
+- install R packages on vid2
+    - delete installed third-party packages but keep all base packages
+
+        ```r
+        # all packages
+        all_pkg <- installed.packages() |>
+            rownames()
+        # all base packages
+        base_pkg <- installed.packages(priority = "high") |>
+            rownames()
+        # non-base packages
+        non_base_pkg <- setdiff(all_pkg, base_pkg)
+        # remove non-base packages
+        remove.packages(non_base_pkg)
+        ```
+
+    - to install a set of packages in Windows from a file, run from command
+        ```
+        > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" dependencies_windows.R
+        ```
+
+- have a test run
+    ```
+    > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" pea1.R
+    ```
+
+
+## Trusaic package workflow
+
+### Develop package in WSL and end2end test in Windows
+
+**The complication**:
+- The package is development in WSL linux file system because RStudio docker container runs faster.
+- The code calling the package functions run on Windows file system as the payParity platform runs on Windows file system.
+- We need to build package source file in Linux file system and copy the source file to Windows file system and install in Windows.
+
+**Method**:
+
+- Create an executable bash script `build_payparity` in `~/bin/` to create the source file and copy it to Windows
+    ```sh
+    #! /usr/bin/env bash
+
+    # delete tar.gz files in parent directory
+    rm ../*tar.gz
+
+    # build package source file payParity_xxxxx.tar.gz
+    # into parent directory ../
+    Rscript -e "devtools::build()"
+
+    # copy the newly created tar.gz file to
+    # /mnt/d/DiversityEquityInclusion/payParity.tar.gz
+    cp ../*tar.gz /mnt/d/DiversityEquityInclusion/payParity.tar.gz
+
+    echo "copied to DEI and renamed as payParity.tar.gz"
+    echo " --- "
+    ```
+ 
+- Create a batch file, `install_payParity.bat` in Windows to install package from source file
+    ```bat
+    "C:\Program Files\R\R-4.3.1\bin\Rscript.exe" -e "install.packages('payParity.tar.gz', repos = NULL, type='source')"
+
+    del payParity.tar.gz
+    ```
+ 
+- How to use them:
+    - `$ build_payparity` run from package directory in WSL
+    - `> install_payparity.bat` run from DEI directory in Window.
+
+
+### Manage installed packages
+
+- delete installed third-party packages but keep all base packages
+
+    ```r
+    # all packages
+    all_pkg <- installed.packages() |>
+        rownames()
+    # all base packages
+    base_pkg <- installed.packages(priority = "high") |>
+        rownames()
+    # non-base packages
+    non_base_pkg <- setdiff(all_pkg, base_pkg)
+    # remove non-base packages
+    remove.packages(non_base_pkg)
+    ```
+
+- to install a set of packages in Windows from a file, run from command
+    ```
+    > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" dependencies_windows.R
+    ```
+
+- have a test run
+    ```
+    > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" pea1.R
+    ```
+
+- use `renv` to identify the minimal set of packages required for a project
+    ```r
+    # initialize renv project and check the env.lock file for installed
+    # packages for this project. They are installed in the order.
+    renv::init()
+    ```
+
+
