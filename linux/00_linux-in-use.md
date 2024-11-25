@@ -47,15 +47,14 @@ Installation
     - github: settings --> SSH and GPG keys --> New SSH key
     - bitbucker: settings --> Personal Bitbucket settings --> SSH keys --> add key
 - clone configuration repo from github
-  - copy and rename `init.vim_for_nvim` to `~/.config/nvim/`.
+  - copy vimrc_essentials to `~/.vimrc`
+  - `bash copy2nvim.sh` to setup Neovim configuration
   - copy `.gitconfig` to `~/.gitconfig`
   - copy `bin/` to `~/bin/`
 - install NeoVim and config it follow instructions in `vim-in-use`
 - connect to OneDrive and download files
   - `$ docker_onedrive` # it is in `~/bin/`. follow the instructions to authroize the connection
-- setup blue terminal
-  - `$ dconf load gcorg/gnome/terminal/ < gnome_terminal_blue.txt`
-
+- setup terminal to use Solarized Dark theme.
 
 
 
@@ -76,6 +75,10 @@ Some typical permission to owner-group-other
 - `chmod 644 file.txt`: if you want others to read it.
 - `chmod 700 xxx.sh`: only the owner can run it.
 - `chmod 744 xxx.sh`: only the owner can run it. Others can see the code.
+- `chmod +x xxx.sh`: add executable permssion to everyone without changing other permissions.
+- `chmod u+x xxx.sh`: add executable permission to owner only without changing other permissions.
+- `chmod g+x xxx.sh`: add executable permission to group only
+- `chmod o+x xxx.sh`: add executable permission to others only
 
 
 ### `gpg`: file encryption
