@@ -51,6 +51,32 @@ input="/home/3aa"
 checkHomeDirectory "$input"
 ```
 
+
+### find ... | while read xxx; do ...
+`find ...` output directories or files line by line and `while read xxx` read each line into `xxx` for future processing in a loop.
+
+Example: in `bash-script-examples/` run `bash while_read_dir_fname.sh tmp0` to check the output of the code below.
+```bash
+#!/bin/bash
+
+data_dir="$1"
+
+echo "Print all .txt and .csv files in $data_dir and its subdirectories"
+
+# list $data_dir and all its subdirectories recursively and then find
+# .txt and .csv files in each directory. Typically use dir in place of aaa
+# and fname in place of bbb.
+find "$data_dir" -type d | while read aaa; do
+  find "$aaa" -type f \( -name "*.csv" -or -name "*.txt" \) | while read bbb; do
+    echo -e "\n$bbb =============="  # -e to enable \n
+    cat "$bbb"
+  done
+done
+
+echo "finished printing"
+```
+
+
 ## bash code snippets
 
 ### check positional parameters
