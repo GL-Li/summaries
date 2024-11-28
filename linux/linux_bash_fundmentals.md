@@ -11,6 +11,41 @@
 - [Udemy: Linux Mastery: Master the Linux Command Line in 11.5 Hours](https://www.udemy.com/course/linux-mastery/learn/lecture/8526918#overview)
 - [Udemy: Bash Mastery: The Complete Guide to Bash Shell Scripting](https://www.udemy.com/course/bash-mastery/learn/lecture/25412436#overview)
 
+
+### Manage shell environments with .profile and .bashrc
+Loading order:
+- `.profile` is sourced when logged into a system.
+- `.bashrc` is sourced every time opening a terminal
+- To ensure `.basrc` is also loaded at log in, this conditional source is often added to `.profile`
+    ```sh
+      # Source .bashrc if it exists
+      if [ -f "$HOME/.bashrc" ]; then
+        . "$HOME/.bashrc"
+      fi
+    ```
+
+Typical use cases
+- `.profile`: setting up environment variables
+    ```sh
+      # Add a directory to the PATH
+      export PATH="$HOME/bin:$PATH"
+      # Environment variables
+      export EDITOR='nano'
+      export JAVA_HOME='/usr/lib/jvm/java-11-openjdk'
+    ```
+- `.bashrc`: alias, functions, and others that are only used in interactive terminal session
+    ```sh
+      # Aliases
+      alias ll='ls -la'
+      alias grep='grep --color=auto'
+      # Prompt customizations
+      PS1='[\u@\h \W]\$ '
+      # Source other scripts
+      source ~/.bash_aliases
+    ```
+
+
+
 ## Workflow and SOP
 
 ### SOP: run bash script as command from anywhere
@@ -56,184 +91,20 @@
 
 - Run command `aaa` from anywhere.
 
-## QA ==========
 
-### QA: how to display the differrence between two files from terminal?
 
-Use command `sdiff -s -w 200 pea1.R pea1_rosa.R | colordiff`, where
 
-- sdiff shows the difference
-  - `-s` difference only
-  - `-w 200` 200 characters each line
-- `color diff` show in color
 
-### QA: how to find specific directories and files and process them one by one?
 
-Use `find ... | while read ...`: The example below includs find directory and files.
 
-- `while read dir` corresponding to `-type d`.
-- `while read fname` corresponding to `-type f`.
-- to run the example in crontab, give full path to the bash script
 
-    ```
-    # min hour day month dayOfWeek command
-    # 30  12   *   *     MON       echo "Hello World" >> ~/hellow.txt
-      11   11   *   *     *         $HOME/bin/delete_clients_data $HOME/tmp 1
-    ```
 
-- example: delete csv and xlsx file in xtmp* subdirectories in `$1` if the subdirectory has not been accesss in a given `$2` days.
 
-    ```sh
-    #!/bin/bash
-    #
-    # delete xxx.csv and xxx.xlsx files in sub-directories
-    #   - of directory specified by parameter $1
-    #   - starting with xtmp
-    #   - not accessed for at least $2 day specified by parameter $2
-    #
-    
-    # find all the directory met above conditions
-    
-    data_dir="$1"
-    min_access_time="$2"
-    
-    echo "Delete old client files:"
-    find "$data_dir" -type d -atime +$2 -name "xtmp*" | while read dir; do
-    
-      find "$dir" -type f \( -name "*.csv" -or -name "*.xlsx" \) | while read fname; do
-    
-        echo "  - $fname"
-        rm "$fname"
-    
-      done
-    
-    done
-    
-    echo "Finished deleting files."
-    ```
 
-### QA: how to delete all directories starting with "xtmp" that are not accessed within 2 weeks?
 
-Assume we only want to delete those in base direttory `/mnt/d/`, the following commands get the job done:
 
-- `$ find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +`
-
-To do it automatically every day at 12:30pm, add to command to crontab:
-
-- `$ crontab -e` to edit the tasks
-- add the line to the list
-
-    ```
-    #  m    h    dom    mon    dow    command
-       30   12      *      *    *     find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +
-    
-    ```
-
-### QA: how to burn an iso image onto a USB drive from terminal?
-
-- Run `$ lsblk` to check which is the USB drive, for example, `/dev/sdd/`
-- `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
-  - be extremely careful. If a wrong disc, the data on the disc will be wiped out
-  - explain:
-    - `dd`: command that converts and copies a file
-    - `bs`: block size
-    - `if`: input file, an arch linux iso image in above example
-    - `of`: output file. Device is a file in Linux
-
-### QA: how to set system time?
-
-The ultimate solution is to install ntp
-
-- `$ sudo apt install ntp` which installs ntp services and it is enabled automatically. The system should be able to sync with the standard time.
-
-Ways to check and manually set
-
-- `$ timedatectl` to show system time
-- `$ sudo timedatectl set-time 2023-02-29` to set date
-- `$ sudo timedatectl set-time 17:23:55` to set time
-
-### QA: how to use systemd to automatically start docker when computer starts?
-
-**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it.
-
-**What is systemd**:
-
-- `systemd` is the first program to run when a Linux computer starts. It mamages all services at start.
-- **ref: youtube video**: [Systemd Deep-Dive: A Complete, Easy to Understand Guide for Everyone](https://www.youtube.com/watch?v=Kzpm-rGAXos)
-
-**Most commonly used systemd commands**
-    - `$ systemctl status docker` to check the status of a service
-    - `$ sudo systemctl start docker` to start a service
-    - `$ sudo systemctl stop docker` to stop a running service
-    - `$ sudo systemctl restart docker` to restart a stopped service with the same configuration
-    - `$ sudo systemctl enable docker` to start the service when the computer starts
-    - `$ sudo systemctl disable docker` to stop starting the service when computer starts
-
-### QA: how to set up ssh key from terminal and use it for github or any Linux server?
-
-**ssh for github**:
-    - `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
-    - `$ cat .ssh/id_rsa.pub` to view and copy the public key.
-    - To use it in github, for example, go to github seetings --> SSH and GPG keys to add a new SSH key and paste the public key.
-    - The computer is ready to clone repos in your github account
-**ssh public key for linux server**:
-    - `$ ssh-copy-id xxx@192.168.1.111` to copy this computer's ssh public key to file `autorized_keys` in server's `~/.ssh/` directory. Need password.
-    - `ssh xxx@192.168.1.111` to connect. No password asked.
-
-### QA: how to set up computer so can be connected with ssh
-
-- Install on Debian host:
-  - `$ sudo apt install openssh-server`
-  - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
-- Install on Ubuntu host:
-  - `$ sudo apt install openssh-server` on the host computer
-  - `$ sudo systemctl enable openssh` if not enabled automatically after installation
-- Install on Fedora host:
-  - `$ sudo dnf install openssh-server`
-  - `$ sudo systemctl enable sshd`. It is named as `sshd`
-- From client
-  - `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
-
-### QA: how to check hostname and ip address
-
-- `$ hostname` to show hostname
-- `$hostname -I` to show all IP addresses of this computer in local networks. They are not public IP addresses.
-
-### QA: how to replace string "abc" to "xyz" in all files in a directory?
-
-- `$ sed -i 's/abc/xyz/g' *`
-
-### QA: how to view the files and folders of a .zip file before extraction?
-
-- `unzip -l xxx.zip` to list all files and directories
-- `unzip -p xxx.zip file1` to see file1 in stdout
-
-### How to download a file from terminal?
-
-For example, here is the file location of iris dataset: `https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`. To download it, we can use `curl` or `wget`:
-
-- `curl -o $HOME/Downloads/ttttt.csv https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`
-  - `-o` for output file
-- `wget https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv` to download `iris.csv` into current directory
-
-### QA: where to store user-compiled executable files or symlinks?
-
-They should be copied to `/usr/local/bin/`, which is not a part of the OS so they will not be overwritten in system update. And by default, this directory is in $PATH by default.
-
-### QA: how to back up a Linux system for restore
-
-Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To use it
-
-- `$ sudo timeshit --create` to create a snapshot
-- `$ sudo timeshift --list` to list all snapshot
-- `$ sudo timeshift --restore --snapshot "2023-06-13_07-37-08"` to restore to a snapshot named by date created.
-- `$ sudo timeshift --delete --snapshot "2023-06-13_07-37-08"` to delete a snapshot.
-
-### QA: how to back up files
-
-Using Unison.
-
-## Raw notes ==========
+## Linux core concepts and operations
+Do not rely on specific utilieis.
 
 ### Linux brace expansion using {}
 
@@ -252,7 +123,7 @@ echo month_{01..12}             # month_01, month_02, ..., month_12
 
 ### Linux command wildcards `*`, `?`, and `[` in file / directory names
 
-**Note**: these wildcards only work in pathnames like file and directory names. `/` in pathname cannot be matched. They are similar to, but not, regular expressions.
+**Note**: these wildcards only work in pathnames like file and directory names. `/` in pathname cannot be matched. Wildcards are similar to, but not, regular expressions.
 
 - `*` any number of strings
 - `?` any single character
@@ -266,224 +137,6 @@ grep abc file?.R    # find lines containing "abc" in file1, fileA, ...
 grep abc file[0-3]  # find lines containing "abc" in file0, ..., file5
 ```
 
-### Linux `locate` to search path names, update database before search
-
-`locate` search all path names in a database, which is updated one time a day. To search for new files, update the database.
-
-- `-i` ignore case
-- `-e` check the file actually exists
-
-```shell
-# install mlocate if updatedb not found
-$ sudo updatedb         # update database before search by locate
-$ locate abc            # search path name containing "abc"
-
-# to use wildcard in search path, the path must represent full path
-$ locate abc*.md        # the path start with abc and end with .md
-$ locate *abc*.md       # the path contains abc and end with .md
-```
-
-### Linux `find` command to search files by name, type, size,
-
-**`find` has many options**
-
-- `-maxdepth 2` search up to second level, only one `-`, not `--`
-- `-type f` show only files, `-type d` only directories
-- `-name "file.txt"` search by name, must be exact file or directory name or using wildcards, not partial string
-- `-size +100k`  file size > 100k, `-size +100k -size -1M`  size in 100k - 1M, `-size -100k -o -size +1M` size < 100k or > 1M.
-
-```shell
-$ find                        # show all diretories and files in current diretory
-$ find eee/                   # list everything in eee/
-$ find -name "*01"            # find path end with 01, quote to
-                              # avoid shell expansion.
-$ find -type d | grep src     # find all directories having src in the path
-
-```
-
-**find files and execute on the found**
-
-- `{}`: placeholder for files found
-- `-exec` or `-ok`,  perform command on each file found.
-- `\;`, end the execution of one file and then start execution of another one
-- `+`: run execution on all files at once if possible.
-- works with standard input and output.
-
-```shell
-$ find -name "file1*" -exec cp {} copy_to_folder \;
-$ find -name "file1*" -ok cp {} copy_to_folder \;    # to confirm for each file
-$ find -name "file1*" -ok cat {} \;                  # print files on terminal, y or n
-$ find -name "file1*" -exec cat {} +
-$ find -maxdepth 1 -name "*.R" -exec vim {} \;
-
-# append a line to all found files. sh -c for shell command
-$ find -name "file1*" -exec sh -c `echo "abc 123" >> {}` \;
-
-# insert "abcd efg hijk" before the first line of all found files
-find -name "file?" -exec sh -c 'sed -i "1 i\abcd efg hijk" {}' \;
-```
-
-### Linux: grep recursively in files whose names match a pattern
-
-```shell
-grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not have "model" in path names under current directory
-```
-
-### Linux: sort command to sort lines
-
-- `-r` reverse
-- `-n` by numerical value
-- `-u` show only unique values
-- `-h` by human readable data
-- `-M` by month Jan, Feb, ...
-- `-k n` sort by nth column of table data
-
-```shell
-ls -l | sort -k 5 -n   # sort by the 5th column
-ls -lh | sort -k 5 -h  # sort by the 5th column by using human-readable value
-```
-
-### Linux: tar command, tarball, archive, compression
-
-Create a tar ball
-
-- `-c` create a new archive
-- `-v` verbose
-- `-f`, `--file=ARCHIVE` use archive file
-- `-z` compress with `gzip`
-- `-j` compress with `bzip2`
-
-```shell
-tar -cvf xxx.tar file1 file2 ...
-tar -cvzf xxx.tar.gz file1 file2 ...
-tar -cvjf xxx.tar.bz2 file1 file2 ...
-```
-
-To preserve the directories, for example, if we want to only back up `OneDrive` in home directory, we can create a bash script:
-
-```shell
-# first go to parent directory of OneDrive
-$ cd ~/
-# compress the all in the directory. When decompressed, we get a folder OneDrive.
-tar -cvzf /mnt/work/backup/onedrive/onedrive.tar.gz OneDrive/*
-
-```
-
-View files in a tarball
-
-- `-t`, `--list` list names in a tarball
-
-```shell
-tar -tf xxx.tar
-```
-
-Extract from a tarball
-
-- `-x` extract files
-
-```shell
-tar -xvf xxx.tar
-tar -xvzf xxx.tar.gz   # extract file from gzip compressed tar ball
-tar -xvjf xxx.tar.bz2  # extract file from bzip2 compressed tar ball
-tar -xf xxx.tar.gz -C path/to/folder  # extract to specific folder
-```
-
-### Linux: gzip, bzip2 to compress tar balls, not for Windows and Mac
-
-`gzip` is faster but less compression
-
-```shell
-gzip xxx.tar      # will create xxx.tar.gz and delete xxx.tar
-gunzip xxx.tar.gz # get xxx.tar back and delete xxx.tar.gz
-```
-
-`bzip2` usually gets more compression but slower
-
-```shell
-bzip2 xxx.tar         # change to xxx.tar.bz2
-bunzip2 xxx.tar.bz2   # get back xxx.tar
-```
-
-### Linux: zip files for share to Windows and Mac users
-
-```shell
-zip xxx.zip file1 file2 ...
-unzip xxx.zip
-```
-
-### Linux: bash script run as command
-
-**Summary**: place all well-written bash script under `~/bin` and add `~/bin` to PATH so the bash scripts can be run just like any terminal command.
-
-Create a minimal example and name it `aaa.sh`
-
-```bash
-#! /usr/bin/bash
-
-echo "collecting all file names in current directory"
-echo "save them in file all_files.txt"
-ls -ltr | tee all_files.txt
-```
-
-Run it from terminal locally
-
-```shell
-bash aaa.sh
-```
-
-Convert to executable file, which can be run as `$ path/to/aaa` without `bash`
-
-```shell
-cd                    # back to home diretory
-mkdir bin             # create a bin to hold all bash script
-mv aaa.sh aaa         # rename to just xxx
-chmod +x aaa          # change to executable file
-```
-
-To run it from anywhere as a terminal command, add the path to `.bashrc`. Restart terminal to add the new path.
-
-```text
-# add to the end of .bashrc
-PATH="$PATH:$HOME/bin"
-```
-
-### Linux: crontab to schedule tasks, <https://crontab.guru/> for schedule, full path to executable script as cron restrict $PATH to /bin and /usr/bin
-
-A cron task include six elements
-
-- m: minute, 0-60 or * for any. Can be multiple values separated by ","
-- h: hour, 0-24 or *
-- dom: day of month, allowed day in the month or *
-- mon: month, 1-12 or `*`, or JAN, FEB, ...
-- dow: day of week, 0-6 or `*`, or SUN, MON, ..., SAT
-- command: command to run
-
-Create a crontab task that
-
-- save "Hello World!" to hello.txt every Friday at 23:15.
-- at 0 min and 30 min, set m to 0,15
-- every three days, set dom to `*/3`
-- every two hours, set h to `*/2`
-
-```shell
-crontab -e                 # open crontab to edit tasks, use full path to bash scripts
-```
-
-```
-#  m    h    dom    mon    dow    command
-  15   23      *      *    FRI    echo "Hello World!" >> ~/hello.txt
-0,30  */4      *      *    FRI    ~/bin/backup_onedrive
-```
-
-### comments best practice: 5 pieces of information to start a script
-
-```
-# Authour:
-# Date Created:
-# Last Modified:
-# Description:
-# Usage:
-```
 
 ### Linux: exit status
 
@@ -495,48 +148,6 @@ crontab -e                 # open crontab to edit tasks, use full path to bash s
 - 3: no such process
 - more are [here](https://www.cyberciti.biz/faq/linux-bash-exit-status-set-exit-statusin-bash/#:~:text=The%20exit%20status%20is%20an,returns%20a%20status%20of%20127.)
 
-### Linux: chmod, change file mode bits, file permission code
-
-- Understand rwx in `$ ls -l`
-
-  - d: directory, if `-`, then a file
-
-  - r: read
-
-  - w: write
-
-  - x: execute
-
-  ```
-  # owner group others
-  drwxr-xr-x  2 gl gl  4096 Oct  8 10:57 Videos
-  -rw-rw-r--  1 gl gl 19842 Dec  4 17:30 weekly-EMA-200-20-9.tpl
-  ```
-
-- change permission with `chmod` exemple
-
-  Let's start with a file permission as
-
-  ```
-  -rw-rw-r-- 1 gl gl    0 Dec  8 07:59 file1
-  ```
-
-  `$ chmod 760 file1` will change it to (7 for owner, 6 for group, 0 for others)
-
-  ```
-  -rwxrw---- 1 gl gl    0 Dec  8 07:59 file1
-  ```
-
-- `chmod` code
-
-  - 0: no permision
-  - 1: execute only
-  - 2: write only
-  - 3: write + execute (1 + 2)
-  - 4: read only
-  - 5: read + execute (4 + 1)
-  - 6: read + write (4 + 2)
-  - 7: read + write + execute (4 + 2 + 1)
 
 ### Linux: add new PATH in .profile
 
@@ -573,6 +184,7 @@ echo "Hello ${student}"  # ${} called shell expansion, curly bracket can be skip
 - `$PWD`: current working directory
 - `$OLDPWD`: previous working directory
 - `$?`: exit status of last command
+
 
 ### Bash: string upper case, lower case, string length, slice substring, concatinate strings, cut substring from stdin
 
@@ -633,40 +245,6 @@ time=$(date +%H:%m:%S)  # use time to substitute command date and its format
 echo "Hello $USER, the time right now is $time"
 ```
 
-### mount and unmount a drive
-
-In a Linux without desktop enable, the system cannot recognize the newly plugged USB drive or other block devices. This is the time `mount` is used to mount the device to the file system.
-
-**View mounted drives**:
-
-```shell
-lsblk
-```
-
-**Unmount a partition**:
-
-```shell
-sudo umount /dev/sdb1
-```
-
-**Rename the directory name of a mounted system**: simply rename the directory
-
-```shell
-sudo mv oldname newnam
-```
-
-**Mount a new hard disk**: To mount a hard disk to  `/mnt/d/`.
-
-```shell
-# create directory
-$ cd /mnt/
-$ mkdir d
-# check available disks to mount
-$ sudo fdisk -l    # find disk such as /dev/sdb
-# mount disk to direct d
-$ sudo mount /dev/sdb1 /mnt/d    # sdb1, the first of sdb.
-```
-
 ### Bash: math, arithmatic expansion, add, subtract, multiply, divide, module for integers
 
 Math expression in `$(())`. **Only work with integers**.
@@ -696,7 +274,7 @@ echo "scale=4; 5/3" | bc   # print 1.6666
 - `~` for home directory
 - `~root` for user root's home directory
 - `~+` for `$PWD`
-- ~- for `$OLDPWD`
+- `~-` for `$OLDPWD`
 
 ```shell
 # to switch back and forth between two directories
@@ -781,7 +359,7 @@ Expansion in later stage cannot be used in expansion in early stage.
 ```bash
 # exemple below will not print 1,2,...,10 as brace expansion occurrs before arithmetic expansion.
 x=10
-echo {1..$x}  # print {1..$x}
+echo {1..$x}  # print {1..10} instead of 1 2 3 4 5 6 7 8 9 10
 ```
 
 ### Bash: word splitting, use quote if not wanting word splitting
@@ -836,8 +414,8 @@ echo "C:\Users\gl\Downloads"  # correct path
 ```shell
 # 0< for direct input to command, where 0 or both 0< can be ignored
 $ cat 0< file.txt  # ok
-$ cat < file.txt   # ok
-$ cat file.txt     # ok
+$ cat < file.txt   # ok, simplified
+$ cat file.txt     # ok, simplified
 $ 0< file.txt cat  # ok
 $ < file.txt cat   # ok
 $ file.txt cat     # not working, file.txt treated as command
@@ -878,7 +456,7 @@ $ cd /root &> stdoutstderr.txt
   $ cd ~/Download; echo ok  # ok
   ```
 
-- `command1 &`: when ampersand & is at the end of a command, the command will run at background while you use the terminal for new commands
+- `command1 &`: when ampersand `&` is at the end of a command, the command will run at background while you use the terminal for new commands
 
   ```shell
   sleep 10 &     # sleep 10 sec and the terminal is ready for new command
@@ -892,16 +470,6 @@ $ cd /root &> stdoutstderr.txt
   > -ltr    # the two line equals to $ ls -ltr
   ```
 
-### Linux: command date, +, %y, %Y, %b, %m, %d, %a, %H, %I, %M, %S, use plus sign and quote
-
-  Check help page if not sure.
-
-  ```shell
-  # need + before format
-  $ date %Y  # date: invalid date ‘%Y’
-  $ date +%Y # 2022
-  $ date +"%Y %b"  # 2022 Dec, format in quote
-  ```
 
 ### Bash: positional parameters $1, $2, $3, ..., ${10}, ${11},
 
@@ -1002,28 +570,6 @@ $ echo $animal1
 $ echo $snimal2
 ```
 
-### Linux: man, if not available, use help, info, internal external command
-
-Check internal (builtin) or external command using `type`
-
-```shell
-$ type -a cd  # cd is a shell builtin   (internal)
-$ type -a shellcheck # ls is aliased to `ls --color=auto'
-                     # ls is /usr/bin/ls  (external)
-                     # ls is /bin/ls
-```
-
-- help: for internal command
-
-- man: for external command only, complete manual
-
-  - search command by keywords in its role
-
-    ```shell
-    man -k compress    # search command by keywords compress
-    ```
-
-- info: for external command only, more information with links to other sources
 
 ### Bash: `select ... in ... do ... done`, space is the delimiter, not `,`
 
@@ -1036,14 +582,6 @@ select day in Mon Tue Wed Thu Fri Sat Sun; do
  break    # to break the do - done loop, other wise loop back to select.
 done
 ```
-
-### Bash: auto indent whole file in vim, gg=G
-
-gg to get to the beginning of the file, = is the indent command, G to go to the end of the file. The combination `gg=G` is to indent from beginning to the end of the file.
-
-### Bash: list operators ;, &, &&, ||, list of command in one line
-
-see [Bash: control operators]
 
 ### Bash: test commands and operators, `[ space=around ]` or `[[ ... ]]`, `!` to negate
 
@@ -1278,6 +816,349 @@ done
 exit 0
 ```
 
+
+
+
+
+
+## to be relocated
+### Linux `locate` to search path names, update database before search
+
+`locate` search all path names in a database, which is updated one time a day. To search for new files, update the database.
+
+- `-i` ignore case
+- `-e` check the file actually exists
+
+```shell
+# install mlocate if updatedb not found
+$ sudo updatedb         # update database before search by locate
+$ locate abc            # search path name containing "abc"
+
+# to use wildcard in search path, the path must represent full path
+$ locate abc*.md        # the path start with abc and end with .md
+$ locate *abc*.md       # the path contains abc and end with .md
+```
+
+### Linux `find` command to search files by name, type, size,
+
+**`find` has many options**
+
+- `-maxdepth 2` search up to second level, only one `-`, not `--`
+- `-type f` show only files, `-type d` only directories
+- `-name "file.txt"` search by name, must be exact file or directory name or using wildcards, not partial string
+- `-size +100k`  file size > 100k, `-size +100k -size -1M`  size in 100k - 1M, `-size -100k -o -size +1M` size < 100k or > 1M.
+
+```shell
+$ find                        # show all diretories and files in current diretory
+$ find eee/                   # list everything in eee/
+$ find -name "*01"            # find path end with 01, quote to
+                              # avoid shell expansion.
+$ find -type d | grep src     # find all directories having src in the path
+
+```
+
+**find files and execute on the found**
+
+- `{}`: placeholder for files found
+- `-exec` or `-ok`,  perform command on each file found.
+- `\;`, end the execution of one file and then start execution of another one
+- `+`: run execution on all files at once if possible.
+- works with standard input and output.
+
+```shell
+$ find -name "file1*" -exec cp {} copy_to_folder \;
+$ find -name "file1*" -ok cp {} copy_to_folder \;    # to confirm for each file
+$ find -name "file1*" -ok cat {} \;                  # print files on terminal, y or n
+$ find -name "file1*" -exec cat {} +
+$ find -maxdepth 1 -name "*.R" -exec vim {} \;
+
+# append a line to all found files. sh -c for shell command
+$ find -name "file1*" -exec sh -c `echo "abc 123" >> {}` \;
+
+# insert "abcd efg hijk" before the first line of all found files
+find -name "file?" -exec sh -c 'sed -i "1 i\abcd efg hijk" {}' \;
+```
+
+### Linux: grep recursively in files whose names match a pattern
+
+```shell
+grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not have "model" in path names under current directory
+```
+
+### Linux: sort command to sort lines
+
+- `-r` reverse
+- `-n` by numerical value
+- `-u` show only unique values
+- `-h` by human readable data
+- `-M` by month Jan, Feb, ...
+- `-k n` sort by nth column of table data
+
+```shell
+ls -l | sort -k 5 -n   # sort by the 5th column
+ls -lh | sort -k 5 -h  # sort by the 5th column by using human-readable value
+```
+
+### Linux: tar command, tarball, archive, compression
+
+Create a tar ball
+
+- `-c` create a new archive
+- `-v` verbose
+- `-f`, `--file=ARCHIVE` use archive file
+- `-z` compress with `gzip`
+- `-j` compress with `bzip2`
+
+```shell
+tar -cvf xxx.tar file1 file2 ...
+tar -cvzf xxx.tar.gz file1 file2 ...
+tar -cvjf xxx.tar.bz2 file1 file2 ...
+```
+
+To preserve the directories, for example, if we want to only back up `OneDrive` in home directory, we can create a bash script:
+
+```shell
+# first go to parent directory of OneDrive
+$ cd ~/
+# compress the all in the directory. When decompressed, we get a folder OneDrive.
+tar -cvzf /mnt/work/backup/onedrive/onedrive.tar.gz OneDrive/*
+
+```
+
+View files in a tarball
+
+- `-t`, `--list` list names in a tarball
+
+```shell
+tar -tf xxx.tar
+```
+
+Extract from a tarball
+
+- `-x` extract files
+
+```shell
+tar -xvf xxx.tar
+tar -xvzf xxx.tar.gz   # extract file from gzip compressed tar ball
+tar -xvjf xxx.tar.bz2  # extract file from bzip2 compressed tar ball
+tar -xf xxx.tar.gz -C path/to/folder  # extract to specific folder
+```
+
+### Linux: gzip, bzip2 to compress tar balls, not for Windows and Mac
+
+`gzip` is faster but less compression
+
+```shell
+gzip xxx.tar      # will create xxx.tar.gz and delete xxx.tar
+gunzip xxx.tar.gz # get xxx.tar back and delete xxx.tar.gz
+```
+
+`bzip2` usually gets more compression but slower
+
+```shell
+bzip2 xxx.tar         # change to xxx.tar.bz2
+bunzip2 xxx.tar.bz2   # get back xxx.tar
+```
+
+### Linux: zip files for share to Windows and Mac users
+
+```shell
+zip xxx.zip file1 file2 ...
+unzip xxx.zip
+```
+
+### Linux: bash script run as command
+
+**Summary**: place all well-written bash script under `~/bin` and add `~/bin` to PATH so the bash scripts can be run just like any terminal command.
+
+Create a minimal example and name it `aaa.sh`
+
+```bash
+#! /usr/bin/bash
+
+echo "collecting all file names in current directory"
+echo "save them in file all_files.txt"
+ls -ltr | tee all_files.txt
+```
+
+Run it from terminal locally
+
+```shell
+bash aaa.sh
+```
+
+Convert to executable file, which can be run as `$ path/to/aaa` without `bash`
+
+```shell
+cd                    # back to home diretory
+mkdir bin             # create a bin to hold all bash script
+mv aaa.sh aaa         # rename to just xxx
+chmod +x aaa          # change to executable file
+```
+
+To run it from anywhere as a terminal command, add the path to `.bashrc`. Restart terminal to add the new path.
+
+```text
+# add to the end of .bashrc
+PATH="$PATH:$HOME/bin"
+```
+
+### Linux: crontab to schedule tasks, <https://crontab.guru/> for schedule, full path to executable script as cron restrict $PATH to /bin and /usr/bin
+
+A cron task include six elements
+
+- m: minute, 0-60 or * for any. Can be multiple values separated by ","
+- h: hour, 0-24 or *
+- dom: day of month, allowed day in the month or *
+- mon: month, 1-12 or `*`, or JAN, FEB, ...
+- dow: day of week, 0-6 or `*`, or SUN, MON, ..., SAT
+- command: command to run
+
+Create a crontab task that
+
+- save "Hello World!" to hello.txt every Friday at 23:15.
+- at 0 min and 30 min, set m to 0,15
+- every three days, set dom to `*/3`
+- every two hours, set h to `*/2`
+
+```shell
+crontab -e                 # open crontab to edit tasks, use full path to bash scripts
+```
+
+```
+#  m    h    dom    mon    dow    command
+  15   23      *      *    FRI    echo "Hello World!" >> ~/hello.txt
+0,30  */4      *      *    FRI    ~/bin/backup_onedrive
+```
+
+### comments best practice: 5 pieces of information to start a script
+
+```
+# Authour:
+# Date Created:
+# Last Modified:
+# Description:
+# Usage:
+```
+
+### Linux: chmod, change file mode bits, file permission code
+
+- Understand rwx in `$ ls -l`
+
+  - d: directory, if `-`, then a file
+
+  - r: read
+
+  - w: write
+
+  - x: execute
+
+  ```
+  # owner group others
+  drwxr-xr-x  2 gl gl  4096 Oct  8 10:57 Videos
+  -rw-rw-r--  1 gl gl 19842 Dec  4 17:30 weekly-EMA-200-20-9.tpl
+  ```
+
+- change permission with `chmod` exemple
+
+  Let's start with a file permission as
+
+  ```
+  -rw-rw-r-- 1 gl gl    0 Dec  8 07:59 file1
+  ```
+
+  `$ chmod 760 file1` will change it to (7 for owner, 6 for group, 0 for others)
+
+  ```
+  -rwxrw---- 1 gl gl    0 Dec  8 07:59 file1
+  ```
+
+- `chmod` code
+
+  - 0: no permision
+  - 1: execute only
+  - 2: write only
+  - 3: write + execute (1 + 2)
+  - 4: read only
+  - 5: read + execute (4 + 1)
+  - 6: read + write (4 + 2)
+  - 7: read + write + execute (4 + 2 + 1)
+
+
+### mount and unmount a drive
+
+In a Linux without desktop enable, the system cannot recognize the newly plugged USB drive or other block devices. This is the time `mount` is used to mount the device to the file system.
+
+**View mounted drives**:
+
+```shell
+lsblk
+```
+
+**Unmount a partition**:
+
+```shell
+sudo umount /dev/sdb1
+```
+
+**Rename the directory name of a mounted system**: simply rename the directory
+
+```shell
+sudo mv oldname newnam
+```
+
+**Mount a new hard disk**: To mount a hard disk to  `/mnt/d/`.
+
+```shell
+# create directory
+$ cd /mnt/
+$ mkdir d
+# check available disks to mount
+$ sudo fdisk -l    # find disk such as /dev/sdb
+# mount disk to direct d
+$ sudo mount /dev/sdb1 /mnt/d    # sdb1, the first of sdb.
+```
+
+### Linux: command date, +, %y, %Y, %b, %m, %d, %a, %H, %I, %M, %S, use plus sign and quote
+
+  Check help page if not sure.
+
+  ```shell
+  # need + before format
+  $ date %Y  # date: invalid date ‘%Y’
+  $ date +%Y # 2022
+  $ date +"%Y %b"  # 2022 Dec, format in quote
+  ```
+
+### Linux: man, if not available, use help, info, internal external command
+
+Check internal (builtin) or external command using `type`
+
+```shell
+$ type -a cd  # cd is a shell builtin   (internal)
+$ type -a shellcheck # ls is aliased to `ls --color=auto'
+                     # ls is /usr/bin/ls  (external)
+                     # ls is /bin/ls
+```
+
+- help: for internal command
+
+- man: for external command only, complete manual
+
+  - search command by keywords in its role
+
+    ```shell
+    man -k compress    # search command by keywords compress
+    ```
+
+- info: for external command only, more information with links to other sources
+
+### Bash: auto indent whole file in vim, gg=G
+
+gg to get to the beginning of the file, = is the indent command, G to go to the end of the file. The combination `gg=G` is to indent from beginning to the end of the file.
+
+
+
 ### Bash: debug with shellcheck for syntax error, error message structure
 
 Do not blindly follow its suggestions, even it says an error. Use it for a warning.
@@ -1390,3 +1271,223 @@ ssh usename@12.345.678.90
 scp /path/to/local/file username@12.345.678.90:/path/to/remote/directory
 scp username@12.345.678.90:/path/to/remote/file /path/to/local/directory
 ```
+
+
+
+
+## QA ==========
+
+### QA: how to display the differrence between two files from terminal?
+
+Use command `sdiff -s -w 200 pea1.R pea1_rosa.R | colordiff`, where
+
+- sdiff shows the difference
+  - `-s` difference only
+  - `-w 200` 200 characters each line
+- `color diff` show in color
+
+### QA: how to find specific directories and files and process them one by one?
+
+Use `find ... | while read ...`: The example below includs find directory and files.
+
+- `while read dir` corresponding to `-type d`.
+- `while read fname` corresponding to `-type f`.
+- to run the example in crontab, give full path to the bash script
+
+    ```
+    # min hour day month dayOfWeek command
+    # 30  12   *   *     MON       echo "Hello World" >> ~/hellow.txt
+      11   11   *   *     *         $HOME/bin/delete_clients_data $HOME/tmp 1
+    ```
+
+- example: delete csv and xlsx file in xtmp* subdirectories in `$1` if the subdirectory has not been accesss in a given `$2` days.
+
+    ```sh
+    #!/bin/bash
+    #
+    # delete xxx.csv and xxx.xlsx files in sub-directories
+    #   - of directory specified by parameter $1
+    #   - starting with xtmp
+    #   - not accessed for at least $2 day specified by parameter $2
+    #
+    
+    # find all the directory met above conditions
+    
+    data_dir="$1"
+    min_access_time="$2"
+    
+    echo "Delete old client files:"
+    find "$data_dir" -type d -atime +$2 -name "xtmp*" | while read dir; do
+    
+      find "$dir" -type f \( -name "*.csv" -or -name "*.xlsx" \) | while read fname; do
+    
+        echo "  - $fname"
+        rm "$fname"
+    
+      done
+    
+    done
+    
+    echo "Finished deleting files."
+    ```
+
+### QA: how to delete all directories starting with "xtmp" that are not accessed within 2 weeks?
+
+Assume we only want to delete those in base direttory `/mnt/d/`, the following commands get the job done:
+
+- `$ find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +`
+
+To do it automatically every day at 12:30pm, add to command to crontab:
+
+- `$ crontab -e` to edit the tasks
+- add the line to the list
+
+    ```
+    #  m    h    dom    mon    dow    command
+       30   12      *      *    *     find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +
+    
+    ```
+
+### QA: how to burn an iso image onto a USB drive from terminal?
+
+- Run `$ lsblk` to check which is the USB drive, for example, `/dev/sdd/`
+- `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
+  - be extremely careful. If a wrong disc, the data on the disc will be wiped out
+  - explain:
+    - `dd`: command that converts and copies a file
+    - `bs`: block size
+    - `if`: input file, an arch linux iso image in above example
+    - `of`: output file. Device is a file in Linux
+
+### QA: how to set system time?
+
+The ultimate solution is to install ntp
+
+- `$ sudo apt install ntp` which installs ntp services and it is enabled automatically. The system should be able to sync with the standard time.
+
+Ways to check and manually set
+
+- `$ timedatectl` to show system time
+- `$ sudo timedatectl set-time 2023-02-29` to set date
+- `$ sudo timedatectl set-time 17:23:55` to set time
+
+### QA: how to use systemd to automatically start docker when computer starts?
+
+**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it.
+
+**What is systemd**:
+
+- `systemd` is the first program to run when a Linux computer starts. It mamages all services at start.
+- **ref: youtube video**: [Systemd Deep-Dive: A Complete, Easy to Understand Guide for Everyone](https://www.youtube.com/watch?v=Kzpm-rGAXos)
+
+**Most commonly used systemd commands**
+    - `$ systemctl status docker` to check the status of a service
+    - `$ sudo systemctl start docker` to start a service
+    - `$ sudo systemctl stop docker` to stop a running service
+    - `$ sudo systemctl restart docker` to restart a stopped service with the same configuration
+    - `$ sudo systemctl enable docker` to start the service when the computer starts
+    - `$ sudo systemctl disable docker` to stop starting the service when computer starts
+
+### QA: how to set up ssh key from terminal and use it for github or any Linux server?
+
+**ssh for github**:
+    - `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
+    - `$ cat .ssh/id_rsa.pub` to view and copy the public key.
+    - To use it in github, for example, go to github seetings --> SSH and GPG keys to add a new SSH key and paste the public key.
+    - The computer is ready to clone repos in your github account
+**ssh public key for linux server**:
+    - `$ ssh-copy-id xxx@192.168.1.111` to copy this computer's ssh public key to file `autorized_keys` in server's `~/.ssh/` directory. Need password.
+    - `ssh xxx@192.168.1.111` to connect. No password asked.
+
+### QA: how to set up computer so can be connected with ssh
+
+- Install on Debian host:
+  - `$ sudo apt install openssh-server`
+  - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
+- Install on Ubuntu host:
+  - `$ sudo apt install openssh-server` on the host computer
+  - `$ sudo systemctl enable openssh` if not enabled automatically after installation
+- Install on Fedora host:
+  - `$ sudo dnf install openssh-server`
+  - `$ sudo systemctl enable sshd`. It is named as `sshd`
+- From client
+  - `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
+
+### QA: how to check hostname and ip address
+
+- `$ hostname` to show hostname
+- `$hostname -I` to show all IP addresses of this computer in local networks. They are not public IP addresses.
+
+### QA: how to replace string "abc" to "xyz" in all files in a directory?
+
+- `$ sed -i 's/abc/xyz/g' *`
+
+### QA: how to view the files and folders of a .zip file before extraction?
+
+- `unzip -l xxx.zip` to list all files and directories
+- `unzip -p xxx.zip file1` to see file1 in stdout
+
+### How to download a file from terminal?
+
+For example, here is the file location of iris dataset: `https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`. To download it, we can use `curl` or `wget`:
+
+- `curl -o $HOME/Downloads/ttttt.csv https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`
+  - `-o` for output file
+- `wget https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv` to download `iris.csv` into current directory
+
+### QA: where to store user-compiled executable files or symlinks?
+
+They should be copied to `/usr/local/bin/`, which is not a part of the OS so they will not be overwritten in system update. And by default, this directory is in $PATH by default.
+
+### QA: how to back up a Linux system for restore
+
+Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To use it
+
+- `$ sudo timeshit --create` to create a snapshot
+- `$ sudo timeshift --list` to list all snapshot
+- `$ sudo timeshift --restore --snapshot "2023-06-13_07-37-08"` to restore to a snapshot named by date created.
+- `$ sudo timeshift --delete --snapshot "2023-06-13_07-37-08"` to delete a snapshot.
+
+### QA: how to back up files
+
+Using Unison.
+
+
+Please explain the role of % in 
+       mv "$file" "${file%.txt}.bak"
+
+🤖:[ChatGPT4o]
+The use of `%` in the Bash variable substitution `${file%.txt}` is a form of parameter expansion that allows you to modify the way part of a variable's value is interpreted.
+
+### Context
+
+```bash
+mv "$file" "${file%.txt}.bak"
+```
+
+### Detailed Explanation
+
+1. **Parameter Expansion Syntax:**
+   - `${variable%pattern}` allows for the removal of the shortest match of `pattern` from the end of the value stored in `variable`.
+
+2. **Role of `%`:**
+   - In this context, `%` is used for suffix removal. If the `pattern` matches the end (suffix) of the `variable's` value, it is stripped off. This operation is non-destructive and does not change the original value of the variable itself.
+
+3. **Applying `${file%.txt}`:**
+   - `${file}`: Holds the filename you are working with.
+   - `%.txt`: Removes `.txt` from the end of the filename if it is present.
+
+### Example Scenario
+
+- Suppose `file="example.txt"`, then `${file%.txt}` will result in `example`, effectively stripping off the `.txt` extension.
+- When you append `.bak` to it, the result becomes `example.bak`, which is what you rename the original file to.
+
+### Why Use This Pattern? 
+
+- You often use this pattern when you need to transform filenames, especially to change file extensions or to create new files with altered names.
+- It is safe because it deals only with the baseline string modification, avoiding complex command structures and ensuring the changes are made systematically.
+
+### Conclusion
+
+The `${file%.txt}` is an elegant, concise way to manipulate filenames directly in Bash. It leverages Bash's pattern matching capabilities, offering a straightforward solution for common tasks like extension replacement.
+
