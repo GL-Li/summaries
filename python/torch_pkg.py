@@ -101,3 +101,51 @@ torch.permute(x, (2, 0, 1))  # 5 x 2 x 3
   # 
   #         [[-1.2674,  0.1233, -0.3716],
   #          [-1.4953, -0.8342, -0.2542]]])
+  #
+
+""" torch.argmax: return indices of max value along a dimention ===============
+dim: reduce along this dimension while keep other dimensions unchanged.
+- Take a mxn 2D tensor for example, if dim=0, the first step is to collapse it 
+  into a 1xn tensor, then replace each element with the row index of the max 
+  element.
+
+"""
+x = torch.arange(24).reshape(2, 3, 4)
+  # tensor([[[ 0,  1,  2,  3],
+  #          [ 4,  5,  6,  7],
+  #          [ 8,  9, 10, 11]],
+  # 
+  #         [[12, 13, 14, 15],
+  #          [16, 17, 18, 19],
+  #          [20, 21, 22, 23]]])
+
+# flattern array
+torch.argmax(x)  # idex 23 of flatterned array
+
+# reduce (colapse) the first dimention to 1 from 2, find the max value and return 
+# its index along the first dimention.
+torch.argmax(x, dim=0)
+  # tensor([[1, 1, 1, 1],
+  #         [1, 1, 1, 1],
+  #         [1, 1, 1, 1]])
+
+# reduce the second dimension from 3 to 1, find the max value and return its 
+# index along the second dimention
+torch.argmax(x, dim=1)
+  # tensor([[2, 2, 2, 2],
+  #         [2, 2, 2, 2]])
+
+# do the same for the third dimension
+torch.argmax(x, dim=2)
+  # tensor([[3, 3, 3],
+  #         [3, 3, 3]])
+
+# now it is easy to understand 2D case
+aaa = torch.tensor([[0.9991, 0.0009],
+                    [0.9982, 0.0018],
+                    [0.9949, 0.0051],
+                    [0.0491, 0.9509],
+                    [0.0307, 0.9693]])
+torch.argmax(aaa, dim=0)  # tensor([0, 4])
+torch.argmax(aaa, dim=1)  # tensor([0, 0, 0, 1, 1])
+
