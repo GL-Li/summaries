@@ -794,11 +794,47 @@ exit 0
 ```
 
 
+# ---
 # Basic utilities
 Frequently used utilites that need to internalized in brain.
 
-## Linux `locate` to search path names, update database before search
+## Work with hardware
 
+### mount and unmount a drive
+In a Linux without desktop enabled, the system cannot recognize the newly plugged USB drive or other block devices. This is the time `mount` is used to mount the device to the file system.
+
+**View mounted drives**:
+```shell
+lsblk
+```
+
+**Unmount a partition**:
+```shell
+sudo umount /dev/sdb1
+```
+
+**Rename the directory name of a mounted system**: simply rename the directory
+```shell
+sudo mv oldname newnam
+```
+
+**Mount a new hard disk**: To mount a hard disk to  `/mnt/d/`.
+```shell
+# create directory
+$ cd /mnt/
+$ mkdir d
+# check available disks to mount
+$ sudo fdisk -l    # find disk such as /dev/sdb
+# mount disk to direct d
+$ sudo mount /dev/sdb1 /mnt/d    # sdb1, the first of sdb.
+```
+
+
+## Work with directories and files
+
+### Search directories, files, and file contents
+
+#### locate to search path names
 `locate` search all path names in a database, which is updated one time a day. To search for new files, update the database.
 
 - `-i` ignore case
@@ -814,8 +850,7 @@ $ locate abc*.md        # the path start with abc and end with .md
 $ locate *abc*.md       # the path contains abc and end with .md
 ```
 
-## Linux `find` command to search files by name, type, size,
-
+#### find to search files by name, type, size,
 **`find` has many options**
 
 - `-maxdepth 2` search up to second level, only one `-`, not `--`
@@ -829,7 +864,6 @@ $ find eee/                   # list everything in eee/
 $ find -name "*01"            # find path end with 01, quote to
                               # avoid shell expansion.
 $ find -type d | grep src     # find all directories having src in the path
-
 ```
 
 **find files and execute on the found**
@@ -841,11 +875,13 @@ $ find -type d | grep src     # find all directories having src in the path
 - works with standard input and output.
 
 ```shell
+# use quoted filenames
 $ find -name "file1*" -exec cp {} copy_to_folder \;
 $ find -name "file1*" -ok cp {} copy_to_folder \;    # to confirm for each file
 $ find -name "file1*" -ok cat {} \;                  # print files on terminal, y or n
 $ find -name "file1*" -exec cat {} +
-$ find -maxdepth 1 -name "*.R" -exec vim {} \;
+$ find -maxdepth 1 -name "*.R" -exec vim {} \;  # open one by one
+$ find -maxdepth 1 -name "*.R" -exec vim {} +   # open all in buffer
 
 # append a line to all found files. sh -c for shell command
 $ find -name "file1*" -exec sh -c `echo "abc 123" >> {}` \;
@@ -854,27 +890,15 @@ $ find -name "file1*" -exec sh -c `echo "abc 123" >> {}` \;
 find -name "file?" -exec sh -c 'sed -i "1 i\abcd efg hijk" {}' \;
 ```
 
-## Linux: grep recursively in files whose names match a pattern
+#### grep recursively
 
 ```shell
 grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not have "model" in path names under current directory
 ```
 
-## Linux: sort command to sort lines
+### compress files and directories
 
-- `-r` reverse
-- `-n` by numerical value
-- `-u` show only unique values
-- `-h` by human readable data
-- `-M` by month Jan, Feb, ...
-- `-k n` sort by nth column of table data
-
-```shell
-ls -l | sort -k 5 -n   # sort by the 5th column
-ls -lh | sort -k 5 -h  # sort by the 5th column by using human-readable value
-```
-
-## Linux: tar command, tarball, archive, compression
+#### tar command, tarball, archive, compression
 
 Create a tar ball
 
@@ -919,7 +943,8 @@ tar -xvjf xxx.tar.bz2  # extract file from bzip2 compressed tar ball
 tar -xf xxx.tar.gz -C path/to/folder  # extract to specific folder
 ```
 
-## Linux: gzip, bzip2 to compress tar balls, not for Windows and Mac
+#### Linux: gzip, bzip2 to compress tar balls
+Not for Windows and Mac
 
 `gzip` is faster but less compression
 
@@ -935,97 +960,20 @@ bzip2 xxx.tar         # change to xxx.tar.bz2
 bunzip2 xxx.tar.bz2   # get back xxx.tar
 ```
 
-## Linux: zip files for share to Windows and Mac users
+#### zip files for share to Windows and Mac users
 
 ```shell
 zip xxx.zip file1 file2 ...
 unzip xxx.zip
 ```
 
-## Linux: bash script run as command
 
-**Summary**: place all well-written bash script under `~/bin` and add `~/bin` to PATH so the bash scripts can be run just like any terminal command.
-
-Create a minimal example and name it `aaa.sh`
-
-```bash
-#! /usr/bin/bash
-
-echo "collecting all file names in current directory"
-echo "save them in file all_files.txt"
-ls -ltr | tee all_files.txt
-```
-
-Run it from terminal locally
-
-```shell
-bash aaa.sh
-```
-
-Convert to executable file, which can be run as `$ path/to/aaa` without `bash`
-
-```shell
-cd                    # back to home diretory
-mkdir bin             # create a bin to hold all bash script
-mv aaa.sh aaa         # rename to just xxx
-chmod +x aaa          # change to executable file
-```
-
-To run it from anywhere as a terminal command, add the path to `.bashrc`. Restart terminal to add the new path.
-
-```text
-# add to the end of .bashrc
-PATH="$PATH:$HOME/bin"
-```
-
-## Linux: crontab to schedule tasks, <https://crontab.guru/> for schedule, full path to executable script as cron restrict $PATH to /bin and /usr/bin
-
-A cron task include six elements
-
-- m: minute, 0-60 or * for any. Can be multiple values separated by ","
-- h: hour, 0-24 or *
-- dom: day of month, allowed day in the month or *
-- mon: month, 1-12 or `*`, or JAN, FEB, ...
-- dow: day of week, 0-6 or `*`, or SUN, MON, ..., SAT
-- command: command to run
-
-Create a crontab task that
-
-- save "Hello World!" to hello.txt every Friday at 23:15.
-- at 0 min and 30 min, set m to 0,15
-- every three days, set dom to `*/3`
-- every two hours, set h to `*/2`
-
-```shell
-crontab -e                 # open crontab to edit tasks, use full path to bash scripts
-```
-
-```
-#  m    h    dom    mon    dow    command
-  15   23      *      *    FRI    echo "Hello World!" >> ~/hello.txt
-0,30  */4      *      *    FRI    ~/bin/backup_onedrive
-```
-
-## comments best practice: 5 pieces of information to start a script
-
-```
-# Authour:
-# Date Created:
-# Last Modified:
-# Description:
-# Usage:
-```
-
-## Linux: chmod, change file mode bits, file permission code
+### chmod to channge file permission
 
 - Understand rwx in `$ ls -l`
-
   - d: directory, if `-`, then a file
-
   - r: read
-
   - w: write
-
   - x: execute
 
   ```
@@ -1060,52 +1008,34 @@ crontab -e                 # open crontab to edit tasks, use full path to bash s
   - 7: read + write + execute (4 + 2 + 1)
 
 
-## mount and unmount a drive
+## Other popular utilities
 
-In a Linux without desktop enable, the system cannot recognize the newly plugged USB drive or other block devices. This is the time `mount` is used to mount the device to the file system.
+### sort to sort lines
 
-**View mounted drives**:
-
-```shell
-lsblk
-```
-
-**Unmount a partition**:
-
-```shell
-sudo umount /dev/sdb1
-```
-
-**Rename the directory name of a mounted system**: simply rename the directory
+- `-r` reverse
+- `-n` by numerical value
+- `-u` show only unique values
+- `-h` by human readable data
+- `-M` by month Jan, Feb, ...
+- `-k n` sort by nth column of table data
 
 ```shell
-sudo mv oldname newnam
+ls -l | sort -k 5 -n   # sort by the 5th column
+ls -lh | sort -k 5 -h  # sort by the 5th column by using human-readable value
 ```
 
-**Mount a new hard disk**: To mount a hard disk to  `/mnt/d/`.
+### date
+Format date with +, %y, %Y, %b, %m, %d, %a, %H, %I, %M, %S, use plus sign and quote. Check help page if not sure.
 
 ```shell
-# create directory
-$ cd /mnt/
-$ mkdir d
-# check available disks to mount
-$ sudo fdisk -l    # find disk such as /dev/sdb
-# mount disk to direct d
-$ sudo mount /dev/sdb1 /mnt/d    # sdb1, the first of sdb.
+# need + before format
+$ date %Y  # date: invalid date ‘%Y’
+$ date +%Y # 2022
+$ date +"%Y %b"  # 2022 Dec, format in quote
+$ date +"%H:%M:%S"  # 10:45:32
 ```
 
-## Linux: command date, +, %y, %Y, %b, %m, %d, %a, %H, %I, %M, %S, use plus sign and quote
-
-  Check help page if not sure.
-
-  ```shell
-  # need + before format
-  $ date %Y  # date: invalid date ‘%Y’
-  $ date +%Y # 2022
-  $ date +"%Y %b"  # 2022 Dec, format in quote
-  ```
-
-## Linux: man, if not available, use help, info, internal external command
+### man, help, info
 
 Check internal (builtin) or external command using `type`
 
@@ -1127,6 +1057,10 @@ $ type -a shellcheck # ls is aliased to `ls --color=auto'
     ```
 
 - info: for external command only, more information with links to other sources
+
+
+
+
 
 ## Bash: auto indent whole file in vim, gg=G
 
@@ -1462,3 +1396,21 @@ mv "$file" "${file%.txt}.bak"
 
 The `${file%.txt}` is an elegant, concise way to manipulate filenames directly in Bash. It leverages Bash's pattern matching capabilities, offering a straightforward solution for common tasks like extension replacement.
 
+
+
+
+
+
+
+
+
+
+## comments best practice: 5 pieces of information to start a script
+
+```
+# Authour:
+# Date Created:
+# Last Modified:
+# Description:
+# Usage:
+```

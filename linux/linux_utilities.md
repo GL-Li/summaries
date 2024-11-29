@@ -307,3 +307,33 @@ To encrypt USB drives, follow step in https://www.youtube.com/watch?v=ZNaT03-xam
 ## timeshift for Debian and Ubuntu
 
 Create a snapshot with comments `$ sudo timeshift --create --comments "Debian initial installation"`. The comments will show up in the Description section of `$ sudo timeshift --list`.
+
+
+
+## Linux: crontab to schedule tasks, <https://crontab.guru/> for schedule, full path to executable script as cron restrict $PATH to /bin and /usr/bin
+
+A cron task include six elements
+
+- m: minute, 0-60 or * for any. Can be multiple values separated by ","
+- h: hour, 0-24 or *
+- dom: day of month, allowed day in the month or *
+- mon: month, 1-12 or `*`, or JAN, FEB, ...
+- dow: day of week, 0-6 or `*`, or SUN, MON, ..., SAT
+- command: command to run
+
+Create a crontab task that
+
+- save "Hello World!" to hello.txt every Friday at 23:15.
+- at 0 min and 30 min, set m to 0,15
+- every three days, set dom to `*/3`
+- every two hours, set h to `*/2`
+
+```shell
+crontab -e                 # open crontab to edit tasks, use full path to bash scripts
+```
+
+```
+#  m    h    dom    mon    dow    command
+  15   23      *      *    FRI    echo "Hello World!" >> ~/hello.txt
+0,30  */4      *      *    FRI    ~/bin/backup_onedrive
+```

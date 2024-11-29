@@ -1,3 +1,41 @@
+## Linux: bash script run as command
+
+**Summary**: place all well-written bash script under `~/bin` and add `~/bin` to PATH so the bash scripts can be run just like any terminal command.
+
+Create a minimal example and name it `aaa.sh`
+
+```bash
+#! /usr/bin/bash
+
+echo "collecting all file names in current directory"
+echo "save them in file all_files.txt"
+ls -ltr | tee all_files.txt
+```
+
+Run it from terminal locally
+
+```shell
+bash aaa.sh
+```
+
+Convert to executable file, which can be run as `$ path/to/aaa` without `bash`
+
+```shell
+cd                    # back to home diretory
+mkdir bin             # create a bin to hold all bash script
+mv aaa.sh aaa         # rename to just xxx
+chmod +x aaa          # change to executable file
+```
+
+To run it from anywhere as a terminal command, add the path to `.bashrc`. Restart terminal to add the new path.
+
+```text
+# add to the end of .bashrc
+PATH="$PATH:$HOME/bin"
+```
+
+
+
 ## Bash script fundmentals
 
 ### Use `[[ ... ]]` over `[ ... ]`
