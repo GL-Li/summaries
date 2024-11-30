@@ -1,11 +1,25 @@
-# Manage Linux
+# Linux environment
+
+## export: set up environmental variables
+To create a new environment variable or send an existing variable to global environment. The environment variable is available to all sub-session.
+
+```bash
+# create a new environment variable
+export AAA="bbbb"  
+
+# send a existing variable to global environment
+BBB="bbbbb"
+export BBB
+```
 
 
-## Manage shell environments with .profile and .bashrc
+## .profile vs .bashrc
+Manage shell environments.
+
 Loading order:
 - `.profile` is sourced when logged into a system.
-- `.bashrc` is sourced every time opening a terminal
-- To ensure `.basrc` is also loaded at log in, this conditional source is often added to `.profile`
+- `.bashrc` is sourced every time opening a terminal that is not log in.
+- To ensure `.basrc` is also loaded at log in, add the following conditional sourcing to `.profile`
     ```sh
       # Source .bashrc if it exists
       if [ -f "$HOME/.bashrc" ]; then
@@ -16,7 +30,7 @@ Loading order:
 Typical use cases
 - `.profile`: setting up environment variables
     ```sh
-      # Add a directory to the PATH
+      # add $HOME/bin before existing $PATH
       export PATH="$HOME/bin:$PATH"
       # Environment variables
       export EDITOR='nano'
@@ -32,51 +46,6 @@ Typical use cases
       # Source other scripts
       source ~/.bash_aliases
     ```
-
-
-
-## Run bash script as command from anywhere
-
-**Summary**: place all well-written bash script under `~/bin` and add `~/bin` to PATH so the bash scripts can be run just like any terminal command.
-
-- Make a new directory `$HOME/bin`
-
-    ```sh
-    cd
-    mkdir bin
-    ```
-
-- Add the directory to `.bashrc` as shown below. Restart terminal to add the new path, and check with `$ echo $PATH` to make sure it is added to PATH.
-
-    ```text
-    # add to the end of .bashrc
-    PATH="$PATH:$HOME/bin"
-    ```
-
-- Create a bash script, for example, `aaa.sh`
-
-    ```bash
-    #! /usr/bin/bash
-    
-    echo "collecting all file names in current directory"
-    echo "save them in file all_files.txt"
-    ls -ltr | tee all_files.txt
-    ```
-
-- Convert to executable file, which can be run as `$ ./path/to/aaa`
-
-    ```sh
-    chmod 777 aaa.sh          # change to executable file for owner, group, and other
-    ```
-
-- To run it from anywhere as a terminal command, create a soft link in `$PATH/bin`, or copy the file to `bin/`.
-
-    ```sh
-    cd ~/bin
-    ln -s path/to/aaa.sh aaa
-    ```
-
-- Run command `aaa` from anywhere.
 
 
 
@@ -798,6 +767,75 @@ exit 0
 # Basic utilities
 Frequently used utilites that need to internalized in brain.
 
+## Manage Linux system
+
+### timedatectl to set system time
+
+The ultimate solution is to install ntp
+
+- `$ sudo apt install ntp` which installs ntp services and it is enabled automatically. The system should be able to sync with the standard time.
+
+Ways to check and manually set
+
+- `$ timedatectl` to show system time
+- `$ sudo timedatectl set-time 2023-02-29` to set date
+- `$ sudo timedatectl set-time 17:23:55` to set time
+
+### systemd/systemctl to automatically start a service
+
+**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it.
+
+**What is systemd**:
+- `systemd` is the first program to run when a Linux computer starts. It mamages all services at start.
+- **ref: youtube video**: [Systemd Deep-Dive: A Complete, Easy to Understand Guide for Everyone](https://www.youtube.com/watch?v=Kzpm-rGAXos)
+
+**Most commonly used systemd commands**
+- `$ systemctl status docker` to check the status of a service
+- `$ sudo systemctl start docker` to start a service
+- `$ sudo systemctl stop docker` to stop a running service
+- `$ sudo systemctl restart docker` to restart a stopped service with the same configuration
+- `$ sudo systemctl enable docker` to start the service when the computer starts
+- `$ sudo systemctl disable docker` to stop starting the service when computer starts
+
+
+## Work with network
+
+### ssh key for github or any Linux server
+
+**ssh for github**:
+    - `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
+    - `$ cat .ssh/id_rsa.pub` to view and copy the public key.
+    - To use it in github, for example, go to github seetings --> SSH and GPG keys to add a new SSH key and paste the public key.
+    - The computer is ready to clone repos in your github account
+**ssh public key for linux server**:
+    - `$ ssh-copy-id xxx@192.168.1.111` to copy this computer's ssh public key to file `autorized_keys` in server's `~/.ssh/` directory. Need password.
+    - `ssh xxx@192.168.1.111` to connect. No password asked.
+
+### set up computer so can be connected with ssh
+
+- Install on Debian host:
+  - `$ sudo apt install openssh-server`
+  - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
+- Install on Ubuntu host:
+  - `$ sudo apt install openssh-server` on the host computer
+  - `$ sudo systemctl enable openssh` if not enabled automatically after installation
+- Install on Fedora host:
+  - `$ sudo dnf install openssh-server`
+  - `$ sudo systemctl enable sshd`. It is named as `sshd`
+- From client
+  - `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
+
+### remote server, ssh, scp
+
+```shell
+ssh usename@12.345.678.90
+scp /path/to/local/file username@12.345.678.90:/path/to/remote/directory
+scp username@12.345.678.90:/path/to/remote/file /path/to/local/directory
+```
+
+
+
+
 ## Work with hardware
 
 ### mount and unmount a drive
@@ -828,6 +866,17 @@ $ sudo fdisk -l    # find disk such as /dev/sdb
 # mount disk to direct d
 $ sudo mount /dev/sdb1 /mnt/d    # sdb1, the first of sdb.
 ```
+
+### burn an iso image onto a USB drive
+
+- Run `$ lsblk` to check which is the USB drive, for example, `/dev/sdd/`
+- `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
+  - be extremely careful. If a wrong disc, the data on the disc will be wiped out
+  - explain:
+    - `dd`: command that converts and copies a file
+    - `bs`: block size
+    - `if`: input file, an arch linux iso image in above example
+    - `of`: output file. Device is a file in Linux
 
 
 ## Work with directories and files
@@ -888,6 +937,9 @@ $ find -name "file1*" -exec sh -c `echo "abc 123" >> {}` \;
 
 # insert "abcd efg hijk" before the first line of all found files
 find -name "file?" -exec sh -c 'sed -i "1 i\abcd efg hijk" {}' \;
+
+# delete all directories starting with "xtmp" that are not accessed within 2 weeks 
+- `$ find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +`
 ```
 
 #### grep recursively
@@ -966,6 +1018,11 @@ bunzip2 xxx.tar.bz2   # get back xxx.tar
 zip xxx.zip file1 file2 ...
 unzip xxx.zip
 ```
+To view the files and folders of a .zip file before extraction?
+
+- `unzip -l xxx.zip` to list all files and directories
+- `unzip -p xxx.zip file1` to see file1 in stdout
+
 
 
 ### chmod to channge file permission
@@ -1009,6 +1066,7 @@ unzip xxx.zip
 
 
 ## Other popular utilities
+These utilities are either simple to use, or I just need part of their functionalities.
 
 ### sort to sort lines
 
@@ -1058,131 +1116,9 @@ $ type -a shellcheck # ls is aliased to `ls --color=auto'
 
 - info: for external command only, more information with links to other sources
 
-
-
-
-
-## Bash: auto indent whole file in vim, gg=G
-
-gg to get to the beginning of the file, = is the indent command, G to go to the end of the file. The combination `gg=G` is to indent from beginning to the end of the file.
-
-
-
-## Bash: debug with shellcheck for syntax error, error message structure
-
-Do not blindly follow its suggestions, even it says an error. Use it for a warning.
-
-```shell
-sudo apt install shellcheck
-shellcheck my_bash_script
-```
-
-Error message structure: command failed : what's wrong : reason of error
-
-## Bash: at command to schedule task
-
-The `at` is a daemon service runs at background for simple and one-time schedules.
-
-```shell
-$ sudo apt install at  # install at
-
-$ service atd status   # check if at is running
-$ sudo service atd start  # start atd service, stop to stop
-
-# to schedule tasks to run at background
-$ at 9:30am  # press enter
-> echo "Hello world"   # one task
-> cp xxx bbb           # another task
-> <EOT>                # end of scheduled task by ctrl D
-
-$ at -l     # list scheduled job
-$ at -r 2   # remove job 2
-
-$ at 10:05am -f my_bash_script    # schedule to run a bash script
-$ at 10:05am Monday -f my_bash_script
-$ at 10:05am -f 12/23/2022 my_bash_script
-$ at now + 5 min -f my_bash_script    # 2 days ...
-```
-
-## Bash: cron directories
-
-**System cron directories** are in `/etc`. All executable scripts in each directory runs as shown in names like `cron.daily`, `cron.hourly`, `cron.weekly` and `cron.monthly`. The exact time can be found in file `/etc/crontab`.
-
-- no dot include dot `.` in script names
-
-**Custom cron directories** are easy to create. Follow steps below to create a folder in home directory to hold scripts that run at 2am each day
-
-```shell
-# step one: create a directory to store scripts to be run at a given time
-$ mkdir cron.daily.2am
-# then add a line to crontab
-$ crontab -e
-```
-
-```
-00 02 * * * run-parts path/to/cron.daily.2am --report
-```
-
-## reboot required after package upgrade
-
-Check `/var/run/reboot-required.pkgs` for the list of packages that require reboot. For example, linux-base upgrade needs reboot.
-
-We want to create a cron task that upgrades packages every day. We first need to create a bash script called `update_packages`:
-
-```bash
-#!/bin/bash
-apt -y update
-apt -y upgrade
-# If `/var/run/reboot-required` file exists, reboot system after upgrade
-if [ -f /var/run/reboot-required ]; then
- reboot
-fi
-```
-
-As upgrade affect the whole system, we will modify `/etc/crobtab` to schedule this task by adding a line
-
-```
-0 0 * * * /path/to/update_script    # not use ~ for home as this file is in root.
-```
-
-For this to take effect, run
-
-```shell
-sudo service cron restart
-```
-
-## anacron
-
-cron requires machine to be on at the scheduled time. anacron can pickup missed job when computer is turned on. anacron is scheduled in system file `/etc/anacrontab`. There is no user specific anacrontab. Edit this file
-
-- change SHELL=/bin/bash
-
-- add path to PATH
-
-- cron.daily, cron.weekly, and cron.monthly are managed by anacron. So any missed tasks for scripts in these folders will run when computer is turned on.
-
-- minimal time interval is a day, no hour and minute
-
-- manually add a job
-
-  run weekly (7), 30 mins after power on if missed, job identifier backup and script is backup_script, which must be in the PATH
-
-  ```
-  7 30 backup backup_script
-  ```
-
-- logs in `/var/spool/anacron`
-
-## Linux, bash, remote server, ssh, scp
-
-```shell
-ssh usename@12.345.678.90
-scp /path/to/local/file username@12.345.678.90:/path/to/remote/directory
-scp username@12.345.678.90:/path/to/remote/file /path/to/local/directory
-```
-
-
-## QA: how to display the differrence between two files from terminal?
+### diff, sdiff, colordiff
+To quickly check if the two files are the same
+`$ diff path/to/file1 path/to/file2`
 
 Use command `sdiff -s -w 200 pea1.R pea1_rosa.R | colordiff`, where
 
@@ -1191,148 +1127,12 @@ Use command `sdiff -s -w 200 pea1.R pea1_rosa.R | colordiff`, where
   - `-w 200` 200 characters each line
 - `color diff` show in color
 
-## QA: how to find specific directories and files and process them one by one?
-
-Use `find ... | while read ...`: The example below includs find directory and files.
-
-- `while read dir` corresponding to `-type d`.
-- `while read fname` corresponding to `-type f`.
-- to run the example in crontab, give full path to the bash script
-
-    ```
-    # min hour day month dayOfWeek command
-    # 30  12   *   *     MON       echo "Hello World" >> ~/hellow.txt
-      11   11   *   *     *         $HOME/bin/delete_clients_data $HOME/tmp 1
-    ```
-
-- example: delete csv and xlsx file in xtmp* subdirectories in `$1` if the subdirectory has not been accesss in a given `$2` days.
-
-    ```sh
-    #!/bin/bash
-    #
-    # delete xxx.csv and xxx.xlsx files in sub-directories
-    #   - of directory specified by parameter $1
-    #   - starting with xtmp
-    #   - not accessed for at least $2 day specified by parameter $2
-    #
-    
-    # find all the directory met above conditions
-    
-    data_dir="$1"
-    min_access_time="$2"
-    
-    echo "Delete old client files:"
-    find "$data_dir" -type d -atime +$2 -name "xtmp*" | while read dir; do
-    
-      find "$dir" -type f \( -name "*.csv" -or -name "*.xlsx" \) | while read fname; do
-    
-        echo "  - $fname"
-        rm "$fname"
-    
-      done
-    
-    done
-    
-    echo "Finished deleting files."
-    ```
-
-## QA: how to delete all directories starting with "xtmp" that are not accessed within 2 weeks?
-
-Assume we only want to delete those in base direttory `/mnt/d/`, the following commands get the job done:
-
-- `$ find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +`
-
-To do it automatically every day at 12:30pm, add to command to crontab:
-
-- `$ crontab -e` to edit the tasks
-- add the line to the list
-
-    ```
-    #  m    h    dom    mon    dow    command
-       30   12      *      *    *     find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +
-    
-    ```
-
-## QA: how to burn an iso image onto a USB drive from terminal?
-
-- Run `$ lsblk` to check which is the USB drive, for example, `/dev/sdd/`
-- `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
-  - be extremely careful. If a wrong disc, the data on the disc will be wiped out
-  - explain:
-    - `dd`: command that converts and copies a file
-    - `bs`: block size
-    - `if`: input file, an arch linux iso image in above example
-    - `of`: output file. Device is a file in Linux
-
-## QA: how to set system time?
-
-The ultimate solution is to install ntp
-
-- `$ sudo apt install ntp` which installs ntp services and it is enabled automatically. The system should be able to sync with the standard time.
-
-Ways to check and manually set
-
-- `$ timedatectl` to show system time
-- `$ sudo timedatectl set-time 2023-02-29` to set date
-- `$ sudo timedatectl set-time 17:23:55` to set time
-
-## QA: how to use systemd to automatically start docker when computer starts?
-
-**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it.
-
-**What is systemd**:
-
-- `systemd` is the first program to run when a Linux computer starts. It mamages all services at start.
-- **ref: youtube video**: [Systemd Deep-Dive: A Complete, Easy to Understand Guide for Everyone](https://www.youtube.com/watch?v=Kzpm-rGAXos)
-
-**Most commonly used systemd commands**
-    - `$ systemctl status docker` to check the status of a service
-    - `$ sudo systemctl start docker` to start a service
-    - `$ sudo systemctl stop docker` to stop a running service
-    - `$ sudo systemctl restart docker` to restart a stopped service with the same configuration
-    - `$ sudo systemctl enable docker` to start the service when the computer starts
-    - `$ sudo systemctl disable docker` to stop starting the service when computer starts
-
-## QA: how to set up ssh key from terminal and use it for github or any Linux server?
-
-**ssh for github**:
-    - `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
-    - `$ cat .ssh/id_rsa.pub` to view and copy the public key.
-    - To use it in github, for example, go to github seetings --> SSH and GPG keys to add a new SSH key and paste the public key.
-    - The computer is ready to clone repos in your github account
-**ssh public key for linux server**:
-    - `$ ssh-copy-id xxx@192.168.1.111` to copy this computer's ssh public key to file `autorized_keys` in server's `~/.ssh/` directory. Need password.
-    - `ssh xxx@192.168.1.111` to connect. No password asked.
-
-## QA: how to set up computer so can be connected with ssh
-
-- Install on Debian host:
-  - `$ sudo apt install openssh-server`
-  - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
-- Install on Ubuntu host:
-  - `$ sudo apt install openssh-server` on the host computer
-  - `$ sudo systemctl enable openssh` if not enabled automatically after installation
-- Install on Fedora host:
-  - `$ sudo dnf install openssh-server`
-  - `$ sudo systemctl enable sshd`. It is named as `sshd`
-- From client
-  - `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
-
-## QA: how to check hostname and ip address
+### hostname to check hostname and ip address
 
 - `$ hostname` to show hostname
 - `$hostname -I` to show all IP addresses of this computer in local networks. They are not public IP addresses.
 
-## QA: how to replace string "abc" to "xyz" in all files in a directory?
-
-- `$ sed -i 's/abc/xyz/g' *`
-
-## QA: how to view the files and folders of a .zip file before extraction?
-
-- `unzip -l xxx.zip` to list all files and directories
-- `unzip -p xxx.zip file1` to see file1 in stdout
-
-## How to download a file from terminal?
+### curl/wget to download a file at terminal
 
 For example, here is the file location of iris dataset: `https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`. To download it, we can use `curl` or `wget`:
 
@@ -1340,11 +1140,8 @@ For example, here is the file location of iris dataset: `https://gist.githubuser
   - `-o` for output file
 - `wget https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv` to download `iris.csv` into current directory
 
-## QA: where to store user-compiled executable files or symlinks?
 
-They should be copied to `/usr/local/bin/`, which is not a part of the OS so they will not be overwritten in system update. And by default, this directory is in $PATH by default.
-
-## QA: how to back up a Linux system for restore
+### timeshift to back up a Linux system
 
 Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To use it
 
@@ -1353,49 +1150,26 @@ Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To u
 - `$ sudo timeshift --restore --snapshot "2023-06-13_07-37-08"` to restore to a snapshot named by date created.
 - `$ sudo timeshift --delete --snapshot "2023-06-13_07-37-08"` to delete a snapshot.
 
-## QA: how to back up files
-
-Using Unison.
 
 
+
+# aaaaaa
 Please explain the role of % in 
        mv "$file" "${file%.txt}.bak"
 
 🤖:[ChatGPT4o]
 The use of `%` in the Bash variable substitution `${file%.txt}` is a form of parameter expansion that allows you to modify the way part of a variable's value is interpreted.
 
-### Context
 
 ```bash
 mv "$file" "${file%.txt}.bak"
 ```
-
-### Detailed Explanation
 
 1. **Parameter Expansion Syntax:**
    - `${variable%pattern}` allows for the removal of the shortest match of `pattern` from the end of the value stored in `variable`.
 
 2. **Role of `%`:**
    - In this context, `%` is used for suffix removal. If the `pattern` matches the end (suffix) of the `variable's` value, it is stripped off. This operation is non-destructive and does not change the original value of the variable itself.
-
-3. **Applying `${file%.txt}`:**
-   - `${file}`: Holds the filename you are working with.
-   - `%.txt`: Removes `.txt` from the end of the filename if it is present.
-
-### Example Scenario
-
-- Suppose `file="example.txt"`, then `${file%.txt}` will result in `example`, effectively stripping off the `.txt` extension.
-- When you append `.bak` to it, the result becomes `example.bak`, which is what you rename the original file to.
-
-### Why Use This Pattern? 
-
-- You often use this pattern when you need to transform filenames, especially to change file extensions or to create new files with altered names.
-- It is safe because it deals only with the baseline string modification, avoiding complex command structures and ensuring the changes are made systematically.
-
-### Conclusion
-
-The `${file%.txt}` is an elegant, concise way to manipulate filenames directly in Bash. It leverages Bash's pattern matching capabilities, offering a straightforward solution for common tasks like extension replacement.
-
 
 
 

@@ -337,3 +337,103 @@ crontab -e                 # open crontab to edit tasks, use full path to bash s
   15   23      *      *    FRI    echo "Hello World!" >> ~/hello.txt
 0,30  */4      *      *    FRI    ~/bin/backup_onedrive
 ```
+
+
+## Bash: at command to schedule task
+
+The `at` is a daemon service runs at background for simple and one-time schedules.
+
+```shell
+$ sudo apt install at  # install at
+
+$ service atd status   # check if at is running
+$ sudo service atd start  # start atd service, stop to stop
+
+# to schedule tasks to run at background
+$ at 9:30am  # press enter
+> echo "Hello world"   # one task
+> cp xxx bbb           # another task
+> <EOT>                # end of scheduled task by ctrl D
+
+$ at -l     # list scheduled job
+$ at -r 2   # remove job 2
+
+$ at 10:05am -f my_bash_script    # schedule to run a bash script
+$ at 10:05am Monday -f my_bash_script
+$ at 10:05am -f 12/23/2022 my_bash_script
+$ at now + 5 min -f my_bash_script    # 2 days ...
+```
+
+## Bash: cron directories
+
+**System cron directories** are in `/etc`. All executable scripts in each directory runs as shown in names like `cron.daily`, `cron.hourly`, `cron.weekly` and `cron.monthly`. The exact time can be found in file `/etc/crontab`.
+
+- no dot include dot `.` in script names
+
+**Custom cron directories** are easy to create. Follow steps below to create a folder in home directory to hold scripts that run at 2am each day
+
+```shell
+# step one: create a directory to store scripts to be run at a given time
+$ mkdir cron.daily.2am
+# then add a line to crontab
+$ crontab -e
+```
+
+```
+00 02 * * * run-parts path/to/cron.daily.2am --report
+```
+
+## reboot required after package upgrade
+
+Check `/var/run/reboot-required.pkgs` for the list of packages that require reboot. For example, linux-base upgrade needs reboot.
+
+We want to create a cron task that upgrades packages every day. We first need to create a bash script called `update_packages`:
+
+```bash
+#!/bin/bash
+apt -y update
+apt -y upgrade
+# If `/var/run/reboot-required` file exists, reboot system after upgrade
+if [ -f /var/run/reboot-required ]; then
+ reboot
+fi
+```
+
+As upgrade affect the whole system, we will modify `/etc/crobtab` to schedule this task by adding a line
+
+```
+0 0 * * * /path/to/update_script    # not use ~ for home as this file is in root.
+```
+
+For this to take effect, run
+
+```shell
+sudo service cron restart
+```
+
+## anacron
+
+cron requires machine to be on at the scheduled time. anacron can pickup missed job when computer is turned on. anacron is scheduled in system file `/etc/anacrontab`. There is no user specific anacrontab. Edit this file
+
+- change SHELL=/bin/bash
+
+- add path to PATH
+
+- cron.daily, cron.weekly, and cron.monthly are managed by anacron. So any missed tasks for scripts in these folders will run when computer is turned on.
+
+- minimal time interval is a day, no hour and minute
+
+- manually add a job
+
+  run weekly (7), 30 mins after power on if missed, job identifier backup and script is backup_script, which must be in the PATH
+
+  ```
+  7 30 backup backup_script
+  ```
+
+- logs in `/var/spool/anacron`
+
+## QA: how to replace string "abc" to "xyz" in all files in a directory?
+
+- `$ sed -i 's/abc/xyz/g' *`
+

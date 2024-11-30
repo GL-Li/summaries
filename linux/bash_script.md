@@ -125,3 +125,61 @@ if [[ $# eq 0 ]]; then
     exit 1
 fi
 ```
+
+
+
+## Bash: debug with shellcheck for syntax error, error message structure
+
+Do not blindly follow its suggestions, even it says an error. Use it for a warning.
+
+```shell
+sudo apt install shellcheck
+shellcheck my_bash_script
+```
+
+Error message structure: command failed : what's wrong : reason of error
+
+
+## Run bash script as command from anywhere
+
+**Summary**: place all well-written bash script under `~/bin` and add `~/bin` to PATH so the bash scripts can be run just like any terminal command.
+
+- Make a new directory `$HOME/bin`
+
+    ```sh
+    cd
+    mkdir bin
+    ```
+
+- Add the directory to `.bashrc` as shown below. Restart terminal to add the new path, and check with `$ echo $PATH` to make sure it is added to PATH.
+
+    ```sh
+    # add to the end of .bashrc
+    PATH="$PATH:$HOME/bin"
+    ```
+
+- Create a bash script, for example, `aaa.sh`
+
+    ```bash
+    #! /usr/bin/bash
+    
+    echo "collecting all file names in current directory"
+    echo "save them in file all_files.txt"
+    ls -ltr | tee all_files.txt
+    ```
+
+- Convert to executable file, which can be run as `$ ./path/to/aaa`
+
+    ```sh
+    chmod 777 aaa.sh          # change to executable file for owner, group, and other
+    ```
+
+- To run it from anywhere as a terminal command, create a soft link in `$PATH/bin`, or copy the file to `bin/`.
+
+    ```sh
+    cd ~/bin
+    ln -s path/to/aaa.sh aaa
+    ```
+
+- Run command `aaa` from anywhere.
+
