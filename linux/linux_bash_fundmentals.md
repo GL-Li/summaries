@@ -1,7 +1,7 @@
 # Linux environment
 
-## export: set up environmental variables
-To create a new environment variable or send an existing variable to global environment. The environment variable is available to all sub-session.
+## Environmental variables
+`export`: to create a new environment variable or send an existing variable to global environment. The environment variable is available to all sub-sessions.
 
 ```bash
 # create a new environment variable
@@ -11,6 +11,12 @@ export AAA="bbbb"
 BBB="bbbbb"
 export BBB
 ```
+
+To view all environment variables in current Linux session, run
+- `$ env`
+
+To remove an environment variable from current session, run
+- `$ unset AAA`
 
 
 ## .profile vs .bashrc
