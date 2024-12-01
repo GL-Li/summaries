@@ -23,8 +23,19 @@ Kill / stop a running session
 Delete a session
 - `# zellij d session_name` to delete a session and `$ zellij ls` does not show it again.
 
+
 ## The ~/.config/zellij/config.kdl file
 It contains all the common keybindings.
+
+
+### Enable copy/paste (Debian)
+In config.kdl file, add (uncomment) line:
+```
+copy_command: "xclip -selection clipboard"
+```
+
+To copy from terminal, simply highlight text with mouse and the highlighted text is copied to clipboard automatically. To paste, use `Ctrl Shift v`.
+
 
 ## Pane
 Use `$ set-title xyz` to name a pane from terminal.
