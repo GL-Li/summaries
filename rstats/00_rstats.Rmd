@@ -29,6 +29,13 @@ These base packages must stay in R-4.4.1/library/ and cannot be moved to user li
 `base  compiler  datasets  grDevices  graphics  grid  methods  parallel  stats  tools  utils`
 
 
+### Collect all termimal output from Rscript run
+Collect both the standard output and error:
+- package loading message and warnings are part of error.
+- we can see the printout on terminal and the same time the message is sent to the log file.
+
+`$ Rscript xxx.R 2>&1 | tee xxx.log`
+
 
 ### import an environment to .GlobalEnv
 
