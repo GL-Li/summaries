@@ -56,9 +56,12 @@ Typical use cases
 
 
 # Core concepts and operations
-Do not rely on specific utilieis.
+Do not rely on specific utilities.
 
-## Linux brace expansion using {}
+## Shell expansion
+Shell expansion enables complex values using simple simbols. 
+
+### brace expansion using {}
 
 **Note**: no space between elements in `{}` in brace expansion.
 
@@ -73,7 +76,65 @@ echo {a..h..2}                  # a, c, e, g
 echo month_{01..12}             # month_01, month_02, ..., month_12
 ```
 
-## Linux command wildcards `*`, `?`, and `[` in file / directory names
+
+### tilde expansion for directories
+`~user_2`, `~+`, `~-`. ~ not in quote, use `$HOME` if have to
+
+- `~` for home directory
+- `~root` for user root's home directory
+- `~+` for `$PWD`
+- `~-` for `$OLDPWD`
+
+```shell
+# to switch back and forth between two directories
+$ cd ~-     # to previous
+$ cd ~-     # switch back
+```
+
+
+### variable / parameter expansion
+`$x` returns the value of variable `x`.
+
+Examples:
+```shell
+x="aaa  bbb"
+echo $x
+```
+
+
+### command substitution 
+Output the result of a command.
+
+use round `()` instead of curly `{}`.
+
+```shell
+# command substitution
+echo "Hello $USER, the time right now is $(date +%H:%m:%S)"
+
+# assign command substitution to a variable
+time=$(date +%H:%m:%S)  # use time to substitute command date and its format
+echo "Hello $USER, the time right now is $time"
+```
+
+### arithmatic expansion
+Add, subtract, multiply, divide, module for integers
+
+Math expression in `$(())`. **Only work with integers**.
+
+- `+`, `-`, `*`, `/`, `**` (exponential), `%` (remainder),
+
+```bash
+echo $((3 + 4))   # print out 7
+echo $(( (1 + 3) * 5 ))  # 20
+x=9
+y=3
+echo $(($x / $y))  # print 3
+echo $((x / y))  # save some typing
+echo $((8 / 3))  # print 2 !!!!!!!!!!!!!!!!!!
+```
+
+### file name expansion
+Using wildcards `*`, `?`, and `[` in file / directory names
 
 **Note**: these wildcards only work in pathnames like file and directory names. `/` in pathname cannot be matched. Wildcards are similar to, but not, regular expressions.
 
@@ -90,151 +151,18 @@ grep abc file[0-3]  # find lines containing "abc" in file0, ..., file5
 ```
 
 
-## Linux: exit status
+### process expansion / substitution
+The output of a command is treated as a temporary file witn `<(command)`.
 
-0 for no error, 1 - 255 for an error
-
-- 0: sucess
-- 1: operation not permitted
-- 2: no such file or directory
-- 3: no such process
-- more are [here](https://www.cyberciti.biz/faq/linux-bash-exit-status-set-exit-statusin-bash/#:~:text=The%20exit%20status%20is%20an,returns%20a%20status%20of%20127.)
-
-
-## Linux: add new PATH in .profile
-
-In addition to modify path for bash script in `.bashrc` [Linux: bash script run as command], we can add new path in `.profile` file.
-
-```
-# add to the end of .profile
-export PATH="$PATH:$HOME/any/directory"
-```
-
-For the change to take effect, restart the terminal or source the file.
-
+example:
 ```shell
-source ~/.profile
+diff <(ls /path/to/dir_1) <(ls /path/to/dir_2)
 ```
 
-## bash: variables and shell expansion
 
-**User-defined variables**: By tradition, use lower case for user defined variables.
+## Command processing
 
-```shell
-student="Sarah"  # NO spaces around "=" sign, otherwise bash treat student as a command
-echo "Hello ${student}"  # ${} called shell expansion, curly bracket can be skipped if you are sure there is no space and special characters in $student. As a general rule, use {}
-```
-
-**Shell variables**: or called environment variables, usually in upper case, with special names. Common shell variables. $PATH, $HOME, $USER, $HOSTNAME, $PS1, $PWD, $OLDPWD, $?
-
-- `$PATH`: or `${PATH}`, path of executables
-- `$HOME`: absolute path to user's home directory
-- `$USER`: current user username
-- `$HOSTNAME`: computer name
-- `$HOSTTYPE`: computer processor architecture type such as "x86-64"
-- `$PS1`: string that defines what before the `$` sign in terminal, for exemple, `\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\] $(parse_git_branch)\[\033[00m\]\$`, very intimidating. It is defined in `.bashrc`. It is where to modify prompt style.
-- `$PWD`: current working directory
-- `$OLDPWD`: previous working directory
-- `$?`: exit status of last command
-
-
-## Bash: string upper case, lower case, string length, slice substring, concatinate strings, cut substring from stdin
-
-- lower and upper cases
-
-  ```shell
-  name="John Doe"
-  echo $name   # or ${name}, print name
-  # to lower case
-  echo ${name,} # first letter to lower case
-  echo ${name,,} # all letters to lower case
-  # to upper cse
-  echo ${name^}  # first letter to upper case
-  echo ${name^^}  # all to upper case
-  ```
-
-- length of the variable
-
-  ```shell
-  echo ${#name}  # "#" count the number of characters
-  ```
-
-- slice a string: position of characters in a string is **index** by 0, 1, 2, 3, ..., **from 0**
-
-  ```shell
-  echo ${name:3:5}  # substring of length 5 from the 4th character
-  echo ${name:3}  # all from the 4th character, 3 + 1 = 4 so 4th
-  echo ${name: -3:5} # start from 3rd counting from end. need a space before "-"
-  echo ${name: -3}
-  ```
-
-- concatenate string: just treat each varaible as a string
-
-  ```shell
-  a="aaa"
-  b="bbb"
-  echo "$a/$b"   # print out aaa/bbb
-  ```
-
-- cut substring with a delimiter, input is from a file or stdout, not from a string. if have to use cut on a string, use `echo` to pipe the string to `cut` like `echo "$aaa_string" | cut -f 2 d ,`.
-
-  ```bash
-  echo "abc.def.ghi" | cut -f2 -d "."  # def
-  cut xxx.txt -f2 -d "."               # cut line by line
-  cut "abc.def.ghi" -f2 -d "."         # error, string not an argument
-  ```
-
-## Bash: command substitution `$(ls -ltr)`
-
-use `()` instead of `{}`.
-
-```shell
-# command substitution
-echo "Hello $USER, the time right now is $(date +%H:%m:%S)"
-
-# assign command substitution to a variable
-time=$(date +%H:%m:%S)  # use time to substitute command date and its format
-echo "Hello $USER, the time right now is $time"
-```
-
-## Bash: math, arithmatic expansion, add, subtract, multiply, divide, module for integers
-
-Math expression in `$(())`. **Only work with integers**.
-
-- `+`, `-`, `*`, `/`, `**` (exponential), `%` (remainder),
-
-```bash
-echo $((3 + 4))   # print out 7
-echo $(( (1 + 3) * 5 ))  # 20
-x=9
-y=3
-echo $(($x / $y))  # print 3
-echo $((x / y))  # save some typing
-echo $((8 / 3))  # print 2 !!!!!!!!!!!!!!!!!!
-```
-
-## Bash: math, bc for decimal numbers, numerical values
-
-**bc**: basic calculator
-
-```bash
-echo "scale=4; 5/3" | bc   # print 1.6666
-```
-
-## Bash: tilde expansion,  `~user`, `~+`, `~-`. ~ not in quote, use `$HOME` if have to
-
-- `~` for home directory
-- `~root` for user root's home directory
-- `~+` for `$PWD`
-- `~-` for `$OLDPWD`
-
-```shell
-# to switch back and forth between two directories
-$ cd ~-     # to previous
-$ cd ~-     # switch back
-```
-
-## Bash: 5 steps to process command line
+### 5 steps to process command line
 
 - tokenization
 - command identification
@@ -1074,6 +1002,15 @@ To view the files and folders of a .zip file before extraction?
 ## Other popular utilities
 These utilities are either simple to use, or I just need part of their functionalities.
 
+### cut strings
+cut substring with a delimiter, input is from a file or stdout, not from a string. if have to use cut on a string, use `echo` to pipe the string to `cut` like `echo "$aaa_string" | cut -f 2 d ,`.
+
+  ```bash
+  echo "abc.def.ghi" | cut -f2 -d "."  # def
+  cut xxx.txt -f2 -d "."               # cut line by line
+  cut "abc.def.ghi" -f2 -d "."         # error, string not an argument
+  ```
+
 ### sort to sort lines
 
 - `-r` reverse
@@ -1194,3 +1131,93 @@ mv "$file" "${file%.txt}.bak"
 # Description:
 # Usage:
 ```
+
+
+## exit status
+
+0 for no error, 1 - 255 for an error
+
+- 0: sucess
+- 1: operation not permitted
+- 2: no such file or directory
+- 3: no such process
+- more are [here](https://www.cyberciti.biz/faq/linux-bash-exit-status-set-exit-statusin-bash/#:~:text=The%20exit%20status%20is%20an,returns%20a%20status%20of%20127.)
+
+
+## variables and shell expansion
+
+**User-defined variables**: By tradition, use lower case for user defined variables.
+
+```shell
+student="Sarah"  # NO spaces around "=" sign, otherwise bash treat student as a command
+echo "Hello ${student}"  # ${} called shell expansion, curly bracket can be skipped if you are sure there is no space and special characters in $student. As a general rule, use {}
+```
+
+**Shell variables**: or called environment variables, usually in upper case, with special names. Common shell variables. $PATH, $HOME, $USER, $HOSTNAME, $PS1, $PWD, $OLDPWD, $?
+
+- `$PATH`: or `${PATH}`, path of executables
+- `$HOME`: absolute path to user's home directory
+- `$USER`: current user username
+- `$HOSTNAME`: computer name
+- `$HOSTTYPE`: computer processor architecture type such as "x86-64"
+- `$PS1`: string that defines what before the `$` sign in terminal, for exemple, `\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\] $(parse_git_branch)\[\033[00m\]\$`, very intimidating. It is defined in `.bashrc`. It is where to modify prompt style.
+- `$PWD`: current working directory
+- `$OLDPWD`: previous working directory
+- `$?`: exit status of last command
+
+
+## string upper case, lower case, string length, slice substring, concatinate strings, cut substring from stdin
+
+- lower and upper cases
+
+  ```shell
+  name="John Doe"
+  echo $name   # or ${name}, print name
+  # to lower case
+  echo ${name,} # first letter to lower case
+  echo ${name,,} # all letters to lower case
+  # to upper cse
+  echo ${name^}  # first letter to upper case
+  echo ${name^^}  # all to upper case
+  ```
+
+- length of the variable
+
+  ```shell
+  echo ${#name}  # "#" count the number of characters
+  ```
+
+- slice a string: position of characters in a string is **index** by 0, 1, 2, 3, ..., **from 0**
+
+  ```shell
+  echo ${name:3:5}  # substring of length 5 from the 4th character
+  echo ${name:3}  # all from the 4th character, 3 + 1 = 4 so 4th
+  echo ${name: -3:5} # start from 3rd counting from end. need a space before "-"
+  echo ${name: -3}
+  ```
+
+- concatenate string: just treat each varaible as a string
+
+  ```shell
+  a="aaa"
+  b="bbb"
+  echo "$a/$b"   # print out aaa/bbb
+  ```
+
+- cut substring with a delimiter, input is from a file or stdout, not from a string. if have to use cut on a string, use `echo` to pipe the string to `cut` like `echo "$aaa_string" | cut -f 2 d ,`.
+
+  ```bash
+  echo "abc.def.ghi" | cut -f2 -d "."  # def
+  cut xxx.txt -f2 -d "."               # cut line by line
+  cut "abc.def.ghi" -f2 -d "."         # error, string not an argument
+  ```
+
+
+## Bash: math, bc for decimal numbers, numerical values
+
+**bc**: basic calculator
+
+```bash
+echo "scale=4; 5/3" | bc   # print 1.6666
+```
+
