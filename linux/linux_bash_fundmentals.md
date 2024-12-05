@@ -178,7 +178,7 @@ diff <(ls /path/to/dir_1) <(ls /path/to/dir_2)
 - quote removal
 - redirections
 
-## Bash: quoting, single quote and double quote are different
+### quoting, single quote and double quote are different
 
 Quoting is about removing special meanings. Backslash removes special meaning of next character, single quote remove all inside, double quote removes all but dollar sign `$`, backtick `, and those in **command substitution**.
 
@@ -192,7 +192,7 @@ filepath="C:\Users\xxx"   # or single quote
 echo "My $filepath"       # double quote only as we have $
 ```
 
-## Bash: token, metacharacter, word, operator
+### token, metacharacter, word, operator
 
 - Token is a sequence of characters that is considered as a single unit by the shell.
 - metacharacter: special character include `|`, `&`, `;`, `(`, `)`, `<`, `>`, space, tab, and newline.
@@ -206,7 +206,7 @@ echo "My $filepath"       # double quote only as we have $
 $ echo $NAME > file.txt
 ```
 
-## Bash: simple command, compound command
+### simple command, compound command
 
 **simple command**s: one line command, separeted by control operators
 
@@ -223,7 +223,7 @@ if [[ 2 -gt 1]]; then
 fi
 ```
 
-## Bash: shell expansion stages, brace expansion cannot contain any other expansions
+### brace expansion cannot contain any other expansions
 
 Expansion in later stage cannot be used in expansion in early stage.
 
@@ -242,7 +242,7 @@ x=10
 echo {1..$x}  # print {1..10} instead of 1 2 3 4 5 6 7 8 9 10
 ```
 
-## Bash: word splitting, use quote if not wanting word splitting
+### word splitting, use quote if not wanting word splitting
 
 **Word splitting** is a process the shell performs to split the result of some unquoted expansions into separate words at `$IFS`. Only  performed on the results of unquoted parameter expansions, command substitutions, and arithmetic expansions.
 
@@ -271,11 +271,7 @@ $ touch $bbb   # create 3 files, 1, 2, and 3
 $ unset IFS    # to cancel IFS=","
 ```
 
-## Bash: globbing, wildcards in filenames
-
-Globbing is only performed on words. see section [Linux command wildcards `*`, `?`, and `[` in file / directory names]
-
-## Bash: quote removal, use quote whenever possible
+### quote removal, use quote whenever possible
 
 During quote removal, the shell removes all unquoted backslashes, single quote, and double quote that did not result from a shell expansion.
 
@@ -285,7 +281,29 @@ echo '\$HOME' # print \$HOME, single quote removed but backslash not as it is qu
 echo "C:\Users\gl\Downloads"  # correct path
 ```
 
-## Bash: redirection, data streams, `<` `>` `>>` `tee`, stdin stout, sterr
+
+### shell operators - execution order and precedence
+Among the three types of operators:
+1. grouping and subshells `(...)`: highest precedence
+2. redirection `>` and `2>`: second highest precedence
+3. logical operators `&&` and `||`: lowest 
+
+There are several other operators. If not sure which one come first, group commands in `(...)` to clarify the relationships.
+
+Example
+```shell
+# the following has two command: ls and llll > stdut.log 2> stderr.log.
+# therefore, output of ls is not redirected to stdout.log
+# command llll doest not exist, will have a stderr
+ls && llll > stdout.log 2> stderr.log
+
+# to redirect the stdout of ls to stdot.log, use command below
+(ls && llll) > stdout.log 2> stderr.log
+```
+
+## streams - stdin, stdout, stderr
+
+### redirection, data streams, `<` `>` `>>` `tee`, stdin stout, sterr
 
 **Three streams**: each command has stdin 0, stdout 1, stderr 2
 
