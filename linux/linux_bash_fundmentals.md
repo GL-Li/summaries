@@ -303,7 +303,7 @@ ls && llll > stdout.log 2> stderr.log
 
 ## streams - stdin, stdout, stderr
 
-### redirection, data streams, `<` `>` `>>` `tee`, stdin stout, sterr
+### redirection, data streams, `<` `>` `>>` stdin stout, sterr
 
 **Three streams**: each command has stdin 0, stdout 1, stderr 2
 
@@ -329,6 +329,17 @@ $ cd /root 2> /dev/null  # when a file is sent to /dev/null, it is just deleted
 
 # &> redirect both stdout and sterror to a file
 $ cd /root &> stdoutstderr.txt
+```
+
+### `tee`: redirect to file while printing on terminal
+
+```bash
+# redirect stdout while print stdout and stderr
+(ls && llll) | tee stdout.log
+# redirect stderr while print both
+(ls && llll) 2> >(tee stdout.log)
+# redirect both while printing
+(ls && llll) 2>&1 | tee std.log
 ```
 
 ## Bash: control operators `&&` `||` `;`  `\` `;;` `;&` `;;&` `|&` `(` `)` `|` new line
