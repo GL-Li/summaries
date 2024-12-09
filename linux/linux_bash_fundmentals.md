@@ -337,10 +337,22 @@ $ cd /root &> stdoutstderr.txt
 # redirect stdout while print stdout and stderr
 (ls && llll) | tee stdout.log
 # redirect stderr while print both
-(ls && llll) 2> >(tee stdout.log)
-# redirect both while printing
+(ls && llll) 2> >(tee stdout.log)  # >(...) use process substitute
+# redirect both while printing, &1 for stdout file descriptor
 (ls && llll) 2>&1 | tee std.log
 ```
+
+### How is stream passed through pipe `|`
+
+For most command in `command_1 | command_2`, the stdout of command_1 will be passed as stdin for command_2.
+
+Above command is equivalent to `command_1 | command_2 -`, where the dash `-` represent the stdout of `command_1`, or represent stdin of `command_2`. It can be ignored.
+
+However, for `vim` the dash is required, for example `ls -ltr | vim -`, in which `vim` must be followed by a dash.
+
+
+
+
 
 ## Bash: control operators `&&` `||` `;`  `\` `;;` `;&` `;;&` `|&` `(` `)` `|` new line
 
