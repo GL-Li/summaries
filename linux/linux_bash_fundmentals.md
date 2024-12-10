@@ -301,60 +301,9 @@ ls && llll > stdout.log 2> stderr.log
 (ls && llll) > stdout.log 2> stderr.log
 ```
 
-## streams - stdin, stdout, stderr
-
-### redirection, data streams, `<` `>` `>>` stdin stout, sterr
-
-**Three streams**: each command has stdin 0, stdout 1, stderr 2
-
-**Examples**:
-
-```shell
-# 0< for direct input to command, where 0 or both 0< can be ignored
-$ cat 0< file.txt  # ok
-$ cat < file.txt   # ok, simplified
-$ cat file.txt     # ok, simplified
-$ 0< file.txt cat  # ok
-$ < file.txt cat   # ok
-$ file.txt cat     # not working, file.txt treated as command
-
-# 1> 1>> redirects output to a file, one can be removed
-$ echo "xxx" 1> output.txt
-$ echo "xxx" > output.txt
-
-# 2> 2>> redirect error message to a file
-$ cd /root  # bash: cd: /root: Permission denied
-$ cd /root 2> error.txt  # error message saved to error.txt
-$ cd /root 2> /dev/null  # when a file is sent to /dev/null, it is just deleted
-
-# &> redirect both stdout and sterror to a file
-$ cd /root &> stdoutstderr.txt
-```
-
-### `tee`: redirect to file while printing on terminal
-
-```bash
-# redirect stdout while print stdout and stderr
-(ls && llll) | tee stdout.log
-# redirect stderr while print both
-(ls && llll) 2> >(tee stdout.log)  # >(...) use process substitute
-# redirect both while printing, &1 for stdout file descriptor
-(ls && llll) 2>&1 | tee std.log
-```
-
-### How is stream passed through pipe `|`
-
-For most command in `command_1 | command_2`, the stdout of command_1 will be passed as stdin for command_2.
-
-Above command is equivalent to `command_1 | command_2 -`, where the dash `-` represent the stdout of `command_1`, or represent stdin of `command_2`. It can be ignored.
-
-However, for `vim` the dash is required, for example `ls -ltr | vim -`, in which `vim` must be followed by a dash.
 
 
-
-
-
-## Bash: control operators `&&` `||` `;`  `\` `;;` `;&` `;;&` `|&` `(` `)` `|` new line
+### control operators `&&` `||` `;`  `\` `;;` `;&` `;;&` `|&` `(` `)` `|` new line
 
 - `command1 && command2`: command2 runs only if comand1 has exit status 0.
 
@@ -392,8 +341,61 @@ However, for `vim` the dash is required, for example `ls -ltr | vim -`, in which
   ```
 
 
-## Bash: positional parameters $1, $2, $3, ..., ${10}, ${11},
 
+## streams - stdin, stdout, stderr
+
+### redirection, data streams, `<` `>` `>>` stdin stout, sterr
+
+**Three streams**: each command has stdin 0, stdout 1, stderr 2
+
+**Examples**:
+
+```shell
+# 0< for direct input to command, where 0 or both 0< can be ignored
+$ cat 0< file.txt  # ok
+$ cat < file.txt   # ok, simplified
+$ cat file.txt     # ok, simplified
+$ 0< file.txt cat  # ok
+$ < file.txt cat   # ok
+$ file.txt cat     # not working, file.txt treated as command
+
+# 1> 1>> redirects output to a file, one can be removed
+$ echo "xxx" 1> output.txt
+$ echo "xxx" > output.txt
+
+# 2> 2>> redirect error message to a file
+$ cd /root  # bash: cd: /root: Permission denied
+$ cd /root 2> error.txt  # error message saved to error.txt
+$ cd /root 2> /dev/null  # when a file is sent to /dev/null, it is just deleted
+
+# &> redirect both stdout and sterror to a file
+$ cd /root &> stdoutstderr.txt
+```
+
+### tee: redirect to file while printing on terminal
+
+```bash
+# redirect stdout while print stdout and stderr
+(ls && llll) | tee stdout.log
+# redirect stderr while print both
+(ls && llll) 2> >(tee stdout.log)  # >(...) use process substitute
+# redirect both while printing, &1 for stdout file descriptor
+(ls && llll) 2>&1 | tee std.log
+```
+
+### How is stream passed through pipe `|`
+
+For most command in `command_1 | command_2`, the stdout of command_1 will be passed as stdin for command_2.
+
+Above command is equivalent to `command_1 | command_2 -`, where the dash `-` represent the stdout of `command_1`, or represent stdin of `command_2`. It can be ignored.
+
+However, for `vim` the dash is required, for example `ls -ltr | vim -`, in which `vim` must be followed by a dash.
+
+
+
+## Bash scripts
+
+### positional parameters $1, $2, $3, ..., ${10}, ${11},
   Allow bash script to read arguments from terminal. Note that when there are over 10 positional parameters, put double digit into {}. Otherwise the shell will interpret it as $1 and 0. Better keep the number of positional parameters no more than 9.
 
   **example**:
@@ -415,7 +417,7 @@ However, for `vim` the dash is required, for example `ls -ltr | vim -`, in which
                                # The third parameter is 999
   ```
 
-## Bash: special parameters `$#`, `$0`, `$*`, `$@`, `"$@"`, `"$*"` for script and positional paramers
+### special parameters `$#`, `$0`, `$*`, `$@`, `"$@"`, `"$*"`
 
 **$#**: number of positional parameters, can be used to specify number of positional parameters as condition
 
@@ -464,7 +466,7 @@ echo "$*"    # print monthly sales,annual report. Separate by IFS instead of spa
 echo $(( $@ ))  # $@ replace whole thing 1 + 6 - 3
 ```
 
-## Bash: read command for interactive input, options -p, -t, -s
+### read command for interactive input, options -p, -t, -s
 
 The input is saved in `$REPLY` shell variable or custom variables
 
@@ -492,7 +494,7 @@ $ echo $snimal2
 ```
 
 
-## Bash: `select ... in ... do ... done`, space is the delimiter, not `,`
+### `select ... in ... do ... done`, space is the delimiter, not `,`
 
 Select from options each separated by space, not `,`.  Keep in quote if not want to split a option.
 
@@ -504,7 +506,8 @@ select day in Mon Tue Wed Thu Fri Sat Sun; do
 done
 ```
 
-## Bash: test commands and operators, `[ space=around ]` or `[[ ... ]]`, `!` to negate
+### test commands and operators, `[ space=around ]` or `[[ ... ]]`, `!` to negate
+Space is required in `[ ` and ` ]` or `[[ ` and ` ]]`.
 
 Return exit status 0 if true, exit status 1 if false.
 
@@ -535,7 +538,7 @@ b=world
 [[ -x fname ]]   # check for executable file
 ```
 
-## Bash: if ... elif ... else ... fi
+### if ... elif ... else ... fi
 
 if statement check the exit status of a  command
 
@@ -562,7 +565,7 @@ else
 fi
 ```
 
-## Bash: `case ... esac`, double quote, `;;` and `)`
+### `case ... esac`, double quote, `;;` and `)`
 
 Must put variable in double quote to prevent word splitting, each case must end with `;;`, which is a specific operator only for `case` statement.
 
@@ -576,7 +579,7 @@ case "$number" in
 esac
 ```
 
-## Bash: `while` loop
+### `while` loop
 
 ```bash
 read -p "Enter your number: " num
@@ -587,7 +590,7 @@ while [ $num -gt 10 ]; do
 done
 ```
 
-## Bash: `getopts`, define options for bash script
+### `getopts`, define options for bash script
 
 Save the code as fc_converter, which convert temperature between F and C. The command has two options: `-c` and `-f`. The value of the option is stored in `$OPTARG`.
 
@@ -639,7 +642,7 @@ done
 exit 0
 ```
 
-## read-while loop to iterate over the lines of files or process substitution `<( command )`
+### read-while loop to iterate over the lines of files or process substitution `<( command )`
 
 process substitution: `<(command)`
 
@@ -659,7 +662,7 @@ while read line; do
 done < <( ls $HOME)
 ```
 
-## Bash: indexed array
+### indexed array
 
 Index starts from 0.
 
@@ -678,7 +681,7 @@ $ number[0]=999   # change a element
 
 ```
 
-## Bash: `readarray` to generate index arrays
+### `readarray` to generate index arrays
 
 Read standard input into an array line by line. Each element has a `\n` at the end, which may mess up with string processing.
 
@@ -697,7 +700,7 @@ $ readarray -t days < weekday.txt
 $ readarray -t files < <(ls)
 ```
 
-## Bash: for loop, on-the-fly list, array, no quote for index
+### for loop, on-the-fly list, array, no quote for index
 
 When use the index of an array in for loop, do not quote it.
 
