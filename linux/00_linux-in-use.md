@@ -52,6 +52,7 @@ Installation
   - copy `.gitconfig` to `~/.gitconfig`
   - copy `bin/` to `~/bin/`
 - install NeoVim and config it follow instructions in `vim-in-use`
+    - `sudo apt install ripgrep` for telescope and fzf
 - connect to OneDrive and download files
   - `$ docker_onedrive` # it is in `~/bin/`. follow the instructions to authroize the connection
 - setup terminal to use Solarized Dark theme.
