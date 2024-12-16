@@ -149,3 +149,23 @@ aaa = torch.tensor([[0.9991, 0.0009],
 torch.argmax(aaa, dim=0)  # tensor([0, 4])
 torch.argmax(aaa, dim=1)  # tensor([0, 0, 0, 1, 1])
 
+
+"""torch statistics ===========================
+mean, variance along a given dimension
+- keepdim=True to keep the dimension, even though its value is 1
+"""
+torch.manual_seed(123)
+x = torch.randn(24).reshape(2, 3, 4)
+  # tensor([[[ 0.3374, -0.1778, -0.3035, -0.5880],
+  #          [ 0.3486,  0.6603, -0.2196, -0.3792],
+  #          [-0.1606, -0.4015,  0.6957, -1.8061]],
+  # 
+  #         [[ 1.8960, -0.1750,  1.3689, -1.6033],
+  #          [-0.7849, -1.4096, -0.4076,  0.7953],
+  #          [ 0.9985,  0.2212,  1.8319, -0.3378]]])
+x.mean(dim=-1)  # 2 x 3
+x.mean(dim=-1, keepdim=True)  # 2 x 3 x 1
+
+x.sum(dim=0)  # 3 x 4
+x.sum(dim=0).var(dim=0)  # torch.Size([4])
+x.sum(dim=0).var(dim=0, keepdim=True)  # torch.Size([1, 4])
