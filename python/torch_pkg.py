@@ -169,3 +169,15 @@ x.mean(dim=-1, keepdim=True)  # 2 x 3 x 1
 x.sum(dim=0)  # 3 x 4
 x.sum(dim=0).var(dim=0)  # torch.Size([4])
 x.sum(dim=0).var(dim=0, keepdim=True)  # torch.Size([1, 4])
+
+
+
+"""torch options =============================
+torch.set_printoptions(sci_mode=False)
+- only works on a tensor object 
+"""
+x = torch.tensor([[0.000013, 1.3]])
+print(x)  # tensor([[1.3000e-05, 1.3000e+00]])
+torch.set_printoptions(sci_mode=False)
+print(x)  # tensor([[    0.0000,     1.3000]])
+
