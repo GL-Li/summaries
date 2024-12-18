@@ -380,6 +380,17 @@ bbb$. <- NULL
 
 
 ### double quotes in csv files
+RFC4180 standard for csv files: https://www.rfc-editor.org/rfc/rfc4180. Regarding double quotes in the data:
+
+```txt
+7.  If double-quotes are used to enclose fields, then a double-quote
+       appearing inside a field must be escaped by preceding it with
+       another double quote.  For example:
+
+       "aaa","b""bb","ccc"
+```
+
+
 It is a bug that `data.table` cannot correctly read two consective double quotes `""` in a csv file as a single quote, which is a csv standard.
 
 https://stackoverflow.com/questions/67026291/reading-files-with-double-double-quotes-in-r
@@ -420,7 +431,8 @@ fwrite(dt_1, file = "rstats/csv-files/double_quotes_1.csv")
 
 # a workaround
 for (col in names(dt_1)) {
-  dt_1[[col]] <- stringi::stri_replace_all_fixed(dt_1[[col]], '""', '"')
+  tmp <- dt_1[[col]]
+  dt_1[[col]] <- stringi::stri_replace_all_fixed(tmp, '""', '"')
 }
 
 
