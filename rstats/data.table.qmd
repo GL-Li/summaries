@@ -377,3 +377,53 @@ bbb <- dcast(aaa, NULL ~ x, value.var = "y")
 names(bbb)
 bbb$. <- NULL
 ```
+
+
+### double quotes in csv files
+It is a bug that `data.table` cannot correctly read two consective double quotes `""` in a csv file as a single quote, which is a csv standard.
+
+https://stackoverflow.com/questions/67026291/reading-files-with-double-double-quotes-in-r
+
+As a tempory solution, use the following replacement
+```r
+for (col in names(dt)) {
+  tmp <- dat[[col]]
+  dt[[col]] <- stringi::stri_replace_all_fixed(tmp, '""', '"')
+}
+```
+
+
+
+```{r}
+library(data.table)
+dt <- data.table(x = c('d"abc""d', "aaa"),
+                 y = 1:2)
+  #           x     y
+  #      <char> <int>
+  # 1: d"abc""d     1
+  # 2:      aaa     2
+fwrite(dt, file = "rstats/csv-files/double_quotes.csv")
+  # x,y
+  # "d""abc""""d",1
+  # aaa,2
+
+dt_1 <- fread("rstats/csv-files/double_quotes.csv")
+  #              x     y
+  #         <char> <int>
+  # 1: d""abc""""d     1
+  # 2:         aaa     2
+
+fwrite(dt_1, file = "rstats/csv-files/double_quotes_1.csv")
+  # x,y
+  # "d""""abc""""""""d",1
+  # aaa,2
+
+# a workaround
+for (col in names(dt_1)) {
+  dt_1[[col]] <- stringi::stri_replace_all_fixed(dt_1[[col]], '""', '"')
+}
+
+
+read.csv("rstats/csv-files/double_quotes.csv")
+readr::read_csv("rstats/csv-files/double_quotes.csv")
+```
