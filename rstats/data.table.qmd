@@ -167,7 +167,7 @@ system.time({
 
 A even better example
 
-```r
+```{r}
 library(data.table)
 library(dplyr)
 library(stringi)
@@ -202,16 +202,30 @@ system.time({
   dt0[stri_detect_fixed(aa, "ff"), aa := stri_replace_all_fixed(aa, "ff", "zzzz")]
 })
 
-cat("\ndplyr ----------------------------\n")
-df <- as_tibble(dtt)
+cat("\ndplyr case_when ----------------------------\n")
+tb1 <- as_tibble(dtt)
 system.time({
-  df <- df |>
-    mutate(aa = ifelse(stri_detect_fixed(aa, "aa"), stri_replace_all_fixed(aa, "aa", "xxxx"), aa)) |>
-    mutate(aa = ifelse(stri_detect_fixed(aa, "bb"), stri_replace_all_fixed(aa, "bb", "yyyy"), aa)) |>
-    mutate(aa = ifelse(stri_detect_fixed(aa, "cc"), stri_replace_all_fixed(aa, "cc", "zzzz"), aa)) |>
-    mutate(aa = ifelse(stri_detect_fixed(aa, "dd"), stri_replace_all_fixed(aa, "dd", "zzzz"), aa)) |>
-    mutate(aa = ifelse(stri_detect_fixed(aa, "ee"), stri_replace_all_fixed(aa, "ee", "zzzz"), aa)) |>
-    mutate(aa = ifelse(stri_detect_fixed(aa, "ff"), stri_replace_all_fixed(aa, "ff", "zzzz"), aa))
+  tb1 <- tb1 |>
+    mutate(aa = case_when(
+      stri_detect_fixed(aa, "aa") ~ stri_replace_all_fixed(aa, "aa", "xxxx"),
+      stri_detect_fixed(aa, "bb") ~ stri_replace_all_fixed(aa, "bb", "yyyy"), 
+      stri_detect_fixed(aa, "cc") ~ stri_replace_all_fixed(aa, "cc", "zzzz"),
+      stri_detect_fixed(aa, "dd") ~ stri_replace_all_fixed(aa, "dd", "zzzz"),
+      stri_detect_fixed(aa, "ee") ~ stri_replace_all_fixed(aa, "ee", "zzzz"), 
+      stri_detect_fixed(aa, "ff") ~ stri_replace_all_fixed(aa, "ff", "zzzz")
+    ))
+})
+
+cat("\ndplyr if_else ----------------------------\n")
+tb2 <- as_tibble(dtt)
+system.time({
+  tb2 <- tb2 |>
+    mutate(aa = if_else(stri_detect_fixed(aa, "aa"), stri_replace_all_fixed(aa, "aa", "xxxx"), aa)) |>
+    mutate(aa = if_else(stri_detect_fixed(aa, "bb"), stri_replace_all_fixed(aa, "bb", "yyyy"), aa)) |>
+    mutate(aa = if_else(stri_detect_fixed(aa, "cc"), stri_replace_all_fixed(aa, "cc", "zzzz"), aa)) |>
+    mutate(aa = if_else(stri_detect_fixed(aa, "dd"), stri_replace_all_fixed(aa, "dd", "zzzz"), aa)) |>
+    mutate(aa = if_else(stri_detect_fixed(aa, "ee"), stri_replace_all_fixed(aa, "ee", "zzzz"), aa)) |>
+    mutate(aa = if_else(stri_detect_fixed(aa, "ff"), stri_replace_all_fixed(aa, "ff", "zzzz"), aa))
 })
 
 
@@ -251,7 +265,8 @@ system.time({
 })
 
 stopifnot(all(dt$aa == dt0$aa))
-stopifnot(all(dt$aa == df$aa))
+stopifnot(all(dt$aa == tb1$aa))
+stopifnot(all(dt$aa == tb2$aa))
 stopifnot(all(dt$aa == df0$aa))
 
 cat("\nall done ---\n\n")
@@ -438,4 +453,30 @@ for (col in names(dt_1)) {
 
 read.csv("rstats/csv-files/double_quotes.csv")
 readr::read_csv("rstats/csv-files/double_quotes.csv")
+```
+
+
+### compare group_by with dplyr
+
+```{r}
+library(data.table)
+library(dplyr)
+
+N <- 1e8
+df <- data.frame(x = sample(letters, size = N, replace = TRUE),
+                y = rnorm(N))
+
+# data.table
+dt <- as.data.table(df)
+system.time({
+  mean_dt <- dt[, .(avg = mean(y)), by = "x"]
+})
+
+# dplyr
+tb <- as_tibble(df)
+system.time({
+  mean_tb <- tb |>
+    group_by(x) |>
+    summarise(avg = mean(y))
+})
 ```
