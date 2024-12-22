@@ -34,6 +34,9 @@ group_var <- group_by_func[1]
 by_var <- group_by_func[2]
 group_func <- group_by_func[3]
 
+xy<- parse_options(args, opt = "xycount")
+print(xy)
+
 
 dat <- fread(fname, keepLeadingZeros = TRUE)
 
@@ -42,7 +45,7 @@ if (is.null(cols_selected)) {
 }
 dat <- dat[, cols_selected, with = FALSE]
 
-if (is.null(task) && is.null(group_by_func)) {
+if (is.null(task) && is.null(group_by_func) && is.null(xy)) {
   print(dat)
 }
 
@@ -65,5 +68,11 @@ if (!is.null(group_by_func)) {
   func <- get(group_func)
   res <- dat[, func(get(by_var)), by = group_var] |>
     setnames("V1", group_func)
+  print(res)
+}
+
+if (!is.null(xy)) {
+  res <- dat[, .N, by = xy] |>
+    _[order(get(xy[1]), get(xy[2]))]
   print(res)
 }
