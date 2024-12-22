@@ -21,7 +21,7 @@
 #
 # How to debug a function that has no runtime error line-by-line
 # - run trace(ggg, edit = TRUE) to temporarily edit the function
-# - add line broweser() to the function
+# - add line browser() to the function
 
 library(data.table)
 
