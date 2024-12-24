@@ -48,10 +48,12 @@ if (!all(options %in% available_options)) {
   cat("\nError: option", setdiff(options, available_options), "is not avaluable.",
       "\nAvailable options are", paste(available_options, collapse = ", "), "\n")
   cat("\nexamples:")
-  cat("\n$ csvshow iris.csv")
-  cat("\n$ csvshow iris.csv --columns col1 col2 --task summary")
-  cat("\n$ csvshow iris.csv --group_by_fun colA colB mean")
-  cat("\n$ csvshow iris.csv --xycount colC colD\n\n")
+  cat("\n$ csvshow aaa.csv                                     # display all columns")
+  cat("\n$ csvshow aaa.csv --columns col1 col2                 # display selected columns")
+  cat("\n$ csvshow aaa.csv --columns col1 col2 --task count    # count all selected categorical columns")
+  cat("\n$ csvshow aaa.csv --columns col1 col2 --task summary  # summary all selected numeric columns")
+  cat("\n$ csvshow aaa.csv --group_by_fun colA colB mean       # group by colA and calculate mean of colB.")
+  cat("\n$ csvshow aaa.csv --xycount colC colD                 # count colC-colD combinations\n\n")
   stop("In valid options")
 }
 
@@ -64,9 +66,7 @@ group_var <- group_by_fun[1]
 by_var <- group_by_fun[2]
 group_fun <- group_by_fun[3]
 
-xy<- parse_options(args, opt = "xycount")
-print(xy)
-
+xy <- parse_options(args, opt = "xycount")
 
 dat <- fread(fname, keepLeadingZeros = TRUE)
 
@@ -76,17 +76,22 @@ if (is.null(cols_selected)) {
 dat <- dat[, cols_selected, with = FALSE]
 
 if (is.null(task) && is.null(group_by_fun) && is.null(xy)) {
-  print(dat)
+  print(dat, topn = 20)
 }
 
 if (!is.null(task) && task == "summary") {
-  print(summary(dat))
+  # only show for numeric columns
+  numeric_cols <- sapply(dat, is.numeric)
+  print(summary(dat[, numeric_cols, with = FALSE]))
 }
 
 if (!is.null(task) && task == "count") {
   for (col in cols_selected) {
     if (is.character(dat[[col]])) {
-      print(as.data.frame(table(dat[[col]])))
+      res <- as.data.table(table(dat[[col]]))
+      names(res) <- c(col, "count")
+      cat("\n----------------------------------------------\n")
+      print(res, topn = 20)
     }
   }
 }
@@ -96,7 +101,7 @@ if (!is.null(group_by_fun)) {
              "', the ", group_fun, " of '", by_var, 
              "' is ----\n"))
   func <- get(group_fun)
-  res <- dat[, func(get(by_var)), by = group_var] |>
+  res <- dat[, func(get(by_var), na.rm = TRUE), by = group_var] |>
     setnames("V1", group_fun)
   print(res)
 }
