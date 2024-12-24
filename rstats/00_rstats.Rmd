@@ -53,7 +53,7 @@ env_i <- readRDS("env_i.RDS")
 list2env(as.list(env_i), envir = .GlobalEnv)
 
 # delete env_i from global environment
-rm("env_i)
+rm("env_i")
 ```
 
 ### catch exit status with system()
@@ -71,3 +71,12 @@ exit_status <- std_out[length(std_out)]
 print(exit_status)
 ```
 From terminal, when we run $ Rscript ttt_run.R, it will print 5 to stdout.
+
+
+
+### Use a variable of a function
+
+```{r}
+fun_var <- "mean"
+get(fun_var)(1:9)  # same as mean(1:9)
+```
