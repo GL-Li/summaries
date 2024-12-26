@@ -58,14 +58,14 @@ dt2 <- data.table(
 # join y and z from dt2 to dt1 in place
 dt1[
   dt2,
-  on = "id", 
-  ":=" (y = i.y, z = i.z)
+  on = "id",
+  ":="(y = i.y, z = i.z)
 ]
-  #       id      x      y          z
-  #    <int> <char> <char>      <num>
-  # 1:     1      a      A -1.0798453
-  # 2:     2      b      B -0.5736653
-  # 3:     3      c      C -0.7555166
+#       id      x      y          z
+#    <int> <char> <char>      <num>
+# 1:     1      a      A -1.0798453
+# 2:     2      b      B -0.5736653
+# 3:     3      c      C -0.7555166
 ```
 
 
@@ -115,7 +115,7 @@ system.time({
   s <- 0
   for (i in 1:n) {
     s <- s + i
-    df[i, "y"] <- s  # no copy either
+    df[i, "y"] <- s # no copy either
   }
 })
 ```
@@ -146,7 +146,7 @@ system.time({
 
 # 0.002 sec, much faster
 system.time({
-    dt[, y := z]
+  dt[, y := z]
 })
 
 
@@ -172,101 +172,59 @@ library(data.table)
 library(dplyr)
 library(stringi)
 
-N <- 1e6
-ss <- c("aa", "bb", "cc", "dd", "ee", "ff")
-
+N <- 1e7
 set.seed(111)
-dtt <- data.table(
+cat("\ncreating data ---------\n")
+ss <- c("aa", "bb", "cc", "dd", "ee", "ff")
+df <- data.frame(
   id = 1:N,
   x = "aaa",
   y = rnorm(N),
-  aa = paste0(sample(ss), rnorm(N)),
-  # the following columns just to make a bigger data frame
-  bb = paste0(sample(ss, 1), rnorm(N)),
-  cc = paste0(sample(ss, 1), rnorm(N)),
-  dd = paste0(sample(ss, 1), rnorm(N)),
-  ee = paste0(sample(ss, 1), rnorm(N)),
-  ff = paste0(sample(ss, 1), rnorm(N)),
-  gg = paste0(sample(ss, 1), rnorm(N)),
-  hh = paste0(sample(ss, 1), rnorm(N))
+  aa = paste0(sample(ss), rnorm(N))
 )
 
 cat("\ndata.table := --------------------\n")
-dt0 <- copy(dtt)
+dt <- as.data.table(df)
 system.time({
-  dt0[stri_detect_fixed(aa, "aa"), aa := stri_replace_all_fixed(aa, "aa", "xxxx")]
-  dt0[stri_detect_fixed(aa, "bb"), aa := stri_replace_all_fixed(aa, "bb", "yyyy")]
-  dt0[stri_detect_fixed(aa, "cc"), aa := stri_replace_all_fixed(aa, "cc", "zzzz")]
-  dt0[stri_detect_fixed(aa, "dd"), aa := stri_replace_all_fixed(aa, "dd", "zzzz")]
-  dt0[stri_detect_fixed(aa, "ee"), aa := stri_replace_all_fixed(aa, "ee", "zzzz")]
-  dt0[stri_detect_fixed(aa, "ff"), aa := stri_replace_all_fixed(aa, "ff", "zzzz")]
+  dt[y > 1, aa := stri_replace_all_fixed(aa, "aa", "xxxxxxxx")]
 })
 
-cat("\ndplyr case_when ----------------------------\n")
-tb1 <- as_tibble(dtt)
-system.time({
-  tb1 <- tb1 |>
-    mutate(aa = case_when(
-      stri_detect_fixed(aa, "aa") ~ stri_replace_all_fixed(aa, "aa", "xxxx"),
-      stri_detect_fixed(aa, "bb") ~ stri_replace_all_fixed(aa, "bb", "yyyy"), 
-      stri_detect_fixed(aa, "cc") ~ stri_replace_all_fixed(aa, "cc", "zzzz"),
-      stri_detect_fixed(aa, "dd") ~ stri_replace_all_fixed(aa, "dd", "zzzz"),
-      stri_detect_fixed(aa, "ee") ~ stri_replace_all_fixed(aa, "ee", "zzzz"), 
-      stri_detect_fixed(aa, "ff") ~ stri_replace_all_fixed(aa, "ff", "zzzz")
-    ))
-})
 
 cat("\ndplyr if_else ----------------------------\n")
-tb2 <- as_tibble(dtt)
+tb <- as_tibble(df)
 system.time({
-  tb2 <- tb2 |>
-    mutate(aa = if_else(stri_detect_fixed(aa, "aa"), stri_replace_all_fixed(aa, "aa", "xxxx"), aa)) |>
-    mutate(aa = if_else(stri_detect_fixed(aa, "bb"), stri_replace_all_fixed(aa, "bb", "yyyy"), aa)) |>
-    mutate(aa = if_else(stri_detect_fixed(aa, "cc"), stri_replace_all_fixed(aa, "cc", "zzzz"), aa)) |>
-    mutate(aa = if_else(stri_detect_fixed(aa, "dd"), stri_replace_all_fixed(aa, "dd", "zzzz"), aa)) |>
-    mutate(aa = if_else(stri_detect_fixed(aa, "ee"), stri_replace_all_fixed(aa, "ee", "zzzz"), aa)) |>
-    mutate(aa = if_else(stri_detect_fixed(aa, "ff"), stri_replace_all_fixed(aa, "ff", "zzzz"), aa))
+  tb <- tb |>
+    mutate(aa = if_else(y > 1, stri_replace_all_fixed(aa, "aa", "xxxxxxxx"), aa))
 })
 
 
 cat("\ndata.table set -------------------\n")
-dt <- copy(dtt)
+dt1 <- as.data.table(df)
 system.time({
-  ii <- which(stri_detect_fixed(dt$aa, "aa"))
-  set(dt, i = ii, j = 4L, stri_replace_all_fixed(dt$aa[ii], "aa", "xxxx"))
-  ii <- which(stri_detect_fixed(dt$aa, "bb"))
-  set(dt, i = ii, j = 4L, stri_replace_all_fixed(dt$aa[ii], "bb", "yyyy"))
-  ii <- which(stri_detect_fixed(dt$aa, "cc"))
-  set(dt, i = ii, j = 4L, stri_replace_all_fixed(dt$aa[ii], "cc", "zzzz"))
-  ii <- which(stri_detect_fixed(dt$aa, "dd"))
-  set(dt, i = ii, j = 4L, stri_replace_all_fixed(dt$aa[ii], "dd", "zzzz"))
-  ii <- which(stri_detect_fixed(dt$aa, "ee"))
-  set(dt, i = ii, j = 4L, stri_replace_all_fixed(dt$aa[ii], "ee", "zzzz"))
-  ii <- which(stri_detect_fixed(dt$aa, "ff"))
-  set(dt, i = ii, j = 4L, stri_replace_all_fixed(dt$aa[ii], "ff", "zzzz"))
+  ii <- which(dt1$y > 1)
+  set(dt1, i = ii, j = 4L, stri_replace_all_fixed(dt1$aa[ii], "aa", "xxxxxxxx"))
 })
 
+cat("\ndplyr case_when ----------------------------\n")
+tb1 <- as_tibble(df)
+system.time({
+  tb1 <- tb1 |>
+    mutate(aa = case_when(
+      y > 1 ~ stri_replace_all_fixed(aa, "aa", "xxxxxxxx"),
+      .default = aa
+    ))
+})
 
 cat("\nnative data.frame ----------------\n")
-df0 <- as.data.frame(dtt)
+df0 <- df
 system.time({
-  ii <- which(stri_detect_fixed(df0$aa, "aa"))
-  df0$aa[ii] = stri_replace_all_fixed(df0$aa[ii], "aa", "xxxx")
-  ii <- which(stri_detect_fixed(df0$aa, "bb"))
-  df0$aa[ii] = stri_replace_all_fixed(df0$aa[ii], "bb", "yyyy")
-  ii <- which(stri_detect_fixed(df0$aa, "cc"))
-  df0$aa[ii] = stri_replace_all_fixed(df0$aa[ii], "cc", "zzzz")
-  ii <- which(stri_detect_fixed(df0$aa, "dd"))
-  df0$aa[ii] = stri_replace_all_fixed(df0$aa[ii], "dd", "zzzz")
-  ii <- which(stri_detect_fixed(df0$aa, "ee"))
-  df0$aa[ii] = stri_replace_all_fixed(df0$aa[ii], "ee", "zzzz")
-  ii <- which(stri_detect_fixed(df0$aa, "ff"))
-  df0$aa[ii] = stri_replace_all_fixed(df0$aa[ii], "ff", "zzzz")
+  ii <- which(df0$y > 1)
+  df0$aa[ii] <- stri_replace_all_fixed(df0$aa[ii], "aa", "xxxxxxxx")
 })
 
-stopifnot(all(dt$aa == dt0$aa))
+stopifnot(all(dt$aa == dt1$aa))
+stopifnot(all(dt$aa == tb$aa))
 stopifnot(all(dt$aa == tb1$aa))
-stopifnot(all(dt$aa == tb2$aa))
 stopifnot(all(dt$aa == df0$aa))
 
 cat("\nall done ---\n\n")
@@ -335,10 +293,12 @@ dt[, .(group_number = .GRP), by = id]
 
 **Usage:**
 ```{r}
-dt <- data.table(id = c("a", "b", "b", "a", "b"), 
-                id2 = c("C", "D", "D", "C", "C"),
-                x = 1:5, 
-                y = 5:9)
+dt <- data.table(
+  id = c("a", "b", "b", "a", "b"),
+  id2 = c("C", "D", "D", "C", "C"),
+  x = 1:5,
+  y = 5:9
+)
 # Show each group with their related group name values
 dt[, .(id_sum = sum(x), group_info = .BY), by = c("id", "id2")]
 ```
@@ -422,27 +382,29 @@ for (col in names(dt)) {
 
 ```{r}
 library(data.table)
-dt <- data.table(x = c('d"abc""d', "aaa"),
-                 y = 1:2)
-  #           x     y
-  #      <char> <int>
-  # 1: d"abc""d     1
-  # 2:      aaa     2
+dt <- data.table(
+  x = c('d"abc""d', "aaa"),
+  y = 1:2
+)
+#           x     y
+#      <char> <int>
+# 1: d"abc""d     1
+# 2:      aaa     2
 fwrite(dt, file = "rstats/csv-files/double_quotes.csv")
-  # x,y
-  # "d""abc""""d",1
-  # aaa,2
+# x,y
+# "d""abc""""d",1
+# aaa,2
 
 dt_1 <- fread("rstats/csv-files/double_quotes.csv")
-  #              x     y
-  #         <char> <int>
-  # 1: d""abc""""d     1
-  # 2:         aaa     2
+#              x     y
+#         <char> <int>
+# 1: d""abc""""d     1
+# 2:         aaa     2
 
 fwrite(dt_1, file = "rstats/csv-files/double_quotes_1.csv")
-  # x,y
-  # "d""""abc""""""""d",1
-  # aaa,2
+# x,y
+# "d""""abc""""""""d",1
+# aaa,2
 
 # a workaround
 for (col in names(dt_1)) {
@@ -460,23 +422,42 @@ readr::read_csv("rstats/csv-files/double_quotes.csv")
 
 ```{r}
 library(data.table)
+setDTthreads(threads = 1)
 library(dplyr)
 
 N <- 1e8
-df <- data.frame(x = sample(letters, size = N, replace = TRUE),
-                y = rnorm(N))
+print("creating df ----")
+df <- data.frame(
+  x1 = sample(letters, size = N, replace = TRUE),
+  x2 = sample(LETTERS, size = N, replace = TRUE),
+  x3 = sample(LETTERS, size = N, replace = TRUE),
+  y = rnorm(N)
+)
 
 # data.table
-dt <- as.data.table(df)
-system.time({
-  mean_dt <- dt[, .(avg = mean(y)), by = "x"]
-})
+print("data.table ----")
+time_dt <- function(df) {
+  dt <- as.data.table(df)
+  system.time({
+    mean_dt <- dt[, .(avg = mean(y)), by = c("x1", "x2", "x3")]
+  })
+  rm(dt)
+  gc()
+}
+time_dt(df)
+
 
 # dplyr
-tb <- as_tibble(df)
-system.time({
-  mean_tb <- tb |>
-    group_by(x) |>
-    summarise(avg = mean(y))
-})
+print("dplyt ----")
+time_tb <- function(df) {
+  tb <- as_tibble(df)
+  system.time({
+    mean_tb <- tb |>
+      group_by(x1, x2, x3) |>
+      summarise(avg = mean(y))
+  })
+  rm(tb)
+  gc()
+}
+time_tb(df)
 ```
