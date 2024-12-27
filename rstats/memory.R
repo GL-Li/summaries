@@ -1,35 +1,41 @@
-#library(pryr)
-
-mem_test <- function() {
+mem_test <- function(N) {
   dt <- data.frame(
     x = 1:N,
     y = rnorm(N)
   )
 
-  print(pryr::mem_used())
-  
   return(mean(dt$y))
 }
 
-N <- 1.5e9
-# for (i in 1:20) {
-#   print(i)
-#   avg <- mem_test()
-#   print(avg)
-#   print(pryr::mem_used())
-# }
+N <- 5e8
+print("run mem_test ----------")
+avg <- mem_test(N)
+print(avg)
 
-N <- 1.5e8
-for (i in 1:10) {
-  print(i)
-  dt <- data.frame(
-    x = 1:N,
-    y = rnorm(N)
-  )
-  avg <- mean(dt$y)
+N <- 1e5
+df <- data.frame(
+  x = 1:N,
+  y = rnorm(N)
+)
 
-  print(pryr::mem_used())
-  #rm(dt)
-  #gc()
-  print(pryr::mem_used())
-}
+
+cat("\nsleep 1 --------")
+Sys.sleep(20)
+print("create df --------------")
+N <- 5e8
+df <- data.frame(
+  x = 1:N,
+  y = rnorm(N)
+)
+rm(df)
+
+cat("\nsleep 2 ------------")
+Sys.sleep(20)
+
+print("run gc() -------------")
+gc()
+
+
+
+cat("\nsleep 3 -----------")
+Sys.sleep(20)

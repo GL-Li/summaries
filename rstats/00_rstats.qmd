@@ -74,46 +74,20 @@ From terminal, when we run $ Rscript ttt_run.R, it will print 5 to stdout.
 
 
 ### garbage collector gc()
-Automatically collect local objects in a function after the function run completed.
-```{r}
-# all garbage in a function is collected after function completion
-mem_test <- function() {
-  dt <- data.frame(
-    x = 1:N,
-    y = rnorm(N)
-  )
-  print(pryr::mem_used())
-  return(mean(dt$y))
-}
+No need to run `gc()` to manually collect garbage. R will automatically collect garbage whenever more memory is needed.
 
-N <- 1.5e9
-for (i in 1:20) {
-  print(i)
-  avg <- mem_test()
-  print(avg)
-  print(pryr::mem_used())
-}
+Sources of garbages:
+- Objects created inside a function scope after function run is completed.
+- Objects removed with `rm(x, y, abc)`
+- A memory location that is not reachable in R anymore, for example, if we first run `dat <- 123` and then run `dat <- "abc"`, then data `123` is not reachable anymore and becomes garbage.
+  
+Use `rm()` to explicityly remove a large object before creating a new large object with the same name. Without `rm(df)`, the memory for the first df is not released before the creation of the second df is completed, which means a minimal memory of two df is required.
+```{r}
+df <- data.frame(x = 1:1e9, y = rnorm(1e9))
+rm(df)
+df <- data.frame(x = 1:1e9, y = rnorm(1e9))
 ```
 
-In a for loop, garbage collector only runs after the object in the new iteration has been created. So must explicitly remove the large object before next iteration. `gc()` is automatically applied after `rm()`.
-```{r}
-# must use rm() to remove dt to give a fresh start for next iteration
-# otherwise 2 times of the size of dt is required.
-N <- 1.5e9
-for (i in 1:100) {
-  print(i)
-  dt <- data.frame(
-    x = 1:N,
-    y = rnorm(N)
-  )
-  avg <- mean(dt$y)
-
-  print(pryr::mem_used())
-  rm(dt)
-  #gc()
-  print(pryr::mem_used())
-}
-```
 
 
 ### Use a variable of a function
