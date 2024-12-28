@@ -1,6 +1,7 @@
 ## low-dependency packages
 Packages depends only on R or base-R packages.
 
+- rbenchmark
 - data.table
 - stringi
 - cli
