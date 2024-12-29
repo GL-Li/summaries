@@ -4,7 +4,6 @@ if (!require(rbenchmark)) {
   install.packages("rbenchmark")
 }
 library(rbenchmark)
-options(dplyr.summarise.inform = FALSE) 
 
 n <- 1e5
 df <- tibble(
@@ -17,12 +16,8 @@ df <- tibble(
 )
 
 dplyr_bench <- function(tb) {
-  res <- tb %>%
-    group_by(pag, jobTitle) %>%
-    summarise(n = n(),
-              avg_num1 = mean(num1),
-              avg_num2 = mean(num2),
-              avg_num3 = mean(num3))
+  res <- tb |>
+    mutate(pag = if_else(num1 > 1, "Other", pag))
 
   return(res)
 }
@@ -30,14 +25,7 @@ dplyr_bench <- function(tb) {
 
 # data.table
 datatable_bench <- function(dt) {
-  res <- dt[
-    ,
-    list(n = .N,
-         avg_num1 = mean(num1),
-         avg_num2 = mean(num2),
-         avg_num3 = mean(num3)),
-    by = c("pag", "jobTitle")
-  ] 
+  res <- dt[num1 > 1, pag := "Other" ] 
 
   return(res)
 }
@@ -51,7 +39,6 @@ if (interactive()) {
   res_dplyr <- dplyr_bench(tb) |> 
     as.data.frame()
   res_datatable <- datatable_bench(dt) |>
-    _[order(pag, jobTitle)] |>
     as.data.frame()
   
   all.equal(res_dplyr, res_datatable)
@@ -64,11 +51,3 @@ bench_res_1 <- benchmark(
   datatable_bench(dt)
 )
 print(bench_res_1)
-
-cat("\n\nbenchmarking 2 ----------------\n")
-bench_res_2 <- benchmark(
-  dplyr_bench(tb),
-  datatable_bench(dt) |>
-    _[order(pag, jobTitle)]
-)
-print(bench_res_2)

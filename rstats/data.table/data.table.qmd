@@ -1,3 +1,106 @@
+## Why use data.table for production instead of dplyr
+
+### minimal dependencies
+- data.table: only imports package `methods`, which is required package for any R distribution.
+- dplyr: imports 13 packages, 11 of them are thirty party packages that are not part of a distribution. The 11 third party packages have their own dependencies.
+
+### fast execution and efficient memory management
+Run speed_datatable_dplyr.R for benchmarks.
+
+
+## data.table fundamentals
+
+### concise syntex `dt[i, j, by]`
+- i: select rows
+- j: operation on columns 
+- by: specify group_by columns
+  
+Examples: in the following examples, `list(...)` can be replaced with `.(...)`. In package development, `list(...)` is preferred.
+```{r}
+library(data.table)
+set.seed(123)
+dt <- data.table(
+  id = 1:8,
+  g1 = letters[1:2],
+  g2 = LETTERS[1:4],
+  y1 = rnorm(8),
+  y2 = rnorm(8) + 100
+)
+
+# filter / slice rows
+dt[id >= 5]
+dt[c(1, 3, 8)]
+
+# select columns
+dt[, list(id, g1, y1)]
+
+# mutate columns
+dt[, y12 := y1 + y2]
+
+# arrange by columns
+dt[order(y1)]
+
+# group_by and summarize
+dt[, list(mean(y1)), by = "g1"]
+
+# rename
+setnames(dt, "id", "id_new")
+
+# distinct
+dt[, list(g1, g2)] |>
+  unique()
+
+# pull the values of a column into a vector
+dt[, g1]   # same as dt$g1 and dt[["g1"]]
+```
+
+### more use cases
+```{r}
+# update columns for selected rows, mutate(... ifelse() ... )
+dt[g1 %in% c("a", "c"), y1 := 999]
+dt
+dt[g1 %in% c("b", "c"), 
+   `:=`(y1 = 999, y2 = 0)]
+dt
+
+# add new columns
+dt[id_new %% 2 == 0, is_even := TRUE]
+
+# group_by - summarize multiple columns
+dt[,
+   list(avg1 = mean(y1), 
+        avg2 = mean(y2)),
+   by = c("g1", "g2")]
+```
+
+
+### Work with variables
+When column names are stored in a variable.
+
+Select columns by variable
+```{r}
+dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
+cols <- c("x", "z")
+dt[, cols, with = FALSE]
+```
+
+Update a column by variable
+```{r}
+dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
+col <- "z"
+dt[, (col) := 999]
+```
+
+Get column values by variable
+```{r}
+dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
+col <- "z"
+dt[get(col) == 5]
+```
+
+
+
+
 ## fread
 
 ### colClass
@@ -185,25 +288,31 @@ df <- data.frame(
 
 cat("\ndata.table := --------------------\n")
 dt <- as.data.table(df)
+pryr::address(dt)
 system.time({
   dt[y > 1, aa := stri_replace_all_fixed(aa, "aa", "xxxxxxxx")]
 })
+pryr::address(dt)
 
 
 cat("\ndplyr if_else ----------------------------\n")
 tb <- as_tibble(df)
+pryr::address(tb)
 system.time({
   tb <- tb |>
     mutate(aa = if_else(y > 1, stri_replace_all_fixed(aa, "aa", "xxxxxxxx"), aa))
 })
+pryr::address(tb)
 
 
 cat("\ndata.table set -------------------\n")
 dt1 <- as.data.table(df)
+pryr::address(dt1)
 system.time({
   ii <- which(dt1$y > 1)
   set(dt1, i = ii, j = 4L, stri_replace_all_fixed(dt1$aa[ii], "aa", "xxxxxxxx"))
 })
+pryr::address(dt1)
 
 cat("\ndplyr case_when ----------------------------\n")
 tb1 <- as_tibble(df)
@@ -217,10 +326,12 @@ system.time({
 
 cat("\nnative data.frame ----------------\n")
 df0 <- df
+pryr::address(df0)
 system.time({
   ii <- which(df0$y > 1)
   df0$aa[ii] <- stri_replace_all_fixed(df0$aa[ii], "aa", "xxxxxxxx")
 })
+pryr::address(df0)
 
 stopifnot(all(dt$aa == dt1$aa))
 stopifnot(all(dt$aa == tb$aa))
@@ -229,6 +340,7 @@ stopifnot(all(dt$aa == df0$aa))
 
 cat("\nall done ---\n\n")
 ```
+
 
 ## Key Special Symbols in `data.table`
 
@@ -245,7 +357,7 @@ dt[, .(count = .N), by = id]
 
 ### `.SD` (Subset of Data)
 - A 'data.table' itself containing the Subset of Data for each group. 
-- Used within `by` for operations on lower-level groupings.
+- Used with `by` for operations on lower-level groupings.
 - It doesn't include the columns used in the `by` in the subset by default.
 
 **Usage:**
@@ -418,46 +530,3 @@ readr::read_csv("rstats/csv-files/double_quotes.csv")
 ```
 
 
-### compare group_by with dplyr
-
-```{r}
-library(data.table)
-setDTthreads(threads = 1)
-library(dplyr)
-
-N <- 1e8
-print("creating df ----")
-df <- data.frame(
-  x1 = sample(letters, size = N, replace = TRUE),
-  x2 = sample(LETTERS, size = N, replace = TRUE),
-  x3 = sample(LETTERS, size = N, replace = TRUE),
-  y = rnorm(N)
-)
-
-# data.table
-print("data.table ----")
-time_dt <- function(df) {
-  dt <- as.data.table(df)
-  system.time({
-    mean_dt <- dt[, .(avg = mean(y)), by = c("x1", "x2", "x3")]
-  })
-  rm(dt)
-  gc()
-}
-time_dt(df)
-
-
-# dplyr
-print("dplyt ----")
-time_tb <- function(df) {
-  tb <- as_tibble(df)
-  system.time({
-    mean_tb <- tb |>
-      group_by(x1, x2, x3) |>
-      summarise(avg = mean(y))
-  })
-  rm(tb)
-  gc()
-}
-time_tb(df)
-```
