@@ -99,6 +99,132 @@ dt[get(col) == 5]
 ```
 
 
+### Special Symbols in `data.table`
+
+#### `.N`
+- Represents the number of rows in the current group when using `by`. 
+- When used without `by`, it gives the total number of rows in the `data.table`.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c(1, 1, 2, 2), x = c(5, 6, 7, 8))
+# Number of rows in each group defined by 'id'
+dt[, .(count = .N), by = id]
+```
+
+#### `.SD` (Subset of Data)
+- A 'data.table' itself containing the Subset of Data for each group. 
+- Used with `by` for operations on lower-level groupings.
+- It doesn't include the columns used in the `by` in the subset by default.
+
+**Usage:**
+```{r}
+# Calculate the mean of all remaining columns within each group defined by 'id'
+dt <- data.table(id = c(1, 1, 2, 2), x = 1:4, y = 5:8)
+dt[, lapply(.SD, mean), by = id]
+```
+
+#### `.SDcols`
+- If you want to specify which columns to include in `.SD`, you can use `.SDcols`.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c(1, 1, 2, 2), x = 1:4, y = 5:8)
+# Mean for specified columns
+dt[, lapply(.SD, mean), by = id, .SDcols = c("x")]
+```
+
+#### `.I`
+- Refers to the row numbers in the original `data.table`.
+
+**Usage:**
+```{r}
+dt <- data.table(id = c(1, 2, 2, 1), x = 1:4, y = 5:8)
+# Return the row numbers of the first occurrence in each group
+dt[, .I[1], by = id]
+# all row numbers by group
+dt[, .I, by = id]
+```
+
+
+### Merge / join
+
+#### `merge(dt1, dt2, ...)`
+To preserve the row order of dt1, set `sort = FALSE`
+```{r}
+dt1 <- data.table(id = c(5:8, 4:1), y1 = letters[1:8])
+dt2 <- data.table(id = 7:4, y2 = LETTERS[5:8])
+merge(dt1, dt2, by = "id", all.x = TRUE, sort = FALSE)
+```
+
+## Advanced topics
+
+### in-place update
+Operations like `:=` and `setnames()` modify the data.table directly. No need to assign the modified data.table to a new variable.
+
+This is a feature that saves memory but is also dangerous - you may accidentally changed a data.table, as shown in the example below.
+
+#### Example 1: two variables point to the same memory
+```{r}
+# dt is accidentally modified even if there is no direct operation on it
+dt <- data.table(x1 = letters[1:3], x2 = LETTERS[1:3])
+aaa <- dt
+aaa[, y := rnorm(3)] |>
+  _[, list(avg = mean(y)), by = "x1"]
+aaa
+dt
+
+# use copy to avoid the accident if memory is not a concern
+dt <- data.table(x1 = letters[1:3], x2 = LETTERS[1:3])
+aaa <- copy(dt)
+aaa[, y := rnorm(3)] |>
+  _[, list(avg = mean(y)), by = "x1"]
+aaa
+dt
+```
+
+#### Example 2: even in a function
+```{r}
+dt <- data.table(x1 = letters[1:3], x2 = LETTERS[1:3])
+
+# this function modifies dt in global environment even though the change
+# is in the function local environment. The reason is that both dt in global
+# and local environment point to the same memory address.
+concat_2_cols <- function(dt) {
+  dt[, x12 := paste0(x1, x2)]
+  return(dt$x12)
+}
+res <- concat_2_cols(dt)
+dt
+
+# if memory is not a concern and you do not want to change dt,
+# make a copy of dt
+concat_2_cols <- function(dt) {
+  dt <- copy(dt)
+  dt[, x12 := paste0(x1, x2)]
+  return(dt$x12)
+}
+
+dt <- data.table(x1 = letters[1:3], x2 = LETTERS[1:3])
+res <- concat_2_cols(dt)
+dt
+```
+
+
+### in-place join-update
+To add column in dt2 to dt1 in-place
+```{r}
+dt1 <- data.table(id1 = c(5:8, 4:1), y1 = letters[1:8], y2 = "xyz")
+dt1
+dt2 <- data.table(id2 = 7:4, y2 = LETTERS[5:8], y3 = 999, y4 = 0)
+dt2
+dt1[dt2, on = c("id1" = "id2"), `:=`(y2 = i.y2, y3 = i.y3)]
+dt1
+```
+
+
+
+
 
 
 ## fread
