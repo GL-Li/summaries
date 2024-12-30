@@ -178,8 +178,6 @@ dt_long <- melt(
 )
 dt_long
 
-
-
 # example 2
 dt <- data.table(
   c1 = 1,
@@ -201,17 +199,58 @@ dt_long
 ### dcast: long to wide table
 
 ```{r}
+# example 1
+aaa <- data.table(group = rep(c("g1", "g2"), each = 3),
+                  x = rep(letters[1:3], 2), 
+                  y = 3:8,
+                  z = 999)
+aaa
+bbb <- dcast(aaa, group ~ x, value.var = "y")
+bbb
+
+
+# example 2: no grouping columns
 aaa <- data.table(x = letters[1:3], y = 5:3)
+aaa
 bbb <- dcast(aaa, NULL ~ x, value.var = "y")
+bbb
 # bbb has an extra column whose name and value are "."
 names(bbb)
 bbb$. <- NULL
 ```
 
 
+### flexible columns selection with `patterns()`
+Use `.SD` and `.SDcols = patterns("pattern")`
+```{r}
+dt <- data.table(
+  grp = c("g1", "g2", "g3"),
+  x1 = 1:3,
+  x2 = 2:4,
+  xx = 3:5,
+  x1x = 4:6,
+  y1 = letters[1:3],
+  yx = letters[2:4]
+)
+# select column starts with x
+dt[, .SD, .SDcols = patterns("^x")]
+# select grp and columns start with x
+dt[, .SD, .SDcols = patterns("grp|^x")]
+# more complicated patterns
+dt[, .SD, .SDcols = patterns("^x[^2]*")]
+# ends with x
+dt[, .SD, .SDcols = patterns("x$")]
+# contains 1
+dt[, .SD, .SDcols = patterns("1")]
+
+# melt
+melt(dt, measure.vars = patterns("^x\\d"))
+```
+
 
 
 ## Advanced topics
+
 
 ### in-place update
 Operations like `:=` and `setnames()` modify the data.table directly. No need to assign the modified data.table to a new variable.
