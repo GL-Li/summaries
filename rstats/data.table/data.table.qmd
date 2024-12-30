@@ -147,15 +147,69 @@ dt[, .I, by = id]
 ```
 
 
-### Merge / join
-
-#### `merge(dt1, dt2, ...)`
+### Merge two data.tables with `merge(dt1, dt2, ...)`
 To preserve the row order of dt1, set `sort = FALSE`
 ```{r}
 dt1 <- data.table(id = c(5:8, 4:1), y1 = letters[1:8])
 dt2 <- data.table(id = 7:4, y2 = LETTERS[5:8])
 merge(dt1, dt2, by = "id", all.x = TRUE, sort = FALSE)
 ```
+
+
+### melt: wide to long table
+
+```{r}
+library(data.table)
+
+# example 1
+dt <- data.table(
+  group = c("g1", "g2"),
+  c1 = 1:2,
+  c2 = 4:5,
+  c3 = 8:9
+)
+dt_long <- melt(
+  data = dt,
+  id.vars = "group",
+  measure.vars = c("c1", "c2", "c3"),
+  variable.name = "factor",
+  value.name = "count",
+  variable.factor = FALSE
+)
+dt_long
+
+
+
+# example 2
+dt <- data.table(
+  c1 = 1,
+  c2 = 2,
+  c3 = 3
+)
+dt_long <- melt(
+  data = dt,
+  id.vars = NULL,
+  measure.vars = names(dt),
+  variable.name = "group",
+  value.name = "count",
+  variable.factor = FALSE
+)
+dt_long
+```
+
+
+### dcast: long to wide table
+
+```{r}
+aaa <- data.table(x = letters[1:3], y = 5:3)
+bbb <- dcast(aaa, NULL ~ x, value.var = "y")
+# bbb has an extra column whose name and value are "."
+names(bbb)
+bbb$. <- NULL
+```
+
+
+
 
 ## Advanced topics
 
@@ -212,6 +266,8 @@ dt
 
 
 ### in-place join-update
+Run `speed_inplace_join.R` to compare the speed to data.table merge and dplyr left_join.
+
 To add column in dt2 to dt1 in-place
 ```{r}
 dt1 <- data.table(id1 = c(5:8, 4:1), y1 = letters[1:8], y2 = "xyz")
@@ -555,41 +611,6 @@ dt[, .(id_sum = sum(x), group_info = .BY), by = c("id", "id2")]
   setkey(dt, id)
   ```
 
-### melt: wide to long table
-
-```{r}
-library(data.table)
-dt <- data.table(
-  c1 = 1,
-  c2 = 2,
-  c3 = 3
-)
-dt_long <- melt(
-  data = dt,
-  id.vars = NULL,
-  measure.vars = names(dt),
-  variable.name = "group",
-  value.name = "count",
-  variable.factor = FALSE
-)
-dt_long
-#     group count
-#    <char> <num>
-# 1:     c1     1
-# 2:     c2     2
-# 3:     c3     3
-```
-
-
-### dcast: long to wide table
-
-```{r}
-aaa <- data.table(x = letters[1:3], y = 5:3)
-bbb <- dcast(aaa, NULL ~ x, value.var = "y")
-# bbb has an extra column whose name and value are "."
-names(bbb)
-bbb$. <- NULL
-```
 
 
 ### double quotes in csv files
