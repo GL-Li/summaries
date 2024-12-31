@@ -147,13 +147,23 @@ dt[, .I, by = id]
 ```
 
 
-### Merge two data.tables with `merge(dt1, dt2, ...)`
+### join / merge
+
+#### Merge dt2 into dt1 with `merge(dt1, dt2, ...)`
 To preserve the row order of dt1, set `sort = FALSE`
 ```{r}
 dt1 <- data.table(id = c(5:8, 4:1), y1 = letters[1:8])
 dt2 <- data.table(id = 7:4, y2 = LETTERS[5:8])
 merge(dt1, dt2, by = "id", all.x = TRUE, sort = FALSE)
 ```
+
+#### join dt2 into dt1 with `dt2[dt1, on = ...]`
+```{r}
+dt1 <- data.table(id = c(5:8, 4:1), y1 = letters[1:8])
+dt2 <- data.table(id = 7:4, y2 = LETTERS[5:8])
+dt2[dt1, on = "id"]
+```
+
 
 
 ### melt: wide to long table
@@ -318,6 +328,8 @@ dt1
 ```
 
 
+### programming on data.table
+https://rdatatable.gitlab.io/data.table/articles/datatable-programming.html
 
 
 
