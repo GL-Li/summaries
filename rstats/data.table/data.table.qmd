@@ -82,20 +82,43 @@ Select columns by variable
 dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
 cols <- c("x", "z")
 dt[, cols, with = FALSE]
+
+# new: use env list
+dt[, cols, env = list(cols = I(c("x", "z")))]
 ```
 
 Update a column by variable
 ```{r}
 dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
+dt
 col <- "z"
 dt[, (col) := 999]
+dt
+
+# New: provide names in an env list
+dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
+dt
+dt[, col := 999, env = list(col = "z")]
+dt
 ```
 
 Get column values by variable
 ```{r}
 dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
+dt
 col <- "z"
-dt[get(col) == 5]
+dt[get(col) >= 6]
+
+#  new: use env list
+dt <- data.table(x = 1:3, y = 2:4, z = 5:7)
+dt
+dt[col >= 6, env = list(col = "z")]
+
+col1 = "z"
+col2 = "x"
+dt[col1 >= 6, 
+   list(col1, col2),
+   env = list(col1 = col1, col2 = col2)]
 ```
 
 
