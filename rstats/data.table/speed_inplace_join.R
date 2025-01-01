@@ -1,3 +1,27 @@
+# compare the speed using different methods to replace values as follows
+# 
+# original data frame:
+#  id      col1      col2      col3     ...    col50
+#  ee+1    c+-,.J    g+-,.D    a+-,.A   ...    d+-,.E
+#  ee+2    c+-,.J    a+-,.J    a+-,.E   ...    b+-,.H
+#  ee+3    j+-,.G    g+-,.J    j+-,.E   ...    g+-,.I
+#  ee+4    b+-,.C    g+-,.J    h+-,.I   ...    i+-,.H
+#  ee+5    f+-,.A    g+-,.J    e+-,.B   ...    j+-,.F
+#
+# converted into
+#  id      col1      col2      col3     ...    col50
+#  id_1    col1_1    col2_1    col3_1   ...    col50_1
+#  id_2    col1_1    col2_2    col3_2   ...    col50_2
+#  id_3    col1_2    col2_3    col3_3   ...    col50_3
+#  id_4    col1_3    col2_3    col3_4   ...    col50_4
+#  id_5    col1_4    col2_3    col3_5   ...    col50_5
+#
+# Results:
+# the inplace data.table join can be 10 times faster, depending on the data size.
+# the large the faster compared to other memory-copy methods.
+
+
+
 library(dplyr)
 library(data.table)
 if (!require(rbenchmark)) {
@@ -51,6 +75,7 @@ for (col in names(df_replacement)) {
 }
 
 dt_merge <- function(dt1, dt1_replacement) {
+  original_names <- names(dt1)
   for (col in names(dt1_replacement)) {
     map <- dt1_replacement[[col]] |> 
       copy() |>
@@ -60,11 +85,34 @@ dt_merge <- function(dt1, dt1_replacement) {
       _[, (col) := new]
     dt1$new <- NULL
   }
-  return(dt)
+  return(dt1[, original_names, with = FALSE])
 }
 
 
-# replace with dplry
+
+# replace with data.table join
+dt2 <- as.data.table(df)
+dt2_replacement <- list()
+for (col in names(df_replacement)) {
+  tmp <- as.data.table(df_replacement[[col]])
+  dt2_replacement[[col]] <- tmp
+}
+
+dt_join <- function(dt2, dt2_replacement) {
+  original_names <- names(dt2)
+  for (col in names(dt2_replacement)) {
+    map <- dt2_replacement[[col]] |> 
+      copy() |>
+      setnames("old", col)
+    dt2 <- map[dt2, on = col] |>
+      _[, (col) := new]
+    dt2$new <- NULL
+  }
+  return(dt2[, original_names, with = FALSE])
+}
+
+
+# replace with dplyr join
 tb <- as_tibble(df)
 tb_replacement <- list()
 for (col in names(df_replacement)) {
@@ -85,21 +133,26 @@ dplyr_join <- function(tb, tb_replacement) {
 }
 
 
-# validation
+# validation: all method have the same output
 if (interactive()) {
   dt_inplace(dt, dt_replacement)
-  dt_new <- dt_merge(dt1, dt1_replacement)
-  all.equal(dt, dt_new)
+  dt_1 <- dt_merge(dt1, dt1_replacement)
+  all.equal(dt, dt_1)
+  dt_2 <- dt_join(dt2, dt2_replacement)
+  all.equal(dt, dt_2)
   
   tb_new <- dplyr_join(tb, tb_replacement)
   all.equal(as.data.frame(dt), as.data.frame(tb_new))
 }
 
+# benchmarking. 
 print("benchmarking -----------")
 benchmark(
   dt_inplace(dt, dt_replacement),
-  dt_new <- dt_merge(dt1, dt1_replacement),
+  dt_1 <- dt_merge(dt1, dt1_replacement),
   tb_new <- dplyr_join(tb, tb_replacement),
-  replications = 10
+  dt_2 <- dt_join(dt2, dt2_replacement),
+  replications = 10,
+  order = "relative"
 )
 
