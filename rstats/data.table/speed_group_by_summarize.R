@@ -61,7 +61,8 @@ if (interactive()) {
 cat("\n\nbenchmarking 1 ----------------\n")
 bench_res_1 <- benchmark(
   dplyr_bench(tb),
-  datatable_bench(dt)
+  datatable_bench(dt),
+  replications = 10
 )
 print(bench_res_1)
 
@@ -69,6 +70,7 @@ cat("\n\nbenchmarking 2 ----------------\n")
 bench_res_2 <- benchmark(
   dplyr_bench(tb),
   datatable_bench(dt) |>
-    _[order(pag, jobTitle)]
+    _[order(pag, jobTitle)],
+  replications = 10
 )
 print(bench_res_2)
