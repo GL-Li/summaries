@@ -39,14 +39,7 @@ parse_options <- function(args, opt) {
   return(opt_values)
 }
 
-args = commandArgs(trailingOnly=TRUE)
-
-# verify options
-options <- args[grepl("^-", args)]
-available_options <- c("--columns", "--task", "--group_by_fun", "--xycount")
-if (!all(options %in% available_options)) {
-  cat("\nError: option", setdiff(options, available_options), "is not avaluable.",
-      "\nAvailable options are", paste(available_options, collapse = ", "), "\n")
+cat_help_message <- function() {
   cat("\nexamples:")
   cat("\n$ csvshow aaa.csv                                     # display all columns")
   cat("\n$ csvshow aaa.csv --columns col1 col2                 # display selected columns")
@@ -54,7 +47,22 @@ if (!all(options %in% available_options)) {
   cat("\n$ csvshow aaa.csv --columns col1 col2 --task summary  # summary all selected numeric columns")
   cat("\n$ csvshow aaa.csv --group_by_fun colA colB mean       # group by colA and calculate mean of colB.")
   cat("\n$ csvshow aaa.csv --xycount colC colD                 # count colC-colD combinations\n\n")
-  stop("In valid options")
+  quit(save = "no")
+}
+
+args = commandArgs(trailingOnly=TRUE)
+
+if (args[1] == "help") {
+  cat_help_message()
+}
+
+# verify options
+options <- args[grepl("^-", args)]
+available_options <- c("--columns", "--task", "--group_by_fun", "--xycount")
+if (!all(options %in% available_options)) {
+  cat("\nError: option", setdiff(options, available_options), "is not avaluable.",
+      "\nAvailable options are", paste(available_options, collapse = ", "), "\n")
+  cat_help_message()
 }
 
 fname <- args[1]
