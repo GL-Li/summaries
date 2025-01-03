@@ -61,7 +61,7 @@ torch.bmm(input, mat2)
 - so the output tensor is b x n x p
 """
 
-X = torch.randn(2, 3, 4)
+x = torch.randn(2, 3, 4)
 y = torch.randn(2, 4, 5)
 torch.bmm(x, y)  # 2 x 3 x 5
   #  tensor([[[ 1.5850e+00, -1.9927e+00,  1.5198e-01,  2.2982e+00,  2.3274e+00],
@@ -87,6 +87,7 @@ x = torch.randn(2, 3, 5)     # 2 x 3 x 5
   #          [-0.1296, -1.4581, -0.5004, -0.3329, -0.8342],
   #          [ 1.0152,  1.1924,  1.2936, -0.0849, -0.2542]]])
 torch.permute(x, (2, 0, 1))  # 5 x 2 x 3
+x.permute((2, 0, 1))
   # tensor([[[-0.6052, -1.4267, -0.5415],
   #          [ 1.3319, -0.1296,  1.0152]],
   # 

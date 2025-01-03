@@ -119,6 +119,22 @@ col2 = "x"
 dt[col1 >= 6, 
    list(col1, col2),
    env = list(col1 = col1, col2 = col2)]
+
+# i, j, by
+dt <- data.table(
+  grp = c("g1", "g2", "g1", "g2", "g3"),
+  level = c("lvl1", "lvl1", "lvl1", "lvl2", "lvl2"),
+  x = 1:5,
+  y = 5:9
+)
+dt[grp != "g3",
+   list(avg_x = mean(x), avg_y = mean(y)),
+   by = c("grp", "level")]
+
+dt[aaa != "g3", 
+   list(avg_x = mean(bbb), avg_y = mean(ccc)),
+   by = ddd,
+   env = list(aaa = "grp", bbb = "x", ccc = "y", ddd = I(c("grp", "level")))]
 ```
 
 
