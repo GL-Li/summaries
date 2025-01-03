@@ -1,5 +1,5 @@
 # compare the speed using different methods to replace values as follows
-# 
+#
 # original data frame:
 #  id      col1      col2      col3     ...    col50
 #  ee+1    c+-,.J    g+-,.D    a+-,.A   ...    d+-,.E
@@ -28,13 +28,13 @@ if (!require(rbenchmark)) {
   install.packages("rbenchmark")
 }
 library(rbenchmark)
-options(dplyr.summarise.inform = FALSE) 
+options(dplyr.summarise.inform = FALSE)
 
-N <- 1e5
+N <- 1e4
 df <- data.frame(id = paste0("ee+", 1:N))
 set.seed(123)
 for (col in paste0("col", 1:50)) {
-  df[[col]] <- paste0(sample(letters[1:10], N, replace = TRUE), 
+  df[[col]] <- paste0(sample(letters[1:10], N, replace = TRUE),
                       "+-,.",
                       sample(LETTERS[1:10], N, replace = TRUE))
 }
@@ -57,7 +57,7 @@ for (col in names(df_replacement)) {
 
 dt_inplace <- function(dt, dt_replacement) {
   for (col in names(dt_replacement)) {
-    map <- dt_replacement[[col]] |> 
+    map <- dt_replacement[[col]] |>
       copy() |>
       setnames("old", col)
     dt[map, on = col, (col) := i.new]
@@ -77,7 +77,7 @@ for (col in names(df_replacement)) {
 dt_merge <- function(dt1, dt1_replacement) {
   original_names <- names(dt1)
   for (col in names(dt1_replacement)) {
-    map <- dt1_replacement[[col]] |> 
+    map <- dt1_replacement[[col]] |>
       copy() |>
       setnames("old", col)
     dt1 <- dt1 |>
@@ -101,7 +101,7 @@ for (col in names(df_replacement)) {
 dt_join <- function(dt2, dt2_replacement) {
   original_names <- names(dt2)
   for (col in names(dt2_replacement)) {
-    map <- dt2_replacement[[col]] |> 
+    map <- dt2_replacement[[col]] |>
       copy() |>
       setnames("old", col)
     dt2 <- map[dt2, on = col] |>
@@ -140,14 +140,14 @@ if (interactive()) {
   all.equal(dt, dt_1)
   dt_2 <- dt_join(dt2, dt2_replacement)
   all.equal(dt, dt_2)
-  
+
   tb_new <- dplyr_join(tb, tb_replacement)
-  all.equal(as.data.frame(dt), as.data.frame(tb_new))
+  all.equal(dt, tb_new, check.attributes = FALSE)
 }
 
-# benchmarking. 
+# benchmarking.
 print("benchmarking -----------")
-benchmark(
+res <- benchmark(
   dt_inplace(dt, dt_replacement),
   dt_1 <- dt_merge(dt1, dt1_replacement),
   tb_new <- dplyr_join(tb, tb_replacement),
@@ -155,4 +155,4 @@ benchmark(
   replications = 10,
   order = "relative"
 )
-
+print(res)

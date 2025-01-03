@@ -4,10 +4,10 @@ if (!require(rbenchmark)) {
   install.packages("rbenchmark")
 }
 library(rbenchmark)
-options(dplyr.summarise.inform = FALSE) 
+options(dplyr.summarise.inform = FALSE)
 
 n <- 1e5
-df <- tibble(
+df <- data.frame(
   id = 1:n,
   pag = sample(paste0("pag_", 1:100), n, replace = TRUE),
   jobTitle = sample(paste0("job_", 1:100), n, replace = TRUE),
@@ -15,6 +15,10 @@ df <- tibble(
   num2 = rnorm(n, mean = 10, sd = 2),
   num3 = rnorm(n, mean = 100, sd = 10)
 )
+
+tb <- as_tibble(df)
+dt <- as.data.table(df)
+
 
 dplyr_bench <- function(tb) {
   res <- tb %>%
@@ -37,24 +41,19 @@ datatable_bench <- function(dt) {
          avg_num2 = mean(num2),
          avg_num3 = mean(num3)),
     by = c("pag", "jobTitle")
-  ] 
+  ]
 
   return(res)
 }
 
-tb <- as_tibble(df)
-dt <- as.data.table(df)
-
 
 if (interactive()) {
-  cat("\nMake sure dplyr and data.table have the same output ------------")
-  res_dplyr <- dplyr_bench(tb) |> 
-    as.data.frame()
+  cat("\nMake sure dplyr and data.table have the same output ------------\n")
+  res_dplyr <- dplyr_bench(tb)
   res_datatable <- datatable_bench(dt) |>
-    _[order(pag, jobTitle)] |>
-    as.data.frame()
-  
-  all.equal(res_dplyr, res_datatable)
+    _[order(pag, jobTitle)]
+
+  all.equal(res_dplyr, res_datatable, check.attributes = FALSE)
 }
 
 

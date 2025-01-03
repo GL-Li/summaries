@@ -5,7 +5,7 @@
 - dplyr: imports 13 packages, 11 of them are thirty party packages that are not part of a distribution. The 11 third party packages have their own dependencies.
 
 ### fast execution and efficient memory management
-Run speed_datatable_dplyr.R for benchmarks.
+Run `speed_filter_mutate.R` and `speed_group_by_sumarize.R` for benchmarks.
 
 
 ## data.table fundamentals
