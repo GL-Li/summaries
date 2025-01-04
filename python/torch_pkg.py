@@ -106,12 +106,13 @@ x.permute((2, 0, 1))
 
 """ torch.argmax: return indices of max value along a dimention ===============
 dim: reduce along this dimension while keep other dimensions unchanged.
-- Take a mxn 2D tensor for example, if dim=0, the first step is to collapse it 
-  into a 1xn tensor, then replace each element with the row index of the max 
+- Take a m x n 2D tensor for example, if dim=0, the first step is to collapse it 
+  into a 1 x n tensor, then replace each element with the row index of the max 
   element.
 
 """
 x = torch.arange(24).reshape(2, 3, 4)
+x
   # tensor([[[ 0,  1,  2,  3],
   #          [ 4,  5,  6,  7],
   #          [ 8,  9, 10, 11]],
