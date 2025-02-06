@@ -39,6 +39,18 @@ To get documentation of a function at ipython console:
 
 `> help(np.argmax)`
 
+### use `.env` for environment variables
+Add to `.env` at the root directory of the project such as 
+  OPENAI_API_KEY=your-api-key-here
+Add `.env` to `.gitignore` to avoid publishing secret accidentally.
+
+```{python}
+from dotenv import load_dotenv
+import os
+from openai import OpenAI
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+```
 
 
 ## tricks
