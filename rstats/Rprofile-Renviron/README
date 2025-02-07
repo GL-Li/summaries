@@ -1,4 +1,4 @@
-Two hidden files .Rprofile and .Renviron in this directory.
+Two hidden files .Rprofile and .Renviron are in this directory.
 
 To test the files, start R from this directory and then check:
 - Sys.getenv("AAA") to get environment variables.

@@ -96,3 +96,15 @@ df <- data.frame(x = 1:1e9, y = rnorm(1e9))
 fun_var <- "mean"
 get(fun_var)(1:9)  # same as mean(1:9)
 ```
+
+
+### Use .Renviron for environment variables
+
+Locations of .Renviron file
+- under user home directory: place API keys and other secret here, which is shared by all projects.
+- under project root: place project-specific constant here. When R started from the project root, the variables will be picked up. If the same variable name also in the file at the user home, the one at the project root is used.
+
+How to use it
+- automatically picked up when R starts
+- `my_api_key <- Sys.getenv("API_KEY")` to extract an environment variable.
+
