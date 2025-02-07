@@ -61,7 +61,7 @@ rm("env_i")
 For example, we have a test file `ttt.R`, which has a quit statement
 ```{r}
 print("stat the test")
-quit(save = "no", status = 5) # nolint
+quit(save = "no", status = 5) 
 ```
 In another file `ttt_run.R`, which runs `ttt.R` with `system()` function:
 ```{r}

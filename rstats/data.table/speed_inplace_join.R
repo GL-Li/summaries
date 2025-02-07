@@ -30,7 +30,7 @@ if (!require(rbenchmark)) {
 library(rbenchmark)
 options(dplyr.summarise.inform = FALSE)
 
-N <- 1e4
+N <- 1e5
 df <- data.frame(id = paste0("ee+", 1:N))
 set.seed(123)
 for (col in paste0("col", 1:50)) {
