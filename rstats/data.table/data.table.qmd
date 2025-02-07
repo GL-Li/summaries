@@ -692,22 +692,21 @@ dt[, .(id_sum = sum(x), group_info = .BY), by = c("id", "id2")]
 
 - **`:=` (Assignment by Reference):**
   - Modifies `data.table` columns in-place for efficiency.
-  ```r
+  ```{r}
   dt[, new_col := x + 1]
   ```
 
 - **`key` and `setkey`:**
   - `key` is for setting a sort order and enhancing joining operations.
-  ```r
+  ```{r}
   setkey(dt, id)
   ```
-
 
 
 ### double quotes in csv files
 RFC4180 standard for csv files: https://www.rfc-editor.org/rfc/rfc4180. Regarding double quotes in the data:
 
-```txt
+```{txt}
 7.  If double-quotes are used to enclose fields, then a double-quote
        appearing inside a field must be escaped by preceding it with
        another double quote.  For example:
@@ -721,7 +720,7 @@ It is a bug that `data.table` cannot correctly read two consective double quotes
 https://stackoverflow.com/questions/67026291/reading-files-with-double-double-quotes-in-r
 
 As a tempory solution, use the following replacement
-```r
+```{r}
 for (col in names(dt)) {
   tmp <- dat[[col]]
   dt[[col]] <- stringi::stri_replace_all_fixed(tmp, '""', '"')
