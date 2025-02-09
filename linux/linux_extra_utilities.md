@@ -1,6 +1,15 @@
-## rclone: mounting cloud drivers to file system
+## rclone: work with Google Drive
 - https://rclone.org/
 - `$ sudo apt install rclone`
+
+### Best practice
+Work with small files
+- mounting cloud drivers to file system
+- work on the small file as if with a local drive
+
+Work with a version controlled projects
+- seperate the project from Google Drive
+- use `rclone copy path/to/project gdrive:path/to/destination --exclude .git/**` to copy the project to Google Drive without git. 
 
 ### configuration for Google Drive 
 - `$ rclone config` to start configuretion
