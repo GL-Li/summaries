@@ -1,0 +1,146 @@
+" .vimrc / init.vim, v0.1.2, happy as of 2024-11-04
+"
+"
+" copy and rename this file to
+" - ~/.vimrc for vim or
+" - ~/.local/nvim/init.vim for neovim
+
+" Things to do outside this file
+"
+" Vim
+" - curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" - sudo apt install vim-gtk3, which has clipboard enabled
+" NeoVim
+" - sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+" - get the latest NeoVim AppImage and place it in ~/bin/
+"
+" Install utilities for fzf
+" - requre dependencies fzf, bat, ripgrep, Perl, and universal tags
+" - following instructions at https://github.com/junegunn/fzf.vim?tab=readme-ov-file
+"
+
+" Tricks
+" - Ctrl q for block visual mode in Windows if Ctrl v is used for paste
+
+
+" general vim setting ===============================================
+
+" use Vim mode instead of pure Vi, it must be the first instruction
+set nocompatible
+" file type specific settings
+filetype on " enable file type detection
+filetype plugin on " load the ibuilt-in plugins for specific file typesa
+filetype indent on " automatically indent code
+
+" set search path for :find *xyz recursively from current directory
+" https://www.youtube.com/watch?v=XA2WjJbmmoM&t=3639s for details
+set path+=**
+
+" display settings
+set encoding=utf-8 " encoding used for displaying file
+set ruler " show the cursor position all the time
+set noshowmatch " not highlight matching braces
+set showmode " show insert/replace/visual mode
+set number relativenumber " show line numbers and relativenumber
+set wildmenu  " show selections
+set wildmode=list:longest  " list all selections in one page
+
+" write settings
+set confirm " confirm :q in case of unsaved changes
+set fileencoding=utf-8 " encoding used when saving file
+set nobackup " do not keep the backup~ file
+set noswapfile " this file sometimes annoying
+
+" edit settings
+set backspace=indent,eol,start " backspacing over everything in insert mode
+set expandtab " fill tabs with spaces
+set nojoinspaces " no extra space after '.' when joining lines
+set shiftwidth=2 " set indentation depth to 2 columns
+set softtabstop=2 " backspacing over 2 spaces like over tabs
+set tabstop=2 " set tabulator length to 2 columns
+
+" search settings
+set hlsearch " highlight search results
+set ignorecase " do case insensitive search...
+set incsearch " do incremental search
+set smartcase " ...unless capital letters are used
+
+" characters for displaying non-printable characters
+set listchars=eol:$,tab:>-,trail:.,nbsp:_,extends:+,precedes:+
+
+" softwrap text
+set linebreak
+set formatoptions=ro
+set comments=b:-
+set breakindent
+set autoindent
+set breakindentopt=shift:2
+
+" code folding
+set foldmethod=indent
+set foldnestmax=2
+set foldminlines=5
+
+" new window position
+set splitbelow
+set splitright
+
+" general key mappings ====================================================
+
+" change leader key to backslash
+let mapleader = "\\"
+
+" save and close to be consistent with VScode and RStudio
+nnoremap <C-s> :w<CR>
+nnoremap <leader>s :w<CR>
+inoremap <C-s> <Esc>:w<CR>
+inoremap <leader>s <Esc>:w<CR>
+
+" copy selected to clipboard
+vnoremap <C-c> "+y
+
+" press F8 to turn the search results highlight off
+noremap <F8> :nohl<CR>
+inoremap <F8> <Esc>:nohl<CR>a
+
+"quit
+nnoremap <leader>q :q<CR>
+
+" file name autocompletion for set path+=**
+inoremap <C-f> <C-x><C-f>
+
+" switch between windows
+nnoremap <leader>wh <C-W>h
+nnoremap <leader>wj <C-W>j
+nnoremap <leader>wk <C-W>k
+nnoremap <leader>wl <C-W>l
+" resize windows
+nnoremap <C-left> :vertical resize -5<CR>
+nnoremap <C-right> :vertical resize +5<CR>
+nnoremap <C-down> :horizontal resize -2<CR>
+nnoremap <C-up> :horizontal resize +2<CR>
+
+
+" plugins installation ===================================================
+
+call plug#begin("/etc/vim/plugged")
+Plug 'vim/colorschemes'   " for the latest retrobox
+Plug 'machakann/vim-highlightedyank'
+
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'justinmk/vim-sneak'
+
+call plug#end()
+
+
+" plugin setting and mapping ================================================
+
+" syntax highlighting using plugin theme -----
+colorscheme retrobox " set color scheme, must be installed first
+set background=dark " dark background for console
+syntax on " enable syntax highlighting
+
+" vim-highlightedyank ---
+" highlight duration in milisecond
+let g:highlightedyank_highlight_duration = 200

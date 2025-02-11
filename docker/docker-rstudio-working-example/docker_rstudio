@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# always start from home directory
+cd $HOME/projects
+
+# default port is 8080
+if [[ $# -eq 0 ]] ; then
+  echo "localhost:8080"
+  docker run \
+    -d \
+    --rm \
+    -p 8080:8787 \
+    -e DISABLE_AUTH="true" \
+    -v "$(pwd)":/home/rstudio \
+    -v $HOME/.gitconfig:/etc/gitconfig \
+    -v $HOME/.ssh:/home/rstudio/.ssh \
+    --name rstudio_selfsrv \
+    trusaicdata/rstudio_selfsrv
+elif [[ $# -eq 1 ]] ; then
+  echo "localhost:$1"
+  docker run \
+    -d \
+    --rm \
+    -p "$1":8787 \
+    -e DISABLE_AUTH="true" \
+    -v "$(pwd)":/home/rstudio \
+    -v $HOME/.gitconfig:/etc/gitconfig \
+    -v $HOME/.ssh:/home/rstudio/.ssh \
+    --name rstudio_selfsrv-"$1" \
+    trusaicdata/rstudio_selfsrv
+else
+  echo "Please provide 0 or 1 parameters"
+fi
