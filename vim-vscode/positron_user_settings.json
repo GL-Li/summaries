@@ -1,0 +1,32 @@
+{
+    "outline.showArrays": false,
+    "outline.showBooleans": false,
+    "outline.showNumbers": false,
+    "outline.showVariables": false,
+    "outline.showNamespaces": false,
+    "outline.showNull": false,
+
+    // To improve performance
+    "editor.lineNumbers": "relative",
+    "remote.autoForwardPortsSource": "hybrid",
+    
+    "workbench.colorTheme": "Cobalt2",
+    "chatgpt.gpt3.apiKey": "my_api_key",
+
+    // vim extension
+    "vim.highlightedyank.enable": true,
+    "vim.hlsearch": true,
+    "vim.sneak": true,
+    "vim.insertModeKeyBindings": [
+      {
+        "before": ["j", "j"],
+        "after": ["<Esc>"]
+      }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+      {
+        "before": ["<space><space>"],
+        "commands": [":nohl"]
+      }
+  ],
+}
