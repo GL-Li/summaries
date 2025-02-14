@@ -1,32 +1,56 @@
+// Other setting by editing keyboard shortcut 
+// - Go to file: Ctrl f
+// - Search in files: Ctrl /
+
+
 {
-    "outline.showArrays": false,
-    "outline.showBooleans": false,
-    "outline.showNumbers": false,
-    "outline.showVariables": false,
-    "outline.showNamespaces": false,
-    "outline.showNull": false,
+  "outline.showArrays": false,
+  "outline.showBooleans": false,
+  "outline.showNumbers": false,
+  "outline.showVariables": false,
+  "outline.showNamespaces": false,
+  "outline.showNull": false,
 
-    // To improve performance
-    "editor.lineNumbers": "relative",
-    "remote.autoForwardPortsSource": "hybrid",
-    
-    "workbench.colorTheme": "Cobalt2",
-    "chatgpt.gpt3.apiKey": "my_api_key",
+  // To improve performance
+  "editor.lineNumbers": "relative",
+  "remote.autoForwardPortsSource": "hybrid",
+  
+  "workbench.colorTheme": "Cobalt2",
+  "chatgpt.gpt3.apiKey": "my_api_key",
 
-    // vim extension
-    "vim.highlightedyank.enable": true,
-    "vim.hlsearch": true,
-    "vim.sneak": true,
-    "vim.insertModeKeyBindings": [
-      {
-        "before": ["j", "j"],
-        "after": ["<Esc>"]
-      }
-    ],
-    "vim.normalModeKeyBindingsNonRecursive": [
-      {
-        "before": ["<space><space>"],
-        "commands": [":nohl"]
-      }
+  // vim extension
+  "vim.highlightedyank.enable": true,
+  "vim.hlsearch": true,
+  "vim.leader": "\\",
+  "vim.sneak": true,
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<leader>", "s"],
+      "commands": ["workbench.action.files.save"]
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<leader>", "q"],
+      "commands": ["workbench.action.closeActiveEditor"]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<leader>", "c"],
+      "commands": ["editor.action.clipboardCopyAction"]
+    }
+  ],
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["j", "j"],
+      "after": ["<Esc>"]  
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<space>", "<space>"],
+      "commands": [":nohl"]
+    }
   ],
 }
