@@ -13,7 +13,7 @@ Extensions:
 ### Open Remote - WSL for Positron
 To work with WSL
 - install Positron for Windows and 
-- install extension Open Remote - WSL for positron, for now. The function may be built in to Positron in later version.
+- install extension Open `Remote - WSL for positron`, for now. The function may be built in to Positron in later version.
 - `Ctrl Shift P` to start the command plattee and search for `Remote WSL - connect to WSL`, run it to connect.
 
 ### VSCode-neovim extension
