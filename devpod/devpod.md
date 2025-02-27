@@ -17,7 +17,9 @@ Resources: https://devpod.sh/docs/quickstart/devpod-cli
 
 **Start the workspace**
 ```sh
-# from the local directory run 
+devpod list  # to list all workspace
+devpod up <workspace-name>  # start from anywhere
+# from current workspace
 devpod up .
 # if any modification to the json file
 devpod up . --recreate
@@ -29,3 +31,42 @@ devpod up . --reset
 ```sh
 devpod up . --ide positron
 ```
+
+**Stop a workspace**
+```sh
+devpod stop .
+devpod stop workspace-name
+```
+
+### connect to a running workspace
+
+**ssh to a workspace**
+```sh
+ssh <workspace-name>.devpod  # add extension .devpod to name
+```
+
+**connect to an IDE**
+```sh
+# list supported IDEs
+devpod ide list
+# set default IDE
+devpod ide use positron
+# or use --ide to specify an ide at startup
+devpod up . --ide openvscode
+```
+
+
+### devcontainer.json file
+
+Typical location of `.devcontainer.json`:
+- `./.devcontainer.json`
+- `./.devcontainer/.devcontainer.json`
+
+**Use a Dockfile** if we want more than an image
+```json
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  ...
+
