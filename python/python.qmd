@@ -55,7 +55,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 ## tricks
 
-### unpack a dictionary as function argument
+### unpack a dictionary as function argument with `**`
 The dictionary keys must match function parameters.
 
 ```{python}
@@ -66,6 +66,28 @@ def add(x, y):
 add(**dic)
     # 300
 ```
+
+
+### unpack iterables with `*`
+For example, function `map()` returns a map object. The map object can be unpacked inside a list `[...]`.
+
+```{python}
+def square(x):
+    return x ** 2
+
+numbers = [1, 2, 3, 4]
+# result is a map iterable
+result = map(square, numbers)
+# unpack inside a list function
+[*result]
+# after unpacking, result becomes empty. The following is an empty list.
+[*result]
+
+# we can also combine with [..., *map()]
+[111, 222, *map(square, numbers)]
+```
+
+
 
 ## Packages
 
