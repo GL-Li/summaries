@@ -58,6 +58,30 @@
     ```
 ## QA =================================================
 
+### QA: How to ignore all files but f1.txt and f2.txt in a subdirectory
+
+The idea is:
+- first ignore eveything under end2end-validation
+- then un-ignore subdirectory end2end-validation/test-cases/
+- re-ignore everything under this subdirectory
+- then un-ignore subdirectory bserate-jobtitle-fast under above subdirectory
+- re-ignore this subdirectory
+- finally un-ignore the selected files.
+
+It is cumbersome, but have to follow the procedure.
+
+```
+end2end-validation/*
+!end2end-validation/test-cases/
+end2end-validation/test-cases/*
+
+!end2end-validation/test-cases/bserate-jobTitle-fast/
+end2end-validation/test-cases/bserate-jobTitle-fast/*
+!end2end-validation/test-cases/bserate-jobTitle-fast/clsRefAdd.csv
+!end2end-validation/test-cases/bserate-jobTitle-fast/demographicBenchmarks.csv
+!end2end-validation/test-cases/bserate-jobTitle-fast/selfSrvData.csv
+```
+
 ### QA: How to find out who made that change in a file?
 
 Use `git blame`
