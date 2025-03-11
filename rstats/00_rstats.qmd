@@ -69,6 +69,9 @@ In another file `ttt_run.R`, which runs `ttt.R` with `system()` function:
 std_out <- system("Rscript ttt.R ; echo $?", intern = TRUE)
 exit_status <- std_out[length(std_out)]
 print(exit_status)
+
+# or if consol output is not required, simply
+exit_status <- system("Rscript ttt.R")
 ```
 From terminal, when we run $ Rscript ttt_run.R, it will print 5 to stdout.
 
