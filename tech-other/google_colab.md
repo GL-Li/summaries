@@ -1,3 +1,10 @@
+## Create a Google Colab project in Google Drive
+
+- Copy the project to Google Drive
+- From Google Drive website, got to project directory
+- To open a locally-created ipynb file, right click on it and `Open With` --> `Google Colab`.
+- To create a new Colab notebook, right click on an empty space and `More` --> `Google colab`.
+
 ## Runtime management
 - **disconnect a runtime or change runtime type to CPU** when you are not actively use it.
     - The clock is ticking even if you are not using it after the resources are assigned to you.
