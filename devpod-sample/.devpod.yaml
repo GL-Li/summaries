@@ -1,0 +1,5 @@
+image: python:3.9-slim  # Use a lightweight Python 3.9 image
+features:
+  git: latest           # Install Git in the container
+workspaceMount: source=${localWorkspaceFolder},target=/workspace,type=bind
+workspaceFolder: /workspace

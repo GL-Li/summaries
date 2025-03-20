@@ -21,6 +21,9 @@ Work with a version controlled projects
         - service_account_file
     - select full access
     - decline advanced configuration
+- WSL may need to install fuse3
+    - `$ sudo apt fues3`
+    - `$ which fusermount3` to show the location of the command fusermount.
 
 ### mount google drive and work on google drive
 - Mount google drive to a mount point
