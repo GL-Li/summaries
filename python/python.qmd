@@ -19,6 +19,9 @@ Installation
 - `$ uv python install cpython-3.12`: install python version
 - `$ uv run -p 3.12 python`: start Python REPL
 
+Recreate a cloned uv project
+- `uv sync`: create .venv and install packages in uv.lock file to the virtual environment. Do not create the virtual environment mannually.
+
 Work with uv project
 - `$ uv init -p 3.13`: convert current directory into a uv project. Several new files are generated. 
   - Use default Python version if not given in the command. Can be changed in `.python-version` file.
@@ -98,6 +101,29 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 ## tricks
+
+### append a dictionary to a list
+Be careful with dictionary memory arrangement. A dictionary is updated in place. So it dictionaries of the same name is added to a list in a for loop, the list can be accidentally be the list of the repeated last directionary.
+
+```{python}
+# wrong list
+dict = {}
+lst = []
+for i in range(3):
+    dict["number"] = i
+    lst.append(dict)
+lst
+  # [{'number': 2}, {'number': 2}, {'number': 2}]
+
+# correct list, create a new dictionary instance inside the loop
+lst = []
+for i in range(3):
+    dict = {}
+    dict["number"] = i
+    lst.append(dict)
+lst
+  # [{'number': 0}, {'number': 1}, {'number': 2}]
+```
 
 ### unpack a dictionary as function argument with `**`
 The dictionary keys must match function parameters.
