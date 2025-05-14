@@ -1,4 +1,36 @@
+## Langchain-langgraph-langsmith
 
-## Raw notes
+### QA: how to draw a graph on terminal
 
-https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/2/guidelines
+```python
+# graph = graph_builder.compile()
+graph.get_graph().print_ascii()
+# the graph is printed on terminal like
+#           +-----------+      
+#           | __start__ |      
+#           +-----------+      
+#                 *            
+#                 *            
+#                 *            
+#       +------------------+   
+#       | query_or_respond |   
+#       +------------------+   
+#            ..        ..      
+#          ..            ..    
+#         .                ..  
+#   +-------+                . 
+#   | tools |                . 
+#   +-------+                . 
+#       *                    . 
+#       *                    . 
+#       *                    . 
+# +----------+               . 
+# | generate |             ..  
+# +----------+           ..    
+#            **        ..      
+#              **    ..        
+#                *  .          
+#            +---------+       
+#            | __end__ |       
+#            +---------+  
+```
