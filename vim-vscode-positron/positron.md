@@ -64,3 +64,9 @@ In visual line mode or visual block mode:
 - `mi`: insert to the beginning of each line of selection
 - `ma`: insert to the end of selection
 - `mI` and `mA`: similar but include empty lines in selection.
+
+
+## remote SSH
+https://positron.posit.co/remote-ssh.html
+
+ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
