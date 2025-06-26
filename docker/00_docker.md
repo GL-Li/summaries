@@ -1,4 +1,4 @@
-## How to command in docker container from host terminal
+## How to run commands in docker container from host terminal
 
 A straightforwrad method is using `here document` to run multiple lines of commands in docker container from host's terminal. Save the following as aaa.sh and have a try with `$ bash aaa.sh` .
 
@@ -33,4 +33,32 @@ echo "Commands finished."
 EOF
 
 echo "Container has exited."
+```
+
+
+## How to safely use API keys in a docker container
+
+**Best option**: use docker compose secrect
+
+Step 1: create a yml file
+
+```yaml
+version: '3.8'
+
+services:
+  my_app:
+    image: your_image_name
+    secrets:
+      - my_api_key
+
+secrets:
+  my_api_key:
+    file: ./my_api_key.txt
+```
+
+Step 2: Start container in swarm mode
+
+```sh
+docker swarm init
+docker compose up -d
 ```
