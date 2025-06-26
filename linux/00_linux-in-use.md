@@ -40,6 +40,7 @@ Installation
     - `$ sudo timeshift --delete --snapshot "2023-06-17_07-34-09"` to delete a snapshot
 - install password mananger
   - `$ sudo apt install pass`  instruction https:gc/www.passwordstore.org/
+  - passwords saved in `.password-store`.
 - import gpg keys to the new computer and set it up for password manager. See section _gpg: file encryption_.
 - create ssh for github and bitbucket
   - `$ ssh-keygen -t rsa` to generate keys. Use all blank settings.
@@ -98,7 +99,7 @@ Some typical permission to owner-group-other
         - `$ gpg --output private.gpg --armor --export-secret-keys lglforfun@gmail.com`, require master passphrase
 - import gpg keys to another computer
     - copy file `public.gpg` and `private.gpg` to the new computer
-    - `$ gpg --import private.gpg` to import private key
+    - `$ gpg --import private.gpg` to import private key, may need `sudo` and password
     - `$ gpg --import public.gpg` to import public key
     - update trust level on the new computer
         - `$ gpg --edit-key lglforfun@gmail.com` to start gpg
