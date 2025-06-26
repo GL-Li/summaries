@@ -1,0 +1,1 @@
+docker build -t safe_api_key_docker .
