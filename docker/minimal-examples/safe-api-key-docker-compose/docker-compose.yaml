@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    secrets:
+      - api_keys_env
+    # The app will run as non-root user 'appuser'
+    # as defined in the Dockerfile
+
+secrets:
+  api_keys_env:
+    file: ./api-keys/.env
+
+# Note: Requires Docker Compose plugin (included with modern Docker installations)
+# Use command: docker compose up --build

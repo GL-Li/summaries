@@ -8,4 +8,10 @@ RUN pip install -r requirements.txt
 COPY llm.py ./
 RUN mkdir api-keys
 
+# Create non-admin user and set permissions
+RUN useradd -m appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
 CMD ["python", "llm.py"]
