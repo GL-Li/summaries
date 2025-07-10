@@ -1,0 +1,49 @@
+// Other setting by editing keyboard shortcut
+// - Ctrl-f: Go to file
+// - Ctrl-w: Search: Find in files
+// - Ctrl-x: View: close ditor (buffer)
+
+
+{
+  "workbench.colorTheme": "Cobalt2",
+
+  "outline.showArrays": false,
+  "outline.showBooleans": false,
+  "outline.showNumbers": false,
+  "outline.showVariables": false,
+  "outline.showNamespaces": false,
+  "outline.showNull": false,
+
+  // To improve performance
+  "editor.lineNumbers": "relative",
+  "remote.autoForwardPortsSource": "hybrid",
+
+  // vim extension
+  "vim.highlightedyank.enable": true,
+  "vim.hlsearch": true,
+  "vim.leader": "\\",
+  "vim.sneak": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["j", "j"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<space>", "<space>"],
+      "commands": [":nohl"]
+    }
+  ],
+  "git.openRepositoryInParentFolders": "never",
+  "files.autoSave": "onFocusChange",
+  "workbench.activityBar.location": "bottom",
+  "files.associations": {
+    "renv.lock": "json"
+  },
+
+  "[r]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Posit.air-vscode"
+  }
+}

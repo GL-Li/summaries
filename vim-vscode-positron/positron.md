@@ -70,3 +70,71 @@ In visual line mode or visual block mode:
 https://positron.posit.co/remote-ssh.html
 
 ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
+
+
+
+## Format R with air
+
+### Reference
+- https://posit-dev.github.io/air/configuration.html#example-configuration
+- https://posit-dev.github.io/air/editor-vscode.html
+
+### Steps for project level formatting
+
+- Create a `.air.toml` file under project root to specify R code formatting.
+```toml
+[format]
+line-width = 120
+indent-width = 4
+indent-style = "space"
+line-ending = "lf"
+persistent-line-breaks = true
+exclude = []
+default-exclude = true
+skip = []
+```
+
+- Add the following to Positron's user `settings.json` file. A .R file will reformat at saving.
+```json
+{
+    "[r]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Posit.air-vscode"
+    }
+}
+```
+
+### Example
+```R
+library(data.table)
+
+# auto indentation with 4 spaces when typing
+dt <- data.table(
+    x = 1:3,
+    y = letters[1:3]
+)
+dat <- mtcars |>
+    as.data.table()
+
+
+## The following line is long than 120 set in .air.toml file. It automatically
+# split into mutiple lines when saving the file.
+# this_is_a_very_long_function_name <- function(parameter_1, parameter_2, parameter_3, parameter_4, parameter_5, parameter_6) {
+#     print("what happens to long lines?")
+# }
+this_is_a_very_long_function_name <- function(
+    parameter_1,
+    parameter_2,
+    parameter_3,
+    parameter_4,
+    parameter_5,
+    parameter_6
+) {
+    print("what happens to long lines?")
+}
+
+# this line is 107 chars long. It keep the line
+normal_function <- function(parameter_1, parameter_2, parameter_3, parameter_4, parameter_5, parameter_6) {
+    print("what happens to long lines?")
+}
+```
