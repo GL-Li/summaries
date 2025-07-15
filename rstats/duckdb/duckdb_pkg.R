@@ -33,6 +33,8 @@ DBI::dbWriteTable(
 DBI::dbListTables(con)
 DBI::dbGetQuery(con, "SELECT * FROM table_1")
 DBI::dbGetQuery(con, "SELECT * FROM table_2")
+DBI::dbListFields(con, "table_1")
+DBI::dbGetQuery(con, "PRAGMA table_info('table_1')")
 
 # disconnect
 DBI::dbDisconnect(con)
