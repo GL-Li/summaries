@@ -3,9 +3,12 @@ Dependencies:
 - Install Quarto for qmd files: download from https://quarto.org/docs/get-started/
 
 Extensions:
-- Quarto
-- VSCode Neovim
+- vim: Vim emmulation
 - Cobalt2 Theme Official
+- cline: for AI coding
+- pyrefly: python language server for 
+    - import a class or function by click
+
 
 
 ## With WSL
