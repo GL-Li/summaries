@@ -36,5 +36,8 @@ DBI::dbGetQuery(con, "SELECT * FROM table_2")
 DBI::dbListFields(con, "table_1")
 DBI::dbGetQuery(con, "PRAGMA table_info('table_1')")
 
+# get all contrains, including primary and foreign keys, not NULL
+dbGetQuery(con, "SELECT * FROM duckdb_constraints();")
+
 # disconnect
 DBI::dbDisconnect(con)
