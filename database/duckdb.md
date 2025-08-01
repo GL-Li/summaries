@@ -20,5 +20,14 @@ D .schema
 
 # display tables
 D SELECT * FROM orders LIMIT 5;
+
+# view all constraints
+SELECT * FROM duckdb_constrains();
+
+# view comments on tables
+SELECT table_name, comment FROM duckdb_tables() WHERE schema_name = 'main' AND comment IS NOT NULL;
+
+# view comments on columns
+sELECT table_name, column_name, comment FROM duckdb_columns() WHERE schema_name = 'main' AND comment IS NOT NULL;
  ```
 
