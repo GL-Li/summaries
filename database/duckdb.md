@@ -28,6 +28,10 @@ SELECT * FROM duckdb_constrains();
 SELECT table_name, comment FROM duckdb_tables() WHERE schema_name = 'main' AND comment IS NOT NULL;
 
 # view comments on columns
-sELECT table_name, column_name, comment FROM duckdb_columns() WHERE schema_name = 'main' AND comment IS NOT NULL;
+SELECT table_name, column_name, comment FROM duckdb_columns() WHERE schema_name = 'main' AND comment IS NOT NULL;
+
+# more standard SQL approach for information on tables and columns
+SELECT * FROM Information_schema.tables;
+SELECT * FROM Information_schema.columns;
  ```
 
