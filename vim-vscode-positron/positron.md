@@ -74,6 +74,20 @@ https://positron.posit.co/remote-ssh.html
 
 ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
 
+### show ssh targets at Positron left side pane
+
+Update `.ssh/config` with the following 
+
+```txt
+Host xps8940
+  HostName 192.168.1.20
+  User gl
+
+Host docker-R-program
+    HostName localhost
+    User rstudio
+    Port 2222
+```
 
 
 ## Format R with air
