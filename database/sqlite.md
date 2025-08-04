@@ -4,6 +4,9 @@
 # start a database sqlite3.db and start sqlite console
 sqlite3 sqlites_sample.db
 
+# get help
+sqlite> .help
+
 # to quit
 sqlite> .quit
 
