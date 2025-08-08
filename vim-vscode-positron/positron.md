@@ -76,7 +76,9 @@ ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
 
 ### show ssh targets at Positron left side pane
 
-Update `.ssh/config` (Windows `C:/User/gli/.ssh/config`) with the following 
+Update `.ssh/config` (Windows `C:/User/gli/.ssh/config`) with the following.
+
+In case of Docker container, copy WSL .ssh over to Windows C:\Users\gli\.ssh as the docker container is initialized in WSL and WSL .ssh is mounted into the container. When ssh connect into the container from Positron, Windows .ssh is used for varificantion. So the two .ssh must be the same.
 
 ```txt
 Host xps8940
