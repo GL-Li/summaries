@@ -76,7 +76,7 @@ ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
 
 ### show ssh targets at Positron left side pane
 
-Update `.ssh/config` with the following 
+Update `.ssh/config` (Windows `C:/User/gli/.ssh/config`) with the following 
 
 ```txt
 Host xps8940
