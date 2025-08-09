@@ -1,3 +1,35 @@
+## Set up
+
+### User setting
+See file `positron_user_setting.json`.
+
+### remote ssh
+https://positron.posit.co/remote-ssh.html
+
+ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
+
+#### show ssh targets 
+
+Update `.ssh/config` (Windows `C:/User/gli/.ssh/config`) with the following.
+
+
+```txt
+Host xps8940
+  HostName 192.168.1.20
+  User gl
+
+Host docker-R-program
+    HostName localhost
+    User rstudio
+    Port 2222
+```
+
+#### copy .ssh from WSL to Windows
+In case of Docker container, copy WSL .ssh over to Windows C:\Users\gli\.ssh as the docker container is initialized in WSL and WSL .ssh is mounted into the container. When ssh connect into the container from Positron, Windows .ssh is used for varificantion. So the two .ssh must be the same.
+
+See project ssh-docker forexample.
+
+
 ## Dependencies and extension
 Dependencies:
 - Install Quarto for qmd files: download from https://quarto.org/docs/get-started/
@@ -68,28 +100,6 @@ In visual line mode or visual block mode:
 - `ma`: insert to the end of selection
 - `mI` and `mA`: similar but include empty lines in selection.
 
-
-## remote SSH
-https://positron.posit.co/remote-ssh.html
-
-ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
-
-### show ssh targets at Positron left side pane
-
-Update `.ssh/config` (Windows `C:/User/gli/.ssh/config`) with the following.
-
-In case of Docker container, copy WSL .ssh over to Windows C:\Users\gli\.ssh as the docker container is initialized in WSL and WSL .ssh is mounted into the container. When ssh connect into the container from Positron, Windows .ssh is used for varificantion. So the two .ssh must be the same.
-
-```txt
-Host xps8940
-  HostName 192.168.1.20
-  User gl
-
-Host docker-R-program
-    HostName localhost
-    User rstudio
-    Port 2222
-```
 
 
 ## Format R with air
