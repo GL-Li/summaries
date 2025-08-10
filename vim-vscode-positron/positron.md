@@ -1,17 +1,34 @@
-## Set up
+# On Top
 
-### User setting
-See file `positron_user_setting.json`.
+## User setting
+- Copy settings in file `positron_user_setting.json` to Positron User Settings (JSON).
+- Create Shortcuts in Positron based on comments at the top of above file.
+- Key extensions:
+    - VSCode Vim Emulator
+    - Cobalt2 Official color theme
+    - Cline for AI coding
+    - pyrefly: python language server for 
+        - import a class or function by click
 
-### remote ssh
+## indows work with projects in WSL
+
+### Open Remote - WSL for Positron
+To work with WSL
+- install Positron for Windows and 
+- install extension Open `Remote - WSL for positron`, for now. The function may be built in to Positron in later version.
+- `Ctrl Shift P` to start the command plattee and search for `Remote WSL - connect to WSL`, run it to connect.
+
+## remote ssh to computers and docker containers
 https://positron.posit.co/remote-ssh.html
 
-ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
+General method:
+- ctrl P --> Remote SSH --> Connect to host --> use@xxx.xxx.x.xx  -> password
 
-#### show ssh targets 
+Use SSH Targets is easier. See below.
 
-Update `.ssh/config` (Windows `C:/User/gli/.ssh/config`) with the following.
+### show ssh targets 
 
+Update `.ssh/config` (Windows `C:/User/gli/.ssh/config`) with the following. The SSH Targets will be listed on the left panel, where we can easiliy make ssh connections.
 
 ```txt
 Host xps8940
@@ -24,45 +41,16 @@ Host docker-R-program
     Port 2222
 ```
 
-#### copy .ssh from WSL to Windows
-In case of Docker container, copy WSL .ssh over to Windows C:\Users\gli\.ssh as the docker container is initialized in WSL and WSL .ssh is mounted into the container. When ssh connect into the container from Positron, Windows .ssh is used for varificantion. So the two .ssh must be the same.
+### copy .ssh from WSL to Windows
+In case of ssh-connect to a Docker container, copy WSL .ssh over to Windows C:\Users\gli\.ssh as the docker container is initialized in WSL and WSL .ssh is mounted into the container. When ssh connect into the container from Positron, Windows .ssh is used for varificantion. So the two .ssh must be the same.
 
-See project ssh-docker forexample.
+See project ssh-docker for how local .ssh setting is mounted to docker containers.
 
+# ----------------------------
 
-## Dependencies and extension
-Dependencies:
-- Install Quarto for qmd files: download from https://quarto.org/docs/get-started/
+# Display Outlines
 
-Extensions:
-- vim: Vim emmulation
-- Cobalt2 Theme Official
-- cline: for AI coding
-- pyrefly: python language server for 
-    - import a class or function by click
-
-
-
-## With WSL
-
-### Open Remote - WSL for Positron
-To work with WSL
-- install Positron for Windows and 
-- install extension Open `Remote - WSL for positron`, for now. The function may be built in to Positron in later version.
-- `Ctrl Shift P` to start the command plattee and search for `Remote WSL - connect to WSL`, run it to connect.
-
-### VSCode-neovim extension
-Give the full path to neovim installed on WSL. In user settings.json file, add
-
-```json
-    "vscode-neovim.wslDistribution": "debian",
-    "vscode-neovim.useWSL": true,
-    "vscode-neovim.neovimExecutablePaths.linux": "/home/gl/bin/nvim"
-```
-
-## Display Outlines
-
-### settings --> outline
+## settings --> outline
 Enable the following outlines
 - Constant: for qmd file
 - string: for md file
@@ -75,7 +63,9 @@ Disable the following outlines
 - null
 - number
 
-### R outlines like in RStudio
+# Formatting and display for R
+
+## R outlines like in RStudio
 
 Enable `setting --> outline:show` string to RStudio style outlines in `xxx.R` file:
 
@@ -86,20 +76,6 @@ fff <- function() {
     "hellow world"
 }
 ```
-
-### VScode-neovim extension
-
-#### Assign Ctrl keys to Neovim
-- Setting --> search for neovim --> find Ctrl key for insert mode and normal mode
-- Add a letter to the list, for example "s". When press Ctrl-s, position executes the keybinding from neovim, instead of Positron.
-  - A good use case is <C-s> mapping to saving and back to normal mode in Neovim.
-  
-#### Multi cursor
-In visual line mode or visual block mode:
-- `mi`: insert to the beginning of each line of selection
-- `ma`: insert to the end of selection
-- `mI` and `mA`: similar but include empty lines in selection.
-
 
 
 ## Format R with air
@@ -167,3 +143,26 @@ normal_function <- function(parameter_1, parameter_2, parameter_3, parameter_4, 
     print("what happens to long lines?")
 }
 ```
+
+# -------------------- 
+# ZZZ
+
+### VSCode-neovim extension
+Give the full path to neovim installed on WSL. In user settings.json file, add
+
+```json
+    "vscode-neovim.wslDistribution": "debian",
+    "vscode-neovim.useWSL": true,
+    "vscode-neovim.neovimExecutablePaths.linux": "/home/gl/bin/nvim"
+```
+
+### Assign Ctrl keys to Neovim
+- Setting --> search for neovim --> find Ctrl key for insert mode and normal mode
+- Add a letter to the list, for example "s". When press Ctrl-s, position executes the keybinding from neovim, instead of Positron.
+  - A good use case is <C-s> mapping to saving and back to normal mode in Neovim.
+  
+### Multi cursor
+In visual line mode or visual block mode:
+- `mi`: insert to the beginning of each line of selection
+- `ma`: insert to the end of selection
+- `mI` and `mA`: similar but include empty lines in selection.

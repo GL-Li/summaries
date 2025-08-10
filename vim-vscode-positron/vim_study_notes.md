@@ -562,10 +562,6 @@ Trouble in comment lines. The operation may fail in commented lines. If this hap
 - `:vs file6` vertical split
 - `:windo %s/aaa/bbb/g` oporate on all windoes.
 
-### vim gvim clipboard copy paste
-
-- Only works in gvim???????????
-- install vim-gtk may allow terminal vim to access clipboard in register ```"*``` and `"+`
 
 ### vim stop italics when type stars
 
@@ -1027,7 +1023,7 @@ $ sudo apt -f install
 
 **Configuration**
 
-copy `init.lua` at https://github.com/nvim-lua/kickstart.nvim to `~/config/mvim/.
+copy `init.lua` at https://github.com/nvim-lua/kickstart.nvim to `~/config/mvim/.`
 
 start nvim, the configuration will start automatically.
 
@@ -1100,7 +1096,7 @@ hightlight ColorColumn ctermbg=238
 
 ### vim syntax hight, /usr/share/vim/vim90/syntax
 
-- reference: `https://arnaudr.io/2020/08/17/modify-vim-syntax-files-for-your-taste/
+- reference: `https://arnaudr.io/2020/08/17/modify-vim-syntax-files-for-your-taste/`
 
 - These are the system files that affect every users and applicationsl They are not supposed to be modified as they will be overwritten at eadh update.
 

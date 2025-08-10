@@ -36,4 +36,8 @@
       "commands": [":nohl"]
     }
   ],
+  "[r]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "Posit.air-vscode"
+  }
 }
