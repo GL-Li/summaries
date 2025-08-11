@@ -29,7 +29,7 @@ postgres=# CREATE USER testuser WITH PASSWORD 'testpassword';
 
 ### Create a database and population tables from a sql file
 
-File `postgresql_sample.aql` contains SQL command to create a new database, create new tables for the database, and populate the tables with a few rows. 
+File `postgresql_sample.sql` contains SQL command to create a new database, create new tables for the database, and populate the tables with a few rows. 
 ```sh
 # the database is owned by super user postgres
 sudo -u postgres psql -f postgresql_sample.sql
