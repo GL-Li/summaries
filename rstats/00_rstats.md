@@ -1,6 +1,17 @@
-## Basic concepts
+# Installation
 
-### Installation
+## Install packages
+
+Recommend `pak` to install packages in a controlled way. By default, it only installs dependencies in groups Depends and Imports, and skips update if a dependency is already installed and meets the minimal version requirement. 
+
+`install.packages(...)` forces upgrade dependencies to the latest version.
+
+```r
+pak::pkg_install("abc")
+```
+
+
+## trim installed packages
 
 R is not in registry on Window. So `path/to/Rscript.exe xxx.R` will run from command line. Under the installation directory, the following subdirectories are not required for `Rscript.exe`:
 
@@ -29,7 +40,9 @@ These base packages must stay in R-4.4.1/library/ and cannot be moved to user li
 `base  compiler  datasets  grDevices  graphics  grid  methods  parallel  stats  tools  utils`
 
 
-### Collect all termimal output from Rscript run
+# Run .R files
+
+## Collect all termimal output from Rscript run
 Collect both the standard output and error:
 - package loading message and warnings are part of error.
 - we can see the printout on terminal and the same time the message is sent to the log file.
@@ -37,9 +50,10 @@ Collect both the standard output and error:
 `$ Rscript xxx.R 2>&1 | tee xxx.log`
 
 
+# to be determined
 ### import an environment to .GlobalEnv
 
-```{r}
+```r
 # save an env object to RDS file
 saveRDS(env_i, file = "env_i.RDS")
 
@@ -59,12 +73,12 @@ rm("env_i")
 ### catch exit status with system()
 
 For example, we have a test file `ttt.R`, which has a quit statement
-```{r}
+```r
 print("stat the test")
 quit(save = "no", status = 5) 
 ```
 In another file `ttt_run.R`, which runs `ttt.R` with `system()` function:
-```{r}
+```r
 # pass exit status 5 to exit_status
 std_out <- system("Rscript ttt.R ; echo $?", intern = TRUE)
 exit_status <- std_out[length(std_out)]
@@ -85,7 +99,7 @@ Sources of garbages:
 - A memory location that is not reachable in R anymore, for example, if we first run `dat <- 123` and then run `dat <- "abc"`, then data `123` is not reachable anymore and becomes garbage.
   
 Use `rm()` to explicityly remove a large object before creating a new large object with the same name. Without `rm(df)`, the memory for the first df is not released before the creation of the second df is completed, which means a minimal memory of two df is required.
-```{r}
+```r
 df <- data.frame(x = 1:1e9, y = rnorm(1e9))
 rm(df)
 df <- data.frame(x = 1:1e9, y = rnorm(1e9))
@@ -95,7 +109,7 @@ df <- data.frame(x = 1:1e9, y = rnorm(1e9))
 
 ### Use a variable of a function
 
-```{r}
+```r
 fun_var <- "mean"
 get(fun_var)(1:9)  # same as mean(1:9)
 ```
