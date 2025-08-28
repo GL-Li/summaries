@@ -34,7 +34,26 @@ The final image can be used with both RStudio and Positron.
 
 ## How to run commands in docker container from host terminal
 
-A straightforwrad method is using `here document` to run multiple lines of commands in docker container from host's terminal. Save the following as aaa.sh and have a try with `$ bash aaa.sh` .
+### use bash -c "..."
+This is a straightforward method that can one or more lines of shell commands, for example:
+
+```bash
+docker run --rm \
+  --platform linux/amd64 \
+  --name rbase-pea1 \
+  -v "$(pwd)/data:/data" \
+  rbase_release \
+  bash -c "
+    cp -r /app/{pea1.R,xnames.csv,rosa.R} /data/ 2>/dev/null || true &&
+    cd /data &&
+    Rscript pea1.R &&
+    rm pea1.R xnames.csv rosa.R
+  "
+```
+
+### use here document
+
+Another method is using `here document` to run multiple lines of commands in docker container from host's terminal. Save the following as aaa.sh and have a try with `$ bash aaa.sh` .
 
 ```sh
 #!/bin/bash
