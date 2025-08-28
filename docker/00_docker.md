@@ -1,3 +1,37 @@
+# Docker images in use
+
+## R docker images
+
+### base image
+Use `rocker/r-ver` as base image instead of `r-base`. All rocker's R images is built on top of `r-ver`.
+
+**Why it is good**
+
+- Fast `install.packages()` as its default CRAN mirror is the Posit Public Package Manager, which serves compiled linux binaries of R packages.
+- Old R version installs all R packages from a fixed snapshot of CRAN mirror at a given date, ensures reproducibility.
+
+**resources**
+
+- https://hub.docker.com/r/rocker/r-ver/tags
+- https://rocker-project.org/images/versioned/r-ver.html
+
+### Never update existing R packages in a docker image 
+Use `pak::pkg_install("xxx")` to install additional package, which by default do not update existing packages when installing dependencies. In additional, it only installes dependencies from Depends and Imports.
+
+### Example project
+Project at `/projects/personal-projects/docker-images/docker-rbase`, which build 4 docker images
+
+- r-ver --> rbase_minimal
+- rbase_minimal --> rbase_release
+- rbase_minimal --> rbase_bitbucket
+- rbase_bitbucket --> rbase_rstudio_positron
+
+The final image can be used with both RStudio and Positron.
+
+
+
+# docker run
+
 ## How to run commands in docker container from host terminal
 
 A straightforwrad method is using `here document` to run multiple lines of commands in docker container from host's terminal. Save the following as aaa.sh and have a try with `$ bash aaa.sh` .
