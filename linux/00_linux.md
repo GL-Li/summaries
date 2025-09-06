@@ -60,7 +60,18 @@ Installation
 
 
 
-## Files and directories
+## Files, directories, and devices
+
+### mount a block device
+
+```sh
+# list available block devices
+lsblk
+# crate a mounting point if not exists
+sudo mkdir /mnt/e
+# mount a block device to the mounting point
+sudo mount /dev/sdb2 /mnt/e
+```
 
 ### `chmod`: file permission
 
