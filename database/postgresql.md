@@ -1,3 +1,55 @@
+## From R for selfSrv
+
+### start Postgresql server
+
+```sh
+# check status
+sudo service postgresql status
+# start serve if not active
+sudo service postgresql start
+```
+
+### create database and user for the database
+
+```sh
+# login to server as super user
+sudo -u postgres psql
+```
+
+Create user and database from postgresql consol
+
+```sql
+CREATE USER selfsrv WITH PASSWORD 'selfsrv-pw';
+CREATE DATABASE encoding_tables OWNER selfsrv;
+```
+
+### create .Renviron file
+And save it in working directory.
+
+```
+PGDATABASE=encoding_tables
+PGPASSWORD=selfsrv-pw
+PGUSER=selfsrv
+PGHOST=localhost
+PGPORT=5432
+```
+
+### Explicitly load .Renviron in pea1.R and make connection
+
+```R
+readRenviron(".Renviron")
+
+con <- dbConnect(
+  RPostgreSQL::PostgreSQL(),
+  dbname = Sys.getenv("PGDATABASE"),
+  host = Sys.getenv("PGHOST"),
+  port = Sys.getenv("PGPORT"),
+  user = Sys.getenv("PGUSER"),
+  password = Sys.getenv("PGPASSWOD")
+)
+```
+
+
 ## Installation
 
 Follow the instructions at https://www.postgresql.org/download/.
