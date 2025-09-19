@@ -34,9 +34,23 @@ PGHOST=localhost
 PGPORT=5432
 ```
 
+### R packages to work with PostgreSQL server
+Two package: 
+- RPostgresQL: older but only depends on DBI
+- RPostgres: newer but has more dependencies
+
+Both has system dependency, if needed, install
+```sh
+sudo apt update
+sudo apt install libpq-dev
+```
+
+We will use RPostgreSQL to connect to a server
+
+
 ### Explicitly load .Renviron in pea1.R and make connection
 
-```R
+```r
 readRenviron(".Renviron")
 
 con <- dbConnect(
@@ -49,8 +63,51 @@ con <- dbConnect(
 )
 ```
 
+## In Python
 
-## Installation
+```sh
+uv add "psycopg[binary]"
+```
+
+Sample code
+```python
+import psycopg
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+try:
+    # Establish a connection to the database
+    conn = psycopg.connect(
+        dbname=os.getenv("PGDATABASE"),
+        user=os.getenv("PGUSER"),
+        password=os.getenv("PGPASSWORD"),
+        host=os.getenv("PGHOST"),
+        port=os.getenv("PGPORT")
+    )
+    print("Connection successful!")
+
+except psycopg.OperationalError as e:
+    print(f"Error connecting to database: {e}")
+
+# Create a cursor object
+with conn.cursor() as cur:
+    # Execute a SQL command to create a table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100),
+            email VARCHAR(100) UNIQUE
+        );
+    """)
+
+    # Commit the changes to the database
+    conn.commit()
+    print("Table created successfully!")
+```
+
+
+## Local Installation
 
 Follow the instructions at https://www.postgresql.org/download/.
 
