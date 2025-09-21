@@ -13,7 +13,7 @@ gcloud init
 # list available project and ID
 gcloud projects list
 
-# set GCP project by ID
+# set GCP project by ID to work with
 gcloud config set project file-backup-471312
 
 # show current project 
@@ -29,8 +29,11 @@ From GCP console
 From local computer terminal, copy a file to the bucket
 
 ```bash
-# list storage buckets
-gcloud storage buckets list
+# list all storage buckets
+gcloud storage ls -r
+
+# list all directories and files in one bucket
+gcloud storage ls -r gs://gl-working-dir
 
 # copy a file to a bucket. The bucket name must be unique on GCP
 gcloud storage cp xxx.zip gs://gl-familiy/
