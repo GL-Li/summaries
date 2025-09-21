@@ -5,3 +5,6 @@
 
 **.env
 **.venv
+
+soft_linked_summaries/*
+!soft_linked_summaries/generate_softlinks.sh
