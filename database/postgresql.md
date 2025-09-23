@@ -213,3 +213,25 @@ test with query `SELECT * FROM orders`. If it has permission issue, rerun the fo
 ```sh
 sudo -u postgres psql -d postgresql_sample -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO sample_user; GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO sample_user;"
 ```
+
+
+## Install pgAdmin4-desktop on WSL 
+pgadmin-desktop is not in the Ubuntu repository. Follow steps below to install and run it
+
+```sh
+# add the repository key
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+
+# add the repository to source list
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list'
+
+# update and install
+sudo apt update
+sudo apt install pgadmin4-desktop
+```
+
+It is installed at `/usr/pgadmin4/bin/pgadmin4`. By default it is added to PATH soe we can run with `$ pgadmin4`. If pgadmin4 not found after running this command, mannually add it to PATH
+
+```sh
+sudo ln -s /usr/pgadmin4/bin/pgadmin4 /usr/local/bin/pgadmin4
+```
