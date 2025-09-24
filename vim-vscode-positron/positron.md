@@ -9,6 +9,7 @@
     - Cline for AI coding
     - pyrefly: python language server for 
         - import a class or function by click
+        - in settings, set `Inlay hints` to `offUnlessPressed` to show type hint only by press `Ctrl + Alt`.
 
 ## indows work with projects in WSL
 
